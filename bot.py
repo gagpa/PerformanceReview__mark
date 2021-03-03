@@ -9,16 +9,19 @@ from src.resources.keyboards import create_reply_start_keyboard, \
 bot = telebot.TeleBot(config.TOKEN)
 
 
-def roles_required(func):
-    def wrapper(*args, **kwargs):
-        message = args[0]
-        user = User.lookup(message.chat.id)
-        if user and user.roles:
-            func(*args, **kwargs)
-        else:
-            bot.send_message(message.chat.id, 'Доступ запрещен')
+def role_required(role):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            message = args[0]
+            user = User.lookup(message.chat.id)
+            if user and (user.roles == role):
+                func(*args, **kwargs)
+            else:
+                bot.send_message(message.chat.id, 'Доступ запрещен')
 
-    return wrapper
+        return wrapper
+
+    return decorator
 
 
 @bot.message_handler(commands=['start'])
@@ -67,6 +70,19 @@ def all_requests(call):
         bot.send_message(chat_id, 'Пользователей не найдено')
 
 
+@bot.callback_query_handler(lambda call: 'requests#' in call.data)
+def all_requests(call):
+    users = db_session.query(User).filter_by(roles=None).all()
+    chat_id = call.message.chat.id
+    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
+    if users:
+        page = call.data.split('#')[-1]
+        msg, paginator = create_users_with_paginator(users, page=int(page), n=2)
+        bot.send_message(chat_id, msg, reply_markup=paginator.markup)
+    else:
+        bot.send_message(chat_id, 'Пользователей не найдено')
+
+
 @bot.callback_query_handler(lambda call: 'requests|get' in call.data)
 def show_user_request(call):
     chat_id = call.message.chat.id
@@ -109,8 +125,8 @@ def accept_user(call):
     # bot.send_document(chat_id, "file")
 
 
-@roles_required
 @bot.message_handler(commands=['ls'])
+@role_required('HR')
 def all_employees(message):
     chat_id = message.chat.id
     users = db_session.query(User).filter(User.roles == 'Employee').all()
@@ -121,8 +137,8 @@ def all_employees(message):
         bot.send_message(chat_id, 'Пользователей не найдено')
 
 
-@roles_required
 @bot.message_handler(commands=['qq'])
+@role_required('HR')
 def check_users(message):
     chat_id = message.chat.id
     user = db_session.query(User).get(chat_id)
