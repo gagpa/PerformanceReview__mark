@@ -4,7 +4,7 @@ from src import config
 from src.models import User, db_session
 from src.resources.auth import process_name_step
 from src.resources.keyboards import create_reply_start_keyboard, \
-    create_inline_keyboard, create_inline_keyboard_for_user_request
+    create_inline_keyboard_for_user_request, create_users_with_paginator
 
 bot = telebot.TeleBot(config.TOKEN)
 
@@ -48,11 +48,21 @@ def all_requests(message):
         bot.delete_message(chat_id=chat_id, message_id=message.message.message_id)
 
     if users:
-        user_info_dict = {i.id: ' - '.join([i.username, i.full_name]) for i in users}
-        inline_keyboard = create_inline_keyboard('requests',
-                                                 dict(enumerate(user_info_dict.keys(), 1)))
-        msg = '\n'.join([f'{i}. {v}' for i, v in enumerate(user_info_dict.values(), 1)])
-        bot.send_message(chat_id, msg, reply_markup=inline_keyboard)
+        msg, paginator = create_users_with_paginator(users, page=1, n=5)
+        bot.send_message(chat_id, msg, reply_markup=paginator.markup)
+    else:
+        bot.send_message(chat_id, 'Пользователей не найдено')
+
+
+@bot.callback_query_handler(lambda call: 'requests#' in call.data)
+def all_requests(call):
+    users = db_session.query(User).filter_by(roles=None).all()
+    chat_id = call.message.chat.id
+    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
+    if users:
+        page = call.data.split('#')[-1]
+        msg, paginator = create_users_with_paginator(users, page=int(page), n=5)
+        bot.send_message(chat_id, msg, reply_markup=paginator.markup)
     else:
         bot.send_message(chat_id, 'Пользователей не найдено')
 
@@ -111,14 +121,24 @@ def all_employees(message):
         bot.send_message(chat_id, 'Пользователей не найдено')
 
 
-@bot.message_handler(commands=['qq'])
 @roles_required
+@bot.message_handler(commands=['qq'])
 def check_users(message):
     chat_id = message.chat.id
     user = db_session.query(User).get(chat_id)
     db_session.delete(user)
     db_session.commit()
     bot.send_message(chat_id, 'Вы удалены из бота')
+
+
+# @bot.message_handler(commands=['create'])
+# def start_message(message):
+#     """Create test users"""
+#     for i in range(11):
+#         if not User.lookup(i):
+#             user = User(id=i, username=f'@username{i}', full_name=f'name{i}')
+#             db_session.add(user)
+#     db_session.commit()
 
 
 bot.polling()

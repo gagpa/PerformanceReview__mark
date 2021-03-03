@@ -1,7 +1,17 @@
 import telebot
+from telegram_bot_pagination import InlineKeyboardPaginator
+
+
+class MyPaginator(InlineKeyboardPaginator):
+    first_page_label = '<<'
+    previous_page_label = '<'
+    current_page_label = '-{}-'
+    next_page_label = '>'
+    last_page_label = '>>'
 
 
 def create_reply_start_keyboard():
+    """Return main keyboard"""
     markup_inline = telebot.types.ReplyKeyboardMarkup()
     user_requests = telebot.types.KeyboardButton(text='Запросы')
     list_users = telebot.types.KeyboardButton(text='Список сотрудников')
@@ -11,22 +21,47 @@ def create_reply_start_keyboard():
 
 
 def create_inline_keyboard(kind, service_dict):
-    markup_inline = telebot.types.InlineKeyboardMarkup()
+    """
+    Return inline keyboard
+    :param kind: type of data
+    :param service_dict: key - button text, value - callback name
+    """
+    markup_inline = []
     for key in service_dict:
         item = telebot.types.InlineKeyboardButton(text=key,
-                                                  callback_data='{}|get|{}'.format(kind, service_dict[key]))
-        markup_inline.add(item)
+                                                  callback_data='{}|get|{}'.format(kind,
+                                                                                   service_dict[
+                                                                                       key]))
+        markup_inline.append(item)
     return markup_inline
 
 
 def create_inline_keyboard_for_user_request(user_id):
     markup_inline = telebot.types.InlineKeyboardMarkup()
     accept = telebot.types.InlineKeyboardButton(text='Принять',
-                                                callback_data='{}|add|{}'.format('requests', user_id))
+                                                callback_data='{}|add|{}'.format('requests',
+                                                                                 user_id))
     delete = telebot.types.InlineKeyboardButton(text='Отклонить',
-                                                callback_data='{}|del|{}'.format('requests', user_id))
+                                                callback_data='{}|del|{}'.format('requests',
+                                                                                 user_id))
     back = telebot.types.InlineKeyboardButton(text='Назад',
-                                              callback_data='{}|back|{}'.format('requests', user_id))
+                                              callback_data='{}|back|{}'.format('requests',
+                                                                                user_id))
     markup_inline.add(accept, delete)
     markup_inline.add(back)
     return markup_inline
+
+
+def create_users_with_paginator(users, page=1, n=5):
+    res = [users[i:i + n] for i in range(0, len(users), n)]
+    paginator = MyPaginator(
+        len(res),
+        current_page=page,
+        data_pattern='requests#{page}'
+    )
+    user_info_dict = {i.id: ' - '.join([i.username, i.full_name]) for i in res[page - 1]}
+    inline_keyboard = create_inline_keyboard('requests',
+                                             dict(enumerate(user_info_dict.keys(), 1)))
+    paginator.add_before(*inline_keyboard)
+    msg = '\n'.join([f'{i}. {v}' for i, v in enumerate(user_info_dict.values(), 1)])
+    return msg, paginator

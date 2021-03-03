@@ -23,7 +23,7 @@ services:
 #    env_file: .env
 #    volumes:
 #      - .:/usr/src/hr-test-bot
-#    command: bash -c "alembic stamp head && alembic revision --autogenerate -m "update" && alembic upgrade head"
+#    command: bash -c "alembic init alembic && alembic stamp head && alembic revision --autogenerate -m "update" && alembic upgrade head"
 #    depends_on:
 #      - hr_postgres_db
 
