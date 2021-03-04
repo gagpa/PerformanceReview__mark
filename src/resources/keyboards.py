@@ -52,16 +52,29 @@ def create_inline_keyboard_for_user_request(user_id):
     return markup_inline
 
 
-def create_users_with_paginator(users, page=1, n=5):
+def create_inline_keyboard_for_user_list(user_id):
+    markup_inline = telebot.types.InlineKeyboardMarkup()
+    accept = telebot.types.InlineKeyboardButton(text='Редактировать',
+                                                callback_data='{}|change|{}'.format('employee', user_id))
+    delete = telebot.types.InlineKeyboardButton(text='Удалить',
+                                                callback_data='{}|del|{}'.format('employee', user_id))
+    back = telebot.types.InlineKeyboardButton(text='Назад',
+                                              callback_data='{}|back|{}'.format('employee', user_id))
+    markup_inline.add(accept, delete)
+    markup_inline.add(back)
+    return markup_inline
+
+
+def create_users_with_paginator(kind, users, page=1, n=5):
     res = [users[i:i + n] for i in range(0, len(users), n)]
     paginator = MyPaginator(
         len(res),
         current_page=page,
-        data_pattern='requests#{page}'
+        data_pattern=kind + '#{page}'
     )
     user_info_dict = {i.id: ' - '.join([i.username, i.full_name]) for i in res[page - 1]}
-    inline_keyboard = create_inline_keyboard('requests',
-                                             dict(enumerate(user_info_dict.keys(), 1)))
+    users_id = dict(enumerate(user_info_dict.keys(), 1))
+    inline_keyboard = create_inline_keyboard(kind, users_id)
     paginator.add_before(*inline_keyboard)
     msg = '\n'.join([f'{i}. {v}' for i, v in enumerate(user_info_dict.values(), 1)])
     return msg, paginator

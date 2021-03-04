@@ -1,15 +1,13 @@
-import os
-
+from sqlalchemy import Column, Text, Integer
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Text, Integer, BigInteger, Float, Date, DateTime
-from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+from src.config import SQLALCHEMY_DATABASE_URI
 
 base = declarative_base()
 
-engine = create_engine(DATABASE_URI)
+engine = create_engine(SQLALCHEMY_DATABASE_URI)
 base.metadata.create_all(engine)
 
 session_maker = sessionmaker(bind=engine)

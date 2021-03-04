@@ -4,7 +4,8 @@ from src import config
 from src.models import User, db_session
 from src.resources.auth import process_name_step
 from src.resources.keyboards import create_reply_start_keyboard, \
-    create_inline_keyboard_for_user_request, create_users_with_paginator
+    create_inline_keyboard_for_user_request, create_users_with_paginator, \
+    create_inline_keyboard_for_user_list
 
 bot = telebot.TeleBot(config.TOKEN)
 
@@ -51,42 +52,30 @@ def all_requests(message):
         bot.delete_message(chat_id=chat_id, message_id=message.message.message_id)
 
     if users:
-        msg, paginator = create_users_with_paginator(users, page=1, n=5)
+        msg, paginator = create_users_with_paginator('requests', users, page=1, n=5)
         bot.send_message(chat_id, msg, reply_markup=paginator.markup)
     else:
         bot.send_message(chat_id, 'Пользователей не найдено')
 
 
 @bot.callback_query_handler(lambda call: 'requests#' in call.data)
-def all_requests(call):
+def requests_per_page(call):
     users = db_session.query(User).filter_by(roles=None).all()
     chat_id = call.message.chat.id
     bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
     if users:
         page = call.data.split('#')[-1]
-        msg, paginator = create_users_with_paginator(users, page=int(page), n=5)
+        msg, paginator = create_users_with_paginator('requests', users, page=int(page), n=5)
         bot.send_message(chat_id, msg, reply_markup=paginator.markup)
     else:
         bot.send_message(chat_id, 'Пользователей не найдено')
 
 
-@bot.callback_query_handler(lambda call: 'requests#' in call.data)
-def all_requests(call):
-    users = db_session.query(User).filter_by(roles=None).all()
-    chat_id = call.message.chat.id
-    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
-    if users:
-        page = call.data.split('#')[-1]
-        msg, paginator = create_users_with_paginator(users, page=int(page), n=2)
-        bot.send_message(chat_id, msg, reply_markup=paginator.markup)
-    else:
-        bot.send_message(chat_id, 'Пользователей не найдено')
-
-
+@bot.callback_query_handler(lambda call: 'employee|get' in call.data)
 @bot.callback_query_handler(lambda call: 'requests|get' in call.data)
 def show_user_request(call):
     chat_id = call.message.chat.id
-    user_id = call.data.split('|')[-1]
+    kind, _, user_id = call.data.split('|')
     user = db_session.query(User).get(user_id)
     user_info = f'''
         Логин: {user.username}
@@ -94,13 +83,19 @@ def show_user_request(call):
         Должность: {user.position}
         Отдел: {user.department}
         Руководитель: {user.chef}
-    '''.replace('  ', '')
+    '''
 
-    markup_inline = create_inline_keyboard_for_user_request(user_id)
+    if kind == 'requests':
+        markup_inline = create_inline_keyboard_for_user_request(user_id)
+    else:
+        user_info += f'Роль: {user.roles}'
+        markup_inline = create_inline_keyboard_for_user_list(user_id)
+
     bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
-    bot.send_message(chat_id, user_info, reply_markup=markup_inline)
+    bot.send_message(chat_id, user_info.replace('  ', ''), reply_markup=markup_inline)
 
 
+@bot.callback_query_handler(lambda call: 'employee|del' in call.data)
 @bot.callback_query_handler(lambda call: 'requests|del' in call.data)
 def delete_user(call):
     chat_id = call.message.chat.id
@@ -125,14 +120,33 @@ def accept_user(call):
     # bot.send_document(chat_id, "file")
 
 
-@bot.message_handler(commands=['ls'])
-@role_required('HR')
+@bot.callback_query_handler(lambda call: 'employee|back' in call.data)
+@bot.message_handler(func=lambda message: message.text == 'Список сотрудников')
+# @role_required('HR')
 def all_employees(message):
-    chat_id = message.chat.id
+    try:
+        chat_id = message.chat.id
+    except AttributeError:
+        chat_id = message.message.chat.id
+        bot.delete_message(chat_id=chat_id, message_id=message.message.message_id)
+
     users = db_session.query(User).filter(User.roles == 'Employee').all()
     if users:
-        res = {i.id: ' '.join([i.username, i.full_name, str(i.roles)]) for i in users}
-        bot.send_message(chat_id, str(res))
+        msg, paginator = create_users_with_paginator('employee', users, page=1, n=5)
+        bot.send_message(chat_id, msg, reply_markup=paginator.markup)
+    else:
+        bot.send_message(chat_id, 'Пользователей не найдено')
+
+
+@bot.callback_query_handler(lambda call: 'employee#' in call.data)
+def employees_per_page(call):
+    users = db_session.query(User).filter(User.roles == 'Employee').all()
+    chat_id = call.message.chat.id
+    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
+    if users:
+        page = call.data.split('#')[-1]
+        msg, paginator = create_users_with_paginator('employee', users, page=int(page), n=2)
+        bot.send_message(chat_id, msg, reply_markup=paginator.markup)
     else:
         bot.send_message(chat_id, 'Пользователей не найдено')
 
@@ -148,11 +162,11 @@ def check_users(message):
 
 
 # @bot.message_handler(commands=['create'])
-# def start_message(message):
+# def create_test_users(message):
 #     """Create test users"""
 #     for i in range(11):
 #         if not User.lookup(i):
-#             user = User(id=i, username=f'@username{i}', full_name=f'name{i}')
+#             user = User(id=i, username=f'@username{i}', full_name=f'name{i}', roles='Employee')
 #             db_session.add(user)
 #     db_session.commit()
 
