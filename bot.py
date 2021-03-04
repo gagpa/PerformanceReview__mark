@@ -1,11 +1,12 @@
 import telebot
+from telebot.types import InlineKeyboardMarkup
 
 from src import config
 from src.models import User, db_session
 from src.resources.auth import process_name_step
 from src.resources.keyboards import create_reply_start_keyboard, \
     create_inline_keyboard_for_user_request, create_users_with_paginator, \
-    create_inline_keyboard_for_user_list
+    create_inline_keyboard_for_user_list, create_inline_keyboard
 
 bot = telebot.TeleBot(config.TOKEN)
 
@@ -82,13 +83,12 @@ def show_user_request(call):
         ФИО: {user.full_name}
         Должность: {user.position}
         Отдел: {user.department}
-        Руководитель: {user.chef}
-    '''
+        Руководитель: {user.chef}'''
 
     if kind == 'requests':
         markup_inline = create_inline_keyboard_for_user_request(user_id)
     else:
-        user_info += f'Роль: {user.roles}'
+        user_info += f'\nРоль: {user.roles}'
         markup_inline = create_inline_keyboard_for_user_list(user_id)
 
     bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
@@ -130,7 +130,7 @@ def all_employees(message):
         chat_id = message.message.chat.id
         bot.delete_message(chat_id=chat_id, message_id=message.message.message_id)
 
-    users = db_session.query(User).filter(User.roles == 'Employee').all()
+    users = db_session.query(User).filter(User.roles is not None).all()
     if users:
         msg, paginator = create_users_with_paginator('employee', users, page=1, n=5)
         bot.send_message(chat_id, msg, reply_markup=paginator.markup)
@@ -140,15 +140,83 @@ def all_employees(message):
 
 @bot.callback_query_handler(lambda call: 'employee#' in call.data)
 def employees_per_page(call):
-    users = db_session.query(User).filter(User.roles == 'Employee').all()
+    users = db_session.query(User).filter(User.roles is not None).all()
     chat_id = call.message.chat.id
     bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
     if users:
         page = call.data.split('#')[-1]
-        msg, paginator = create_users_with_paginator('employee', users, page=int(page), n=2)
+        msg, paginator = create_users_with_paginator('employee', users, page=int(page), n=5)
         bot.send_message(chat_id, msg, reply_markup=paginator.markup)
     else:
         bot.send_message(chat_id, 'Пользователей не найдено')
+
+
+@bot.callback_query_handler(lambda call: 'employee|change' in call.data
+                                         and len(call.data.split('|')) == 3)
+# @role_required('HR')
+def change_employee(call):
+    chat_id = call.message.chat.id
+    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
+    service_dict = {'ФИО': 'full_name',
+                    'Должность': 'position',
+                    'Отдел': 'department',
+                    'Логин руководителя': 'chef',
+                    'Роль': 'roles'
+                    }
+    buttons = create_inline_keyboard(call.data, service_dict)
+    markup_inline = InlineKeyboardMarkup()
+    markup_inline.add(*buttons)
+    bot.send_message(chat_id, 'Выберите данные для изменения', reply_markup=markup_inline)
+
+
+@bot.callback_query_handler(lambda call: 'employee|change' in call.data
+                                         and len(call.data.split('|')) == 4)
+# @role_required('HR')
+def change_employee(call):
+    chat_id = call.message.chat.id
+    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
+    attr = call.data.split("|")[-1]
+    if attr != 'roles':
+        service_dict = {'full_name': 'новое ФИО',
+                        'position': 'новую должность',
+                        'department': 'новый отдел',
+                        'chef': 'новый логин руководителя'
+                        }
+        bot.send_message(chat_id, f'Введите {service_dict[attr]}')
+        bot.register_next_step_handler_by_chat_id(chat_id, accept_data_to_change, call.data)
+    else:
+        service_dict = {'HR': 'HR',
+                        'Lead': 'Lead',
+                        'Employee': 'Employee'
+                        }
+        buttons = create_inline_keyboard(call.data, service_dict)
+        markup_inline = InlineKeyboardMarkup()
+        markup_inline.add(*buttons)
+        bot.send_message(chat_id, 'Выберите роль', reply_markup=markup_inline)
+
+
+@bot.callback_query_handler(lambda call: 'employee|change' in call.data and 'roles' in call.data)
+def accept_role_to_change(call):
+    chat_id = call.message.chat.id
+    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
+    role = call.data.split('|')[-1]
+    user_id = call.data.split('|')[-3]
+    User.update(user_id, roles=role)
+    db_session.commit()
+    bot.send_message(chat_id, 'Изменения внесены')
+
+
+def accept_data_to_change(message, call_data):
+    attr_to_change = call_data.split('|')[-1]
+    user_id = call_data.split('|')[-2]
+    chat_id = message.chat.id
+    if message.text.lower() not in ['отмена', 'список сотрудников', 'запросы']:
+        User.update(user_id, **{attr_to_change: message.text})
+        db_session.commit()
+        bot.send_message(chat_id, 'Изменения внесены')
+    else:
+        bot.send_message(chat_id, 'Внесение изменений отменено',
+                         reply_markup=create_reply_start_keyboard())
 
 
 @bot.message_handler(commands=['qq'])

@@ -29,9 +29,8 @@ def create_inline_keyboard(kind, service_dict):
     markup_inline = []
     for key in service_dict:
         item = telebot.types.InlineKeyboardButton(text=key,
-                                                  callback_data='{}|get|{}'.format(kind,
-                                                                                   service_dict[
-                                                                                       key]))
+                                                  callback_data='{}|{}'.format(kind, service_dict[
+                                                      key]))
         markup_inline.append(item)
     return markup_inline
 
@@ -54,13 +53,16 @@ def create_inline_keyboard_for_user_request(user_id):
 
 def create_inline_keyboard_for_user_list(user_id):
     markup_inline = telebot.types.InlineKeyboardMarkup()
-    accept = telebot.types.InlineKeyboardButton(text='Редактировать',
-                                                callback_data='{}|change|{}'.format('employee', user_id))
+    change = telebot.types.InlineKeyboardButton(text='Редактировать',
+                                                callback_data='{}|change|{}'.format('employee',
+                                                                                    user_id))
     delete = telebot.types.InlineKeyboardButton(text='Удалить',
-                                                callback_data='{}|del|{}'.format('employee', user_id))
+                                                callback_data='{}|del|{}'.format('employee',
+                                                                                 user_id))
     back = telebot.types.InlineKeyboardButton(text='Назад',
-                                              callback_data='{}|back|{}'.format('employee', user_id))
-    markup_inline.add(accept, delete)
+                                              callback_data='{}|back|{}'.format('employee',
+                                                                                user_id))
+    markup_inline.add(change, delete)
     markup_inline.add(back)
     return markup_inline
 
@@ -74,7 +76,7 @@ def create_users_with_paginator(kind, users, page=1, n=5):
     )
     user_info_dict = {i.id: ' - '.join([i.username, i.full_name]) for i in res[page - 1]}
     users_id = dict(enumerate(user_info_dict.keys(), 1))
-    inline_keyboard = create_inline_keyboard(kind, users_id)
+    inline_keyboard = create_inline_keyboard(kind + '|get', users_id)
     paginator.add_before(*inline_keyboard)
     msg = '\n'.join([f'{i}. {v}' for i, v in enumerate(user_info_dict.values(), 1)])
     return msg, paginator
