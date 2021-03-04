@@ -26,6 +26,18 @@ def role_required(role):
     return decorator
 
 
+def check_message(func):
+    def wrapper(*args, **kwargs):
+        message = args[0]
+        if message.text.lower().strip() not in ['отмена', 'список сотрудников', 'запросы',
+                                                'запуск/остановка review']:
+            func(*args, **kwargs)
+        else:
+            bot.send_message(message.chat.id, 'Внесение изменений отменено. Попробуйте снова')
+
+    return wrapper
+
+
 @bot.message_handler(commands=['start'])
 def start_message(message):
     chat_id = message.chat.id
@@ -206,17 +218,14 @@ def accept_role_to_change(call):
     bot.send_message(chat_id, 'Изменения внесены')
 
 
+@check_message
 def accept_data_to_change(message, call_data):
     attr_to_change = call_data.split('|')[-1]
     user_id = call_data.split('|')[-2]
     chat_id = message.chat.id
-    if message.text.lower() not in ['отмена', 'список сотрудников', 'запросы']:
-        User.update(user_id, **{attr_to_change: message.text})
-        db_session.commit()
-        bot.send_message(chat_id, 'Изменения внесены')
-    else:
-        bot.send_message(chat_id, 'Внесение изменений отменено',
-                         reply_markup=create_reply_start_keyboard())
+    User.update(user_id, **{attr_to_change: message.text})
+    db_session.commit()
+    bot.send_message(chat_id, 'Изменения внесены')
 
 
 @bot.message_handler(commands=['qq'])
