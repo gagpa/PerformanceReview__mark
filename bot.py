@@ -1,5 +1,7 @@
+import datetime
+
 import telebot
-from telebot.types import InlineKeyboardMarkup
+import telebot_calendar
 
 from src import config
 from src.models import User, db_session
@@ -175,9 +177,7 @@ def change_employee(call):
                     'Логин руководителя': 'chef',
                     'Роль': 'roles'
                     }
-    buttons = create_inline_keyboard(call.data, service_dict)
-    markup_inline = InlineKeyboardMarkup()
-    markup_inline.add(*buttons)
+    markup_inline = create_inline_keyboard(call.data, service_dict)
     bot.send_message(chat_id, 'Выберите данные для изменения', reply_markup=markup_inline)
 
 
@@ -201,9 +201,7 @@ def change_employee(call):
                         'Lead': 'Lead',
                         'Employee': 'Employee'
                         }
-        buttons = create_inline_keyboard(call.data, service_dict)
-        markup_inline = InlineKeyboardMarkup()
-        markup_inline.add(*buttons)
+        markup_inline = create_inline_keyboard(call.data, service_dict)
         bot.send_message(chat_id, 'Выберите роль', reply_markup=markup_inline)
 
 
@@ -226,6 +224,56 @@ def accept_data_to_change(message, call_data):
     User.update(user_id, **{attr_to_change: message.text})
     db_session.commit()
     bot.send_message(chat_id, 'Изменения внесены')
+
+
+@bot.message_handler(func=lambda message: message.text == 'Запуск/остановка Review')
+def review(message):
+    chat_id = message.chat.id
+    service_dict = {'Запуск': 'start',
+                    'Останвока': 'stop'
+                    }
+    markup_inline = create_inline_keyboard('review', service_dict)
+    bot.send_message(chat_id, 'Выберите роль', reply_markup=markup_inline)
+
+
+@bot.callback_query_handler(lambda call: 'review|start' in call.data)
+def employees_per_page(call):
+    chat_id = call.message.chat.id
+    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
+    msg = "Выберите дату начала периода"
+    choose_date(chat_id, 'review|first_date', msg)
+
+
+def choose_date(chat_id, call_data, msg):
+    now = datetime.datetime.now()
+    # документация по календарю: https://github.com/FlymeDllVa/telebot-calendar
+    calendar = telebot_calendar.CallbackData(call_data, "action", "year", "month", "day")
+    bot.send_message(chat_id, msg,
+                     reply_markup=telebot_calendar.create_calendar(name=calendar.prefix,
+                                                                   year=now.year,
+                                                                   month=now.month))
+
+
+@bot.callback_query_handler(
+    lambda call: any(element in call.data for element in ["PREVIOUS-MONTH", "DAY", "NEXT-MONTH", "MONTHS",
+                                                          "MONTH", "CANCEL", "IGNORE"]))
+def callback_inline(call):
+    print('6: ', call.data)
+    chat_id = call.message.chat.id
+    call_data, action, year, month, day = call.data.split(':')
+    # Обработка календаря. Получить дату или None, если кнопки другого типа
+    date = telebot_calendar.calendar_query_handler(
+        bot=bot, call=call, name=call_data, action=action, year=year, month=month, day=day
+    )
+    if action == "DAY":
+        if 'first_date' in call_data:
+            msg = "Выберите дату конца периода"
+            choose_date(chat_id, 'review|second_date', msg)
+            print(date)
+        elif 'second_date' in call_data:
+            print(date)
+    elif action == "CANCEL":
+        bot.send_message(chat_id=call.from_user.id, text="Попробуйте снова")
 
 
 @bot.message_handler(commands=['qq'])
