@@ -1,4 +1,6 @@
 import telebot
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, \
+    KeyboardButton
 from telegram_bot_pagination import InlineKeyboardPaginator
 
 
@@ -12,11 +14,12 @@ class MyPaginator(InlineKeyboardPaginator):
 
 def create_reply_start_keyboard():
     """Return main keyboard"""
-    markup_inline = telebot.types.ReplyKeyboardMarkup()
-    user_requests = telebot.types.KeyboardButton(text='Запросы')
-    list_users = telebot.types.KeyboardButton(text='Список сотрудников')
+    markup_inline = ReplyKeyboardMarkup()
+    user_requests = KeyboardButton(text='Запросы')
+    list_users = KeyboardButton(text='Список сотрудников')
+    review = KeyboardButton(text='Запуск/остановка Review')
 
-    markup_inline.add(user_requests, list_users)
+    markup_inline.add(user_requests, list_users, review)
     return markup_inline
 
 
@@ -26,42 +29,46 @@ def create_inline_keyboard(kind, service_dict):
     :param kind: type of data
     :param service_dict: key - button text, value - callback name
     """
-    markup_inline = []
+    buttons = []
     for key in service_dict:
-        item = telebot.types.InlineKeyboardButton(text=key,
-                                                  callback_data='{}|{}'.format(kind, service_dict[
-                                                      key]))
-        markup_inline.append(item)
-    return markup_inline
+        item = InlineKeyboardButton(text=key,
+                                    callback_data='{}|{}'.format(kind, service_dict[key]))
+        buttons.append(item)
+    if 'get' in kind:
+        return buttons
+    else:
+        markup_inline = InlineKeyboardMarkup()
+        markup_inline.add(*buttons)
+        return markup_inline
 
 
 def create_inline_keyboard_for_user_request(user_id):
-    markup_inline = telebot.types.InlineKeyboardMarkup()
-    accept = telebot.types.InlineKeyboardButton(text='Принять',
-                                                callback_data='{}|add|{}'.format('requests',
-                                                                                 user_id))
-    delete = telebot.types.InlineKeyboardButton(text='Отклонить',
-                                                callback_data='{}|del|{}'.format('requests',
-                                                                                 user_id))
-    back = telebot.types.InlineKeyboardButton(text='Назад',
-                                              callback_data='{}|back|{}'.format('requests',
-                                                                                user_id))
+    markup_inline = InlineKeyboardMarkup()
+    accept = InlineKeyboardButton(text='Принять',
+                                  callback_data='{}|add|{}'.format('requests',
+                                                                   user_id))
+    delete = InlineKeyboardButton(text='Отклонить',
+                                  callback_data='{}|del|{}'.format('requests',
+                                                                   user_id))
+    back = InlineKeyboardButton(text='Назад',
+                                callback_data='{}|back|{}'.format('requests',
+                                                                  user_id))
     markup_inline.add(accept, delete)
     markup_inline.add(back)
     return markup_inline
 
 
 def create_inline_keyboard_for_user_list(user_id):
-    markup_inline = telebot.types.InlineKeyboardMarkup()
-    change = telebot.types.InlineKeyboardButton(text='Редактировать',
-                                                callback_data='{}|change|{}'.format('employee',
-                                                                                    user_id))
-    delete = telebot.types.InlineKeyboardButton(text='Удалить',
-                                                callback_data='{}|del|{}'.format('employee',
-                                                                                 user_id))
-    back = telebot.types.InlineKeyboardButton(text='Назад',
-                                              callback_data='{}|back|{}'.format('employee',
-                                                                                user_id))
+    markup_inline = InlineKeyboardMarkup()
+    change = InlineKeyboardButton(text='Редактировать',
+                                  callback_data='{}|change|{}'.format('employee',
+                                                                      user_id))
+    delete = InlineKeyboardButton(text='Удалить',
+                                  callback_data='{}|del|{}'.format('employee',
+                                                                   user_id))
+    back = InlineKeyboardButton(text='Назад',
+                                callback_data='{}|back|{}'.format('employee',
+                                                                  user_id))
     markup_inline.add(change, delete)
     markup_inline.add(back)
     return markup_inline

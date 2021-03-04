@@ -233,15 +233,22 @@ def review(message):
                     'Останвока': 'stop'
                     }
     markup_inline = create_inline_keyboard('review', service_dict)
-    bot.send_message(chat_id, 'Выберите роль', reply_markup=markup_inline)
+    bot.send_message(chat_id, 'Выберите действие', reply_markup=markup_inline)
 
 
 @bot.callback_query_handler(lambda call: 'review|start' in call.data)
-def employees_per_page(call):
+def start_review(call):
     chat_id = call.message.chat.id
     bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
     msg = "Выберите дату начала периода"
     choose_date(chat_id, 'review|first_date', msg)
+
+
+@bot.callback_query_handler(lambda call: 'review|stop' in call.data)
+def stop_review(call):
+    chat_id = call.message.chat.id
+    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
+    bot.send_message(chat_id, 'Текущие Review остановлено')
 
 
 def choose_date(chat_id, call_data, msg):
@@ -254,11 +261,10 @@ def choose_date(chat_id, call_data, msg):
                                                                    month=now.month))
 
 
-@bot.callback_query_handler(
-    lambda call: any(element in call.data for element in ["PREVIOUS-MONTH", "DAY", "NEXT-MONTH", "MONTHS",
-                                                          "MONTH", "CANCEL", "IGNORE"]))
+@bot.callback_query_handler(lambda call: any(element in call.data for element in
+                                             ["PREVIOUS-MONTH", "DAY", "NEXT-MONTH", "MONTHS",
+                                              "MONTH", "CANCEL", "IGNORE"]))
 def callback_inline(call):
-    print('6: ', call.data)
     chat_id = call.message.chat.id
     call_data, action, year, month, day = call.data.split(':')
     # Обработка календаря. Получить дату или None, если кнопки другого типа
@@ -272,6 +278,11 @@ def callback_inline(call):
             print(date)
         elif 'second_date' in call_data:
             print(date)
+            users = db_session.query(User).all()
+            for user in users:
+                if user.chef not in ['Нет', None]:
+                    msg = 'Необходимо заполнить анкету в разделе "Заполнение анкеты"'
+                    bot.send_message(user.id, msg)
     elif action == "CANCEL":
         bot.send_message(chat_id=call.from_user.id, text="Попробуйте снова")
 
