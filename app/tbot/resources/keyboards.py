@@ -17,8 +17,9 @@ def create_reply_start_keyboard():
     user_requests = KeyboardButton(text='Запросы')
     list_users = KeyboardButton(text='Список сотрудников')
     review = KeyboardButton(text='Запуск/остановка Review')
+    current_review = KeyboardButton(text='Текущий Review')
 
-    markup_inline.add(user_requests, list_users, review)
+    markup_inline.add(user_requests, list_users, review, current_review)
     return markup_inline
 
 
@@ -33,7 +34,7 @@ def create_inline_keyboard(kind, service_dict):
         item = InlineKeyboardButton(text=key,
                                     callback_data='{}|{}'.format(kind, service_dict[key]))
         buttons.append(item)
-    if 'get' in kind:
+    if 'get' in kind or 'rapport' in kind:
         return buttons
     else:
         markup_inline = InlineKeyboardMarkup()
@@ -83,6 +84,21 @@ def create_users_with_paginator(kind, users, page=1, n=5):
     user_info_dict = {i.id: ' - '.join([i.username, i.full_name]) for i in res[page - 1]}
     users_id = dict(enumerate(user_info_dict.keys(), 1))
     inline_keyboard = create_inline_keyboard(kind + '|get', users_id)
+    paginator.add_before(*inline_keyboard)
+    msg = '\n'.join([f'{i}. {v}' for i, v in enumerate(user_info_dict.values(), 1)])
+    return msg, paginator
+
+
+def create_reviews_with_paginator(kind, users, page=1, n=5):
+    res = [users[i:i + n] for i in range(0, len(users), n)]
+    paginator = MyPaginator(
+        len(res),
+        current_page=page,
+        data_pattern=kind + '#{page}'
+    )
+    user_info_dict = {i.id: ' - '.join([i.full_name]) for i in res[page - 1]}
+    users_id = dict(enumerate(user_info_dict.keys(), 1))
+    inline_keyboard = create_inline_keyboard(kind + '|rapport', users_id)
     paginator.add_before(*inline_keyboard)
     msg = '\n'.join([f'{i}. {v}' for i, v in enumerate(user_info_dict.values(), 1)])
     return msg, paginator

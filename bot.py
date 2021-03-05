@@ -8,7 +8,7 @@ from app.models.models import User, db_session
 from app.tbot.resources.auth import process_name_step
 from app.tbot.resources.keyboards import create_reply_start_keyboard, \
     create_inline_keyboard_for_user_request, create_users_with_paginator, \
-    create_inline_keyboard_for_user_list, create_inline_keyboard
+    create_inline_keyboard_for_user_list, create_inline_keyboard, create_reviews_with_paginator
 
 bot = telebot.TeleBot(config.TOKEN)
 
@@ -32,7 +32,7 @@ def check_message(func):
     def wrapper(*args, **kwargs):
         message = args[0]
         if message.text.lower().strip() not in ['отмена', 'список сотрудников', 'запросы',
-                                                'запуск/остановка review']:
+                                                'запуск/остановка review', 'текущий review']:
             func(*args, **kwargs)
         else:
             bot.send_message(message.chat.id, 'Внесение изменений отменено. Попробуйте снова')
@@ -287,14 +287,40 @@ def callback_inline(call):
         bot.send_message(chat_id=call.from_user.id, text="Попробуйте снова")
 
 
-@bot.message_handler(commands=['qq'])
-@role_required('HR')
-def check_users(message):
+@bot.message_handler(func=lambda message: message.text == 'Текущий Review')
+# @role_required('HR')
+def current_review(message):
+    users = db_session.query(User).filter(User.roles is not None).all()
     chat_id = message.chat.id
-    user = db_session.query(User).get(chat_id)
-    db_session.delete(user)
-    db_session.commit()
-    bot.send_message(chat_id, 'Вы удалены из бота')
+
+    if users:
+        msg, paginator = create_reviews_with_paginator('review', users, page=1, n=5)
+        bot.send_message(chat_id, msg, reply_markup=paginator.markup)
+    else:
+        bot.send_message(chat_id, 'Пользователей не найдено')
+
+
+@bot.callback_query_handler(lambda call: 'review#' in call.data)
+def employees_per_page(call):
+    users = db_session.query(User).filter(User.roles is not None).all()
+    chat_id = call.message.chat.id
+    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
+    if users:
+        page = call.data.split('#')[-1]
+        msg, paginator = create_reviews_with_paginator('review', users, page=int(page), n=5)
+        bot.send_message(chat_id, msg, reply_markup=paginator.markup)
+    else:
+        bot.send_message(chat_id, 'Пользователей не найдено')
+
+
+# @bot.message_handler(commands=['qq'])
+# @role_required('HR')
+# def check_users(message):
+#     chat_id = message.chat.id
+#     user = db_session.query(User).get(chat_id)
+#     db_session.delete(user)
+#     db_session.commit()
+#     bot.send_message(chat_id, 'Вы удалены из бота')
 
 
 # @bot.message_handler(commands=['create'])
