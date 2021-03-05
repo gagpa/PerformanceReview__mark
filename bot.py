@@ -1,16 +1,12 @@
-import datetime
-
-import telebot
 import telebot_calendar
 
-from config import config
 from app.models.models import User, db_session
+from app.tbot.create_bot import bot
 from app.tbot.resources.auth import process_name_step
 from app.tbot.resources.keyboards import create_reply_start_keyboard, \
     create_inline_keyboard_for_user_request, create_users_with_paginator, \
-    create_inline_keyboard_for_user_list, create_inline_keyboard, create_reviews_with_paginator
-
-bot = telebot.TeleBot(config.TOKEN)
+    create_inline_keyboard_for_user_list, create_inline_keyboard, create_reviews_with_paginator, \
+    choose_date
 
 
 def role_required(role):
@@ -49,7 +45,7 @@ def start_message(message):
         user = User(id=chat_id, username=f'@{message.chat.username}')
         db_session.add(user)
         bot.send_message(chat_id, 'Введите свое ФИО')
-        bot.register_next_step_handler(message, process_name_step, bot)
+        bot.register_next_step_handler(message, process_name_step)
     else:
         bot.send_message(chat_id, 'Что бы вы хотели сделать?',
                          reply_markup=create_reply_start_keyboard())
@@ -251,16 +247,6 @@ def stop_review(call):
     bot.send_message(chat_id, 'Текущие Review остановлено')
 
 
-def choose_date(chat_id, call_data, msg):
-    now = datetime.datetime.now()
-    # документация по календарю: https://github.com/FlymeDllVa/telebot-calendar
-    calendar = telebot_calendar.CallbackData(call_data, "action", "year", "month", "day")
-    bot.send_message(chat_id, msg,
-                     reply_markup=telebot_calendar.create_calendar(name=calendar.prefix,
-                                                                   year=now.year,
-                                                                   month=now.month))
-
-
 @bot.callback_query_handler(lambda call: any(element in call.data for element in
                                              ["PREVIOUS-MONTH", "DAY", "NEXT-MONTH", "MONTHS",
                                               "MONTH", "CANCEL", "IGNORE"]))
@@ -290,6 +276,7 @@ def callback_inline(call):
 @bot.message_handler(func=lambda message: message.text == 'Текущий Review')
 # @role_required('HR')
 def current_review(message):
+    # TODO: change User to Review
     users = db_session.query(User).filter(User.roles is not None).all()
     chat_id = message.chat.id
 
@@ -302,6 +289,7 @@ def current_review(message):
 
 @bot.callback_query_handler(lambda call: 'review#' in call.data)
 def employees_per_page(call):
+    # TODO: change User to Review
     users = db_session.query(User).filter(User.roles is not None).all()
     chat_id = call.message.chat.id
     bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)

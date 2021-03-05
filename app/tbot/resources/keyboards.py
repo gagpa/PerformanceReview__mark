@@ -1,6 +1,11 @@
+import datetime
+
+import telebot_calendar
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, \
     KeyboardButton
 from telegram_bot_pagination import InlineKeyboardPaginator
+
+from app.tbot.create_bot import bot
 
 
 class MyPaginator(InlineKeyboardPaginator):
@@ -102,3 +107,13 @@ def create_reviews_with_paginator(kind, users, page=1, n=5):
     paginator.add_before(*inline_keyboard)
     msg = '\n'.join([f'{i}. {v}' for i, v in enumerate(user_info_dict.values(), 1)])
     return msg, paginator
+
+
+def choose_date(chat_id, call_data, msg):
+    now = datetime.datetime.now()
+    # документация по календарю: https://github.com/FlymeDllVa/telebot-calendar
+    calendar = telebot_calendar.CallbackData(call_data, "action", "year", "month", "day")
+    bot.send_message(chat_id, msg,
+                     reply_markup=telebot_calendar.create_calendar(name=calendar.prefix,
+                                                                   year=now.year,
+                                                                   month=now.month))
