@@ -3,11 +3,11 @@ version: "3.3"
 services:
   hr-test-bot:
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: ..
+      dockerfile: Dockerfile
     image: hr-test-bot
     restart: always
-    env_file: .env
+    env_file: ../.env
     volumes:
       - .:/usr/src/hr-test-bot
     command: python bot.py
@@ -36,4 +36,3 @@ services:
       - 5432:5432
     volumes:
       - /opt/disk/hr-test-bot/postgres:/var/lib/postgresql/data
-

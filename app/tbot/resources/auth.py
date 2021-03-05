@@ -1,4 +1,4 @@
-from src.models import User, db_session
+from app.models.models import User, db_session
 
 
 def process_name_step(message, bot):

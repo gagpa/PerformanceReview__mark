@@ -1,4 +1,3 @@
-import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, \
     KeyboardButton
 from telegram_bot_pagination import InlineKeyboardPaginator

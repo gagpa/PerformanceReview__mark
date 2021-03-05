@@ -3,10 +3,10 @@ import datetime
 import telebot
 import telebot_calendar
 
-from src import config
-from src.models import User, db_session
-from src.resources.auth import process_name_step
-from src.resources.keyboards import create_reply_start_keyboard, \
+from config import config
+from app.models.models import User, db_session
+from app.tbot.resources.auth import process_name_step
+from app.tbot.resources.keyboards import create_reply_start_keyboard, \
     create_inline_keyboard_for_user_request, create_users_with_paginator, \
     create_inline_keyboard_for_user_list, create_inline_keyboard
 
