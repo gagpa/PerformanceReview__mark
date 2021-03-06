@@ -16,7 +16,7 @@ class Duty(base):
     text = Column(VARCHAR(1000), nullable=False)
 
     created_at = Column(TIMESTAMP, default=datetime.now(), nullable=False)
-    updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=False)
+    updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=True)
 
     form_id = Column(Integer, ForeignKey('forms.id'), nullable=False)
 

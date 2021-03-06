@@ -15,7 +15,7 @@ class Comment(base):
     text = Column(VARCHAR(255), nullable=True)
 
     created_at = Column(TIMESTAMP, default=datetime.now(), nullable=False)
-    updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=False)
+    updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=True)
 
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)

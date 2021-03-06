@@ -14,7 +14,7 @@ class Form(base):
     id = Column(Integer, primary_key=True)
 
     created_at = Column(TIMESTAMP, default=datetime.now(), nullable=False)
-    updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=False)
+    updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=True)
 
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     review_period_id = Column(Integer, ForeignKey('review_periods.id'), nullable=False)

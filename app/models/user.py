@@ -17,7 +17,7 @@ class User(base):
     fullname = Column(VARCHAR(255), nullable=False)
 
     created_at = Column(TIMESTAMP, default=datetime.now(), nullable=False)
-    updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=False)
+    updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=True)
 
     boss_id = Column(Integer, ForeignKey('users.id'), nullable=True)
     department_id = Column(Integer, ForeignKey('departments.id'), nullable=False)
