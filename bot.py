@@ -2,53 +2,11 @@ import telebot_calendar
 
 from app.models.models import User, db_session
 from app.tbot.create_bot import bot
-from app.tbot.resources.auth import process_name_step
+from app.tbot.resources.decorators import role_required, check_message
 from app.tbot.resources.keyboards import create_reply_start_keyboard, \
     create_inline_keyboard_for_user_request, create_users_with_paginator, \
     create_inline_keyboard_for_user_list, create_inline_keyboard, create_reviews_with_paginator, \
     choose_date
-
-
-def role_required(role):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            message = args[0]
-            user = User.lookup(message.chat.id)
-            if user and (user.roles == role):
-                func(*args, **kwargs)
-            else:
-                bot.send_message(message.chat.id, 'Доступ запрещен')
-
-        return wrapper
-
-    return decorator
-
-
-def check_message(func):
-    def wrapper(*args, **kwargs):
-        message = args[0]
-        if message.text.lower().strip() not in ['отмена', 'список сотрудников', 'запросы',
-                                                'запуск/остановка review', 'текущий review']:
-            func(*args, **kwargs)
-        else:
-            bot.send_message(message.chat.id, 'Внесение изменений отменено. Попробуйте снова')
-
-    return wrapper
-
-
-@bot.message_handler(commands=['start'])
-def start_message(message):
-    chat_id = message.chat.id
-    if not User.lookup(message.chat.id):
-        bot.send_message(chat_id,
-                         'Приветствую @{}.'.format(message.chat.username))
-        user = User(id=chat_id, username=f'@{message.chat.username}')
-        db_session.add(user)
-        bot.send_message(chat_id, 'Введите свое ФИО')
-        bot.register_next_step_handler(message, process_name_step)
-    else:
-        bot.send_message(chat_id, 'Что бы вы хотели сделать?',
-                         reply_markup=create_reply_start_keyboard())
 
 
 @bot.callback_query_handler(lambda call: 'requests|back' in call.data)
@@ -163,7 +121,7 @@ def employees_per_page(call):
 
 @bot.callback_query_handler(lambda call: 'employee|change' in call.data
                                          and len(call.data.split('|')) == 3)
-# @role_required('HR')
+#@role_required('HR')
 def change_employee(call):
     chat_id = call.message.chat.id
     bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
