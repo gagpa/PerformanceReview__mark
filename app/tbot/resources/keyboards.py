@@ -86,7 +86,7 @@ def create_users_with_paginator(kind, users, page=1, n=5):
         current_page=page,
         data_pattern=kind + '#{page}'
     )
-    user_info_dict = {i.id: ' - '.join([i.username, i.full_name]) for i in res[page - 1]}
+    user_info_dict = {i.id: ' - '.join([i.username, i.fullname]) for i in res[page - 1]}
     users_id = dict(enumerate(user_info_dict.keys(), 1))
     inline_keyboard = create_inline_keyboard(kind + '|get', users_id)
     paginator.add_before(*inline_keyboard)
@@ -101,7 +101,7 @@ def create_reviews_with_paginator(kind, users, page=1, n=5):
         current_page=page,
         data_pattern=kind + '#{page}'
     )
-    user_info_dict = {i.id: ' - '.join([i.full_name]) for i in res[page - 1]}
+    user_info_dict = {i.id: ' - '.join([i.fullname]) for i in res[page - 1]}
     users_id = dict(enumerate(user_info_dict.keys(), 1))
     inline_keyboard = create_inline_keyboard(kind + '|rapport', users_id)
     paginator.add_before(*inline_keyboard)
