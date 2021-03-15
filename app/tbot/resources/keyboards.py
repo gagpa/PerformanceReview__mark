@@ -94,14 +94,29 @@ def create_users_with_paginator(kind, users, page=1, n=5):
     return msg, paginator
 
 
-def create_reviews_with_paginator(kind, users, page=1, n=5):
-    res = [users[i:i + n] for i in range(0, len(users), n)]
+def create_reviews_with_paginator(kind, review, page=1, n=5):
+    res = [review[i:i + n] for i in range(0, len(review), n)]
     paginator = MyPaginator(
         len(res),
         current_page=page,
         data_pattern=kind + '#{page}'
     )
-    user_info_dict = {i.id: ' - '.join([i.fullname]) for i in res[page - 1]}
+    user_info_dict = {i.id: ' - '.join([i.user.fullname, i.status.name]) for i in res[page - 1]}
+    users_id = dict(enumerate(user_info_dict.keys(), 1))
+    inline_keyboard = create_inline_keyboard(kind + '|rapport', users_id)
+    paginator.add_before(*inline_keyboard)
+    msg = '\n'.join([f'{i}. {v}' for i, v in enumerate(user_info_dict.values(), 1)])
+    return msg, paginator
+
+
+def create_archive_with_paginator(kind, forms, page=1, n=5):
+    res = [forms[i:i + n] for i in range(0, len(forms), n)]
+    paginator = MyPaginator(
+        len(res),
+        current_page=page,
+        data_pattern=kind + '#{page}'
+    )
+    user_info_dict = {i.id: ' - '.join([i.user.fullname, i.status.name]) for i in res[page - 1]}
     users_id = dict(enumerate(user_info_dict.keys(), 1))
     inline_keyboard = create_inline_keyboard(kind + '|rapport', users_id)
     paginator.add_before(*inline_keyboard)

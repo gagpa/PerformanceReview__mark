@@ -9,3 +9,5 @@ psycopg2
 alembic
 python-telegram-bot-pagination
 telebot-calendar
+jinja2
+weasyprint

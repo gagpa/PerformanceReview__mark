@@ -1,6 +1,9 @@
 import datetime
+import os
 
 import telebot_calendar
+from jinja2 import Environment, FileSystemLoader
+from weasyprint import HTML
 
 from app.db import db_session
 from app.models import User, Role, ReviewPeriod, Position, Department, Form
@@ -289,18 +292,12 @@ def callback_inline(call):
     if action == "DAY":
         if 'first_date' in call_data:
             msg = "Выберите дату конца периода"
-            print(date)
             choose_date(chat_id, f'review|{date.strftime("%Y-%m-%d %H-%M-%S")}|second|', msg)
-            db_session.commit()
-            print(date)
         elif 'second' in call_data:
-            print(call_data)
             first_date = datetime.datetime.strptime(call_data.split('|')[1], '%Y-%m-%d %H-%M-%S')
             review_period = ReviewPeriod(start_date=first_date, end_date=date, is_active=True)
             db_session.add(review_period)
             db_session.commit()
-            print(review_period)
-            print(date)
             users = db_session.query(User).all()
             for user in users:
                 if user.boss is not None:
@@ -313,8 +310,10 @@ def callback_inline(call):
 @bot.message_handler(func=lambda message: message.text == 'Текущий Review')
 # @role_required('HR')
 def current_review(message):
-    current = db_session.query(ReviewPeriod).filter_by(is_active=True).one_or_none()
     chat_id = message.chat.id
+    current = db_session.query(Form).join(ReviewPeriod).filter(
+        Form.review_period_id == ReviewPeriod.id).filter(ReviewPeriod.is_active == True).all()
+    print(current)
 
     if current:
         msg, paginator = create_reviews_with_paginator('review', current, page=1, n=5)
@@ -325,17 +324,75 @@ def current_review(message):
 
 
 @bot.callback_query_handler(lambda call: 'review#' in call.data)
-def employees_per_page(call):
-    # TODO: change User to Review
-    users = db_session.query(User).filter(User.role is not None).all()
+def current_review_per_page(call):
+    current = db_session.query(Form).join(ReviewPeriod).filter(
+        Form.review_period_id == ReviewPeriod.id).filter(ReviewPeriod.is_active == True).all()
     chat_id = call.message.chat.id
-    bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
-    if users:
+    # bot.delete_message(chat_id=chat_id, message_id=call.message.message_id)
+    if current:
         page = call.data.split('#')[-1]
-        msg, paginator = create_reviews_with_paginator('review', users, page=int(page), n=5)
+        msg, paginator = create_reviews_with_paginator('review', current, page=int(page), n=5)
+        # bot.send_message(chat_id, msg, reply_markup=paginator.markup)
+        bot.edit_message_text(msg, chat_id, call.message.message_id, reply_markup=paginator.markup)
+    else:
+        bot.send_message(chat_id, 'Review не запущен. '
+                                  'Вы можете запустить его в разделе "Запуск/остановка Review"')
+
+
+@bot.callback_query_handler(lambda call: 'review|rapport' in call.data)
+# @role_required('HR')
+def get_current_rapport(call):
+    # form_id = call.data.split('|')[-1]
+    template_vars = {"start": "1.11",
+                     "end": "11.11",
+                     "reviews": [0, 1, 2]}
+    create_and_send_pdf(call.message.chat.id, "hr_report_template.html", template_vars)
+
+
+def create_and_send_pdf(chat_id, template_name, template_vars):
+    filename = f"report_{datetime.datetime.now()}.pdf"
+    env = Environment(loader=FileSystemLoader('.'))
+    template = env.get_template(template_name)
+    html_out = template.render(template_vars)
+    HTML(string=html_out).write_pdf(filename)
+    with open(filename, "rb") as f:
+        bot.send_document(chat_id, f)
+
+    os.remove(filename)
+
+
+@bot.message_handler(func=lambda message: message.text == 'Архив')
+# @role_required('HR')
+def archive(message):
+    chat_id = message.chat.id
+    old_reviews = db_session.query(Form).join(ReviewPeriod).filter(
+        Form.review_period_id == ReviewPeriod.id).filter(ReviewPeriod.is_active == False).all()
+    if old_reviews:
+        msg, paginator = create_reviews_with_paginator('archive', old_reviews, page=1, n=5)
         bot.send_message(chat_id, msg, reply_markup=paginator.markup)
     else:
-        bot.send_message(chat_id, 'Пользователей не найдено')
+        bot.send_message(chat_id, 'Нет завершенных Review. '
+                                  'Вы можете остановить его в разделе "Запуск/остановка Review"')
+
+
+@bot.callback_query_handler(lambda call: 'archive#' in call.data)
+def archive_per_page(call):
+    old_reviews = db_session.query(Form).join(ReviewPeriod).filter(
+        Form.review_period_id == ReviewPeriod.id).filter(ReviewPeriod.is_active == False).all()
+    chat_id = call.message.chat.id
+    if old_reviews:
+        page = call.data.split('#')[-1]
+        msg, paginator = create_reviews_with_paginator('archive', old_reviews, page=int(page), n=5)
+        bot.edit_message_text(msg, chat_id, call.message.message_id, reply_markup=paginator.markup)
+    else:
+        bot.send_message(chat_id, 'Нет завершенных Review. '
+                                  'Вы можете остановить его в разделе "Запуск/остановка Review"')
+
+
+@bot.callback_query_handler(lambda call: 'archive|rapport' in call.data)
+# @role_required('HR')
+def get_old_rapport(call):
+    pass
 
 
 @bot.message_handler(commands=['qq'])
