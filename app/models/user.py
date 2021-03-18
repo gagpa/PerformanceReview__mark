@@ -15,6 +15,7 @@ class User(base):
 
     username = Column(VARCHAR(50), unique=True, nullable=False)
     fullname = Column(VARCHAR(255), nullable=False)
+    chat_id = Column(VARCHAR(25), unique=True, nullable=False)
 
     created_at = Column(TIMESTAMP, default=datetime.now(), nullable=False)
     updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=True)
@@ -31,4 +32,4 @@ class User(base):
     projects = relationship('Project', secondary='comments')
 
     def __repr__(self):
-        return f'User: {self.username}'
+        return f'User: {self.username} {self.chat_id}'
