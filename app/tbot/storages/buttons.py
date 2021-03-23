@@ -21,6 +21,10 @@ BUTTONS_TEMPLATES = \
 
         'coworker_review_form': ListButtonTemplate('coworker_review_form'),
         'coworker_review_list': ButtonTemplate('Список', 'coworker_review_list'),
+        'coworker_review_projects': ButtonTemplate('Оценить проекты', 'coworker_review_projects'),
+        'coworker_review_todo': ButtonTemplate('Дать совет', 'coworker_review_todo'),
+        'coworker_review_not_todo': ButtonTemplate('Что перестать делать', 'coworker_review_not_todo'),
+        'coworker_review_send_to_hr': ButtonTemplate('Отправить HR', 'coworker_review_send_to_hr'),
 
         'fails': ButtonTemplate('Провалы', 'fails'),
         'fails_add': ButtonTemplate('Добавить', 'fails_add'),

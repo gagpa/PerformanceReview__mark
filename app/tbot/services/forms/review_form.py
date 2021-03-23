@@ -25,9 +25,14 @@ class ReviewForm:
     model = None
     markup = None
 
-    def __init__(self, form: Optional[Form], can_write: bool = False, on_boss_review: bool = False):
+    def __init__(self, form: Optional[Form],
+                 on_write: bool = False,
+                 on_boss_review: bool = False,
+                 on_coworker_review: bool = False,
+                 ):
         self.on_boss_review = on_boss_review
-        self.can_write = can_write
+        self.on_write = on_write
+        self.on_coworker_review = on_coworker_review
         if form:
             self.add(form)
 
@@ -42,14 +47,24 @@ class ReviewForm:
     def __create_markup(self) -> Optional[InlineKeyboardMarkup]:
         """ Создать клавиатуру """
         rows = []
-        if self.can_write:
+        if self.on_write:
             rows.append([BUTTONS_TEMPLATES[self.__ORDER[0]], BUTTONS_TEMPLATES[self.__ORDER[1]]])
             rows.append([BUTTONS_TEMPLATES[self.__ORDER[2]], BUTTONS_TEMPLATES[self.__ORDER[3]]])
             rows.append([BUTTONS_TEMPLATES['send_to_boss']])
             self.markup = InlineKeyboardBuilder.build(*rows)
             return self.markup
         elif self.on_boss_review:
-            rows.append([BUTTONS_TEMPLATES['boss_review_accept'], BUTTONS_TEMPLATES['boss_review_decline']])
+            rows.append([BUTTONS_TEMPLATES['boss_review_accept'],
+                         BUTTONS_TEMPLATES['boss_review_decline'],
+                         ])
+            self.markup = InlineKeyboardBuilder.build_with_pk(*rows, pk=self.model.id)
+            return self.markup
+        elif self.on_coworker_review:
+            rows.append([BUTTONS_TEMPLATES['coworker_review_projects'],
+                         BUTTONS_TEMPLATES['coworker_review_todo'],
+                         BUTTONS_TEMPLATES['coworker_review_not_todo'],
+                         ])
+            rows.append([BUTTONS_TEMPLATES['coworker_review_send_to_hr']])
             self.markup = InlineKeyboardBuilder.build_with_pk(*rows, pk=self.model.id)
             return self.markup
 

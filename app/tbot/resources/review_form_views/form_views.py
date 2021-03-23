@@ -6,8 +6,8 @@ from app.services.status import change_boss_review, get_boss_review
 def controller_form(message):
     """ Покзать анкету """
     form = message.form
-    can_write = form.status != get_boss_review()
-    template = ReviewForm(form, can_write=can_write)
+    on_write = form.status != get_boss_review()
+    template = ReviewForm(form, on_write=on_write)
     MessageManager.send_message(message=message, template=template)
 
 
@@ -15,8 +15,8 @@ def controller_send_to_boss(message):
     """ Отправить руководителю """
     form = message.form
     change_boss_review(form)
-    can_write = form.status != get_boss_review()
-    template = ReviewForm(form, can_write=can_write)
+    on_write = form.status != get_boss_review()
+    template = ReviewForm(form, on_write=on_write)
     MessageManager.send_message(message=message, template=template)
 
 

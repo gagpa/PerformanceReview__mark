@@ -6,6 +6,11 @@ from app.tbot.resources.boss_review_views import \
     controller_boss_review_form, \
     controller_boss_review_accept, \
     controller_boss_review_decline
+
+from app.tbot.resources.coworker_review_views import \
+    controller_coworker_review_list, \
+    controller_coworker_review_form
+
 from app.tbot.resources.review_form_views import \
     controller_form, \
     controller_duty, \
@@ -64,11 +69,18 @@ ROUTES = \
         'fails_edit_choose': controller_fails_edit_choose,
         'fails_delete_choose': controller_fails_delete_choose,
         'send_to_boss': controller_send_to_boss,
+
         'boss_review_list': controller_boss_review_list,
         'boss_review_form': controller_boss_review_form,
         'boss_review_accept': controller_boss_review_accept,
         'boss_review_decline': controller_boss_review_decline,
-    }
 
+        'coworker_review_form': controller_coworker_review_form,
+        'coworker_review_list': controller_coworker_review_list,
+        # 'coworker_review_projects'
+        # 'coworker_review_todo'
+        # 'coworker_review_not_todo'
+        # 'coworker_review_send_to_hr'
+    }
 
 __all__ = ['ROUTES']
