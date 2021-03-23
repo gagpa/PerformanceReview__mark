@@ -1,66 +1,38 @@
 """
 View обязанности.
 """
-from app.models import Form
-from app.services.duty_service import is_exist, get
-from app.tbot.services.duty_service import add_wrapper, edit_wrapper
-from app.tbot.services.template_forms import DutyFormTemplate
-from app.tbot.storages.buttons import BUTTONS
-from app.tbot.services import send_message, ask_user
+from app.services.duty import is_exist, get
+from app.tbot.extensions import MessageManager
+from app.tbot.services.duty import add_wrapper, edit_wrapper
+from app.tbot.services.forms import DutyForm
 
 
-def controller_duty(message, form: Form):
-    """
-    Контроллер формы заполнения обязанностей.
-    :param message:
-    :param form:
-    :return:
-    """
-    buttons = []
-    template = DutyFormTemplate()
-    if is_exist(form):
-        duty = get(form=form)
-        template.add(duty)
-        buttons.append([BUTTONS['duty']['edit']])
-        buttons.append([BUTTONS['default']['form']])
-    else:
-        buttons.append([BUTTONS['duty']['add']])
-        buttons.append([BUTTONS['default']['form']])
-    send_message(message=message, template=template, buttons=buttons)
+def controller_duty(message):
+    """  Показать обязанность в форме """
+    form = message.form
+    duty = get(form=form) if is_exist(form) else None
+    can_edit = bool(duty)
+    template = DutyForm(duty, can_add=not can_edit, can_edit=can_edit)
+    MessageManager.send_message(message=message, template=template)
 
 
-def controller_duty_add(message, form: Form):
-    """
-    Контроллер формы добавления обязанностей.
-    :param message:
-    :param form:
-    :return:
-    """
-
-    buttons = None
-
-    template = DutyFormTemplate()
-    ask_user(message=message,
-             next_controller=add_wrapper(controller_duty),
-             template=template,
-             buttons=buttons,
-             form=form)
+def controller_duty_add(message):
+    """ Добавить обязанность """
+    template = DutyForm(can_add=False, can_edit=False)
+    MessageManager.ask_user(message=message, template=template, next_controller=add_wrapper(controller_duty))
 
 
-def controller_duty_edit(message, form: Form):
-    """
-    Изменить обязанности пользователя.
-    :param message:
-    :param form:
-    :return:
-    """
-    buttons = None
-
-    template = DutyFormTemplate()
+def controller_duty_edit(message):
+    """ Изменить обязанность """
+    form = message.form
     duty = get(form=form)
-    template.add(duty)
-    ask_user(message=message,
-             next_controller=edit_wrapper(controller_duty),
-             template=template,
-             buttons=buttons,
-             form=form)
+    template = DutyForm(duty, can_add=False, can_edit=False)
+    MessageManager.ask_user(message=message, template=template, next_controller=edit_wrapper(controller_duty))
+
+
+__all__ = \
+    [
+        'controller_duty',
+        'controller_duty_add',
+        'controller_duty_edit',
+    ]

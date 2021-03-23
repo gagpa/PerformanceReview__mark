@@ -1,96 +1,50 @@
-from copy import deepcopy
-
-from app.tbot.services.fail_service import add_wrapper
-
-from app.models import Form
-from app.services.fail_service import is_exist, get_all_text, get_all_in_form
-from app.tbot.services import send_message, ask_user
-from app.tbot.services.template_forms import FailsFormTemplate
-from app.tbot.storages.buttons import BUTTONS
+from app.services.achievement import is_exist, get_all_in_form
+from app.services.fail import is_exist, get_all_in_form
+from app.tbot.extensions import MessageManager
+from app.tbot.services.achievement import add_wrapper
+from app.tbot.services.fail import add_wrapper
+from app.tbot.services.forms import FailsForm
 
 
-def controller_fails(message, form: Form):
-    """
-    :param message:
-    :param form:
-    :return:
-    """
-    buttons = []
-    template = FailsFormTemplate()
-    if is_exist(form=form):
-        template.add(get_all_in_form(form=form))
-
-    buttons.append([BUTTONS['fails']['add']])
-    buttons.append([BUTTONS['fails']['edit_choose'], BUTTONS['fails']['delete_choose']])
-    buttons.append([
-        deepcopy(BUTTONS['default']['form']),
-    ])
-    send_message(message=message, template=template, buttons=buttons)
+def controller_fails(message):
+    """ Показать провалы в форме """
+    form = message.form
+    fails = get_all_in_form(form) if is_exist(form=form) else None
+    can_edit = bool(fails)
+    template = FailsForm(fails, can_add=True, can_edit=can_edit, can_del=can_edit)
+    MessageManager.send_message(message=message, template=template)
 
 
-def controller_fails_add(message, form: Form):
-    """
-    Контроллер формы добавления проекта.
-    :return:
-    """
-    template = FailsFormTemplate()
-
-    if is_exist(form=form):
-        template.add(get_all_in_form(form=form))
+def controller_fails_add(message):
+    """ Добавить один или несколько провалов """
+    form = message.form
+    fails = get_all_in_form(form) if is_exist(form=form) else None
+    template = FailsForm(fails, can_add=False, can_del=False, can_edit=False)
 
     next_controller = add_wrapper(controller_fails)
-    ask_user(message=message,
-             next_controller=next_controller,
-             template=template,
-             form=form,
-             )
+    MessageManager.ask_user(message=message, template=template, next_controller=next_controller)
 
 
-def controller_fails_edit_choose(message, form: Form):
-    """
-
-    :param message:
-    :param form:
-    :return:
-    """
-    template = FailsFormTemplate()
-
-    fails = get_all_in_form(form)
-    template.add(fails)
-
-    buttons = [[]]
-    for i, fail in enumerate(fails):
-        btn = deepcopy(BUTTONS['fail']['edit'])
-        btn.text = str(btn.text).format(index=i + 1)
-        btn.callback_data = str(btn.callback_data).format(pk=fail.id)
-        buttons[0].append(btn)
-    buttons.append([
-        deepcopy(BUTTONS['form']['fails']),
-        deepcopy(BUTTONS['default']['form']),
-    ])
-    send_message(message=message, template=template, buttons=buttons)
+def controller_fails_edit_choose(message):
+    """ Выбрать провал для изменения """
+    form = message.form
+    fails = get_all_in_form(form) if is_exist(form=form) else None
+    template = FailsForm(fails, can_add=False, can_edit=True, can_del=False)
+    MessageManager.send_message(message=message, template=template)
 
 
-def controller_fails_delete_choose(message, form: Form):
-    """
+def controller_fails_delete_choose(message):
+    """ Выбрать провал для удаления """
+    form = message.form
+    fails = get_all_in_form(form) if is_exist(form=form) else None
+    template = FailsForm(fails, can_add=False, can_edit=False, can_del=True)
+    MessageManager.send_message(message=message, template=template)
 
-    :param message:
-    :param form:
-    :return:
-    """
-    template = FailsFormTemplate()
 
-    fails = get_all_in_form(form)
-    template.add(fails)
-
-    buttons = [[]]
-    for i, fail in enumerate(fails):
-        btn = deepcopy(BUTTONS['fail']['delete'])
-        btn.text = str(btn.text).format(index=i + 1)
-        btn.callback_data = str(btn.callback_data).format(pk=fail.id)
-        buttons[0].append(btn)
-    buttons.append([
-        deepcopy(BUTTONS['form']['fails']),
-        deepcopy(BUTTONS['default']['form']),
-    ])
-    send_message(message=message, template=template, buttons=buttons)
+__all__ = \
+    [
+        'controller_fails',
+        'controller_fails_add',
+        'controller_fails_edit_choose',
+        'controller_fails_delete_choose'
+    ]

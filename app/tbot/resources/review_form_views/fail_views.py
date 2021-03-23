@@ -1,41 +1,38 @@
-from app.models import Form
-from app.services.fail_service import get_for_pk, delete
+from app.services.achievement import get_for_pk, delete
+from app.services.fail import get_for_pk, delete
+from app.tbot.extensions import MessageManager
 from app.tbot.resources.review_form_views.fails_views import controller_fails
-from app.tbot.services import ask_user
-from app.tbot.services.fail_service import edit_wrapper
-from app.tbot.services.template_forms import FailFormTemplate
+from app.tbot.services.achievement import edit_wrapper
+from app.tbot.services.fail import edit_wrapper
+from app.tbot.services.forms import FailForm
 
 
-def controller_fail_delete(call, form: Form):
-    """
-
-    :param message:
-    :param form:
-    :return:
-    """
-    pk = int(call.data.split(' ')[-1])
+def controller_fail_delete(message):
+    """ Удлаить провал """
+    pk = message.pk
 
     fail = get_for_pk(pk)
     delete(fail)
 
-    controller_fails(message=call.message, form=form)
+    controller_fails(message=message)
 
 
-def controller_fail_edit(call, form: Form):
-    """
-
-    :param call:
-    :param form:
-    :return:
-    """
-    pk = int(call.data.split(' ')[-1])
+def controller_fail_edit(message):
+    """ Изменить провал """
+    pk = message.pk
 
     fail = get_for_pk(pk)
-    template = FailFormTemplate()
+    template = FailForm(fail)
+    message.model = fail
 
-    ask_user(message=call.message,
-             next_controller=edit_wrapper(controller_fails),
-             template=template,
-             form=form,
-             data=fail
-             )
+    MessageManager.ask_user(message=message,
+                            next_controller=edit_wrapper(controller_fails),
+                            template=template,
+                            )
+
+
+__all__ = \
+    [
+        'controller_fail_delete',
+        'controller_fail_edit',
+    ]

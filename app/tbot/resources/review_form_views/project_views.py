@@ -1,162 +1,100 @@
-from copy import deepcopy
-
-from app.models import Form
-from app.services.project_service import get_all_in_form, delete, get_for_pk
+from app.services.project import create_empty
+from app.services.project import delete, get_for_pk
+from app.tbot.extensions import MessageManager
 from app.tbot.resources.review_form_views.projects_views import controller_projects
-from app.tbot.services.message_service import send_message, ask_user
-from app.tbot.services.project_service import edit_name_wrapper, edit_contacts_wrapper, edit_description_wrapper
-from app.tbot.services.template_forms import ProjectsFormTemplate, ProjectFormTemplate
-from app.tbot.storages.buttons import BUTTONS
+from app.tbot.services.forms import ProjectForm
+from app.tbot.services.project import add_wrapper
+from app.tbot.services.project import edit_name_wrapper, edit_contacts_wrapper, edit_description_wrapper
 
 
-def controller_project_edit_choose(message, form: Form):
-    """
-    Контроллер для выбора изменения проекта.
-    :param message:
-    :param form:
-    :return:
-    """
-    template = ProjectsFormTemplate()
-    projects = get_all_in_form(form)
-    template.add(projects)
-
-    buttons = [[]]
-    for i, project in enumerate(projects):
-        btn = deepcopy(BUTTONS['project']['edit'])
-        btn.text = str(btn.text).format(index=i + 1)
-        btn.callback_data = str(btn.callback_data).format(pk=project.id)
-        buttons[0].append(btn)
-    buttons.append([
-        deepcopy(BUTTONS['form']['projects']),
-        deepcopy(BUTTONS['default']['form']),
-    ])
-    send_message(message=message, template=template, buttons=buttons)
-
-
-def controller_project_edit(call, form):
-    """
-
-    :param message:
-    :param form:
-    :return:
-    """
-    buttons = []
-
-    pk = int(call.data.split(' ')[-1])
-
+def controller_project_edit(message):
+    """ Изменить проект """
+    pk = message.pk
     project = get_for_pk(pk)
-    template = ProjectFormTemplate()
-    template.add(project)
-    buttons.append([
-        deepcopy(BUTTONS['project']['name']),
-        deepcopy(BUTTONS['project']['description']),
-        deepcopy(BUTTONS['project']['contacts']),
-    ])
-    buttons.append([
-        deepcopy(BUTTONS['form']['projects']),
-        deepcopy(BUTTONS['default']['form']),
-    ])
-
-    for btn in buttons[0]:
-        btn.callback_data = str(btn.callback_data).format(pk=project.id)
-
-    send_message(message=call.message, template=template, buttons=buttons)
+    template = ProjectForm(project, can_edit=True)
+    MessageManager.send_message(message=message, template=template)
 
 
-def controller_project_edit_name(call, form):
-    """
-
-    :param message:
-    :param form:
-    :return:
-    """
-    pk = int(call.data.split(' ')[-1])
-
+def controller_project_edit_name(message):
+    """ Изменить имя проекта """
+    pk = message.pk
     project = get_for_pk(pk)
-    template = ProjectsFormTemplate()
-
-    ask_user(message=call.message,
-             next_controller=edit_name_wrapper(controller_project_edit),
-             template=template,
-             form=form,
-             data=project
-             )
+    template = ProjectForm(project, can_add=True, is_name=True)
+    message.model = project
+    MessageManager.ask_user(message=message, template=template,
+                            next_controller=edit_name_wrapper(controller_project_edit))
 
 
-def controller_project_edit_contacts(call, form):
-    """
-
-    :param message:
-    :param form:
-    :return:
-    """
-    pk = int(call.data.split(' ')[-1])
-
+def controller_project_edit_contacts(message):
+    """ Изменить контакты к проекту """
+    pk = message.pk
     project = get_for_pk(pk)
-    template = ProjectsFormTemplate()
-
-    ask_user(message=call.message,
-             next_controller=edit_contacts_wrapper(controller_project_edit),
-             template=template,
-             form=form,
-             data=project
-             )
+    template = ProjectForm(project, can_add=True, is_contacts=True)
+    message.model = project
+    MessageManager.ask_user(message=message, template=template,
+                            next_controller=edit_contacts_wrapper(controller_project_edit))
 
 
-def controller_project_edit_description(call, form):
-    """
-
-    :param message:
-    :param form:
-    :return:
-    """
-    pk = int(call.data.split(' ')[-1])
-
+def controller_project_edit_description(message):
+    """ Измнить описание проекта """
+    pk = message.pk
     project = get_for_pk(pk)
-    template = ProjectsFormTemplate()
-
-    ask_user(message=call.message,
-             next_controller=edit_description_wrapper(controller_project_edit),
-             template=template,
-             form=form,
-             data=project
-             )
+    template = ProjectForm(project, can_add=True, is_description=True)
+    message.model = project
+    MessageManager.ask_user(message=message, template=template,
+                            next_controller=edit_description_wrapper(controller_project_edit))
 
 
-def controller_project_delete_choose(message, form: Form):
-    """
-    Контроллер для удаления проекта.
-    :param message:
-    :param form:
-    :return:
-    """
-    template = ProjectsFormTemplate()
-    projects = get_all_in_form(form)
-    # template.add_projects()
-
-    buttons = [[]]
-    for i, project in enumerate(projects):
-        btn = deepcopy(BUTTONS['project']['delete'])
-        btn.text = str(btn.text).format(index=i + 1)
-        btn.callback_data = str(btn.callback_data).format(pk=project.id)
-        buttons[0].append(btn)
-    buttons.append([
-        deepcopy(BUTTONS['form']['projects']),
-        deepcopy(BUTTONS['default']['form']),
-    ])
-    send_message(message=message, template=template, buttons=buttons)
-
-
-def controller_project_delete(call, form):
-    """
-
-    :param message:
-    :param form:
-    :return:
-    """
-    pk = int(call.data.split(' ')[-1])
-
+def controller_project_delete(message):
+    """ Удалить проект """
+    pk = message.pk
     project = get_for_pk(pk)
     delete(project)
+    controller_projects(message=message)
 
-    controller_projects(message=call.message, form=form)
+
+def controller_project_add(message):
+    """ Добавить новый проект """
+    form = message.form
+    message.model = create_empty(form)
+    template = ProjectForm(message.model, can_add=True, is_name=True)
+    MessageManager.ask_user(message=message, template=template, next_controller=controller_add_project_name)
+
+
+def controller_add_project_name(message, model):
+    """ Добавить название проекта """
+    model.name = message.text
+    message.model = model
+    template = ProjectForm(model, can_add=True, is_description=True)
+    next_controller = controller_add_project_description
+    MessageManager.ask_user(message=message, template=template, next_controller=next_controller)
+
+
+def controller_add_project_description(message, model):
+    """ Добавить описание проекта """
+    model.description = message.text
+    message.model = model
+    template = ProjectForm(model, can_add=True, is_contacts=True)
+    next_controller = controller_add_project_contacts
+    MessageManager.ask_user(message=message, template=template, next_controller=next_controller)
+
+
+def controller_add_project_contacts(message, model):
+    """ Добавить контакты проекта """
+    # message.data.users = message.text
+    message.model = model
+    add_wrapper(controller_projects)(message)
+
+
+__all__ = \
+    [
+        'controller_project_edit',
+        'controller_project_edit_name',
+        'controller_project_edit_contacts',
+        'controller_project_edit_description',
+        'controller_project_delete',
+        'controller_project_add',
+        'controller_add_project_name',
+        'controller_add_project_description',
+        'controller_add_project_contacts',
+    ]

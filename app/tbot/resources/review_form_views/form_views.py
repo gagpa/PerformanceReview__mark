@@ -1,20 +1,27 @@
-from app.models import Form
-from app.tbot.services import send_message
-from app.tbot.services.template_forms import FormTemplate
-from app.tbot.storages.buttons import BUTTONS
+from app.tbot.extensions import MessageManager
+from app.tbot.services.forms import ReviewForm
+from app.services.status import change_boss_review, get_boss_review
 
 
-def controller_form(message, form: Form):
-    """
-    Контроллер формы анкеты.
-    :return:
-    """
-    buttons = []
+def controller_form(message):
+    """ Покзать анкету """
+    form = message.form
+    can_write = form.status != get_boss_review()
+    template = ReviewForm(form, can_write=can_write)
+    MessageManager.send_message(message=message, template=template)
 
-    template = FormTemplate()
-    if form:
-        template.add(form)
 
-    buttons.append([BUTTONS['form']['duty'], BUTTONS['form']['projects']])
-    buttons.append([BUTTONS['form']['achievements'], BUTTONS['form']['fails']])
-    send_message(message=message, template=template, buttons=buttons)
+def controller_send_to_boss(message):
+    """ Отправить руководителю """
+    form = message.form
+    change_boss_review(form)
+    can_write = form.status != get_boss_review()
+    template = ReviewForm(form, can_write=can_write)
+    MessageManager.send_message(message=message, template=template)
+
+
+__all__ = \
+    [
+        'controller_form',
+        'controller_send_to_boss',
+    ]
