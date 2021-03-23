@@ -19,6 +19,9 @@ BUTTONS_TEMPLATES = \
         'boss_review_form': ListButtonTemplate('boss_review_form'),
         'boss_review_list': ButtonTemplate('Список', 'boss_review_list'),
 
+        'coworker_review_form': ListButtonTemplate('coworker_review_form'),
+        'coworker_review_list': ButtonTemplate('Список', 'coworker_review_list'),
+
         'fails': ButtonTemplate('Провалы', 'fails'),
         'fails_add': ButtonTemplate('Добавить', 'fails_add'),
         'fail_delete': ListButtonTemplate('fail_delete'),
