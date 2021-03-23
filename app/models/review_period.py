@@ -4,9 +4,7 @@ from app.db import base
 
 
 class ReviewPeriod(base):
-    """
-    Модель периода review.
-    """
+    """ Модель периода review """
     __tablename__ = 'review_periods'
     id = Column(Integer, primary_key=True)
 
@@ -16,3 +14,6 @@ class ReviewPeriod(base):
 
     def __repr__(self):
         return f'Review period {self.start_date} - {self.end_date}'
+
+
+__all__ = ['ReviewPeriod']

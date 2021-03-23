@@ -4,9 +4,7 @@ from app.db import base
 
 
 class Department(base):
-    """
-    Модель отдела.
-    """
+    """ Модель отдела """
     __tablename__ = 'departments'
     id = Column(Integer, primary_key=True)
 
@@ -14,3 +12,6 @@ class Department(base):
 
     def __repr__(self):
         return f'Department {self.name}'
+
+
+__all__ = ['Department']

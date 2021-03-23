@@ -7,9 +7,7 @@ from app.db import base
 
 
 class Fail(base):
-    """
-    Модель провала.
-    """
+    """ Модель провала """
     __tablename__ = 'fails'
     id = Column(Integer, primary_key=True)
 
@@ -24,3 +22,6 @@ class Fail(base):
 
     def __repr__(self):
         return f'Fail'
+
+
+__all__ = ['Fail']

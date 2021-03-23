@@ -6,9 +6,7 @@ from app.db import base
 
 
 class Comment(base):
-    """
-    Модель комментария.
-    """
+    """ Модель комментария """
     __tablename__ = 'comments'
     id = Column(Integer, primary_key=True)
 
@@ -22,3 +20,6 @@ class Comment(base):
 
     def __repr__(self):
         return f'Comment'
+
+
+__all__ = ['Comment']

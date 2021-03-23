@@ -7,9 +7,7 @@ from app.db import base
 
 
 class Achievement(base):
-    """
-    Модель достижения.
-    """
+    """ Модель достижения """
     __tablename__ = 'achievements'
     id = Column(Integer, primary_key=True)
 
@@ -24,3 +22,6 @@ class Achievement(base):
 
     def __repr__(self):
         return f'Achievement'
+
+
+__all__ = ['Achievement']

@@ -7,9 +7,7 @@ from app.db import base
 
 
 class Project(base):
-    """
-    Модель проекта.
-    """
+    """ Модель проекта """
     __tablename__ = 'projects'
     id = Column(Integer, primary_key=True)
 
@@ -26,3 +24,6 @@ class Project(base):
 
     def __repr__(self):
         return f'Project :{self.name}'
+
+
+__all__ = ['Project']

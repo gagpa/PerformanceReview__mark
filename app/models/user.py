@@ -7,9 +7,7 @@ from app.db import base
 
 
 class User(base):
-    """
-    Модель пользователя.
-    """
+    """ Модель пользователя """
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
 
@@ -33,3 +31,6 @@ class User(base):
 
     def __repr__(self):
         return f'User: {self.username} {self.chat_id}'
+
+
+__all__ = ['User']

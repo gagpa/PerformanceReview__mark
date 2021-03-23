@@ -4,9 +4,7 @@ from app.db import base
 
 
 class Status(base):
-    """
-    Модель статуса формы.
-    """
+    """ Модель статуса формы """
     __tablename__ = 'statuses'
     id = Column(SmallInteger, primary_key=True)
 
@@ -14,3 +12,6 @@ class Status(base):
 
     def __repr__(self):
         return f'Status: {self.name}'
+
+
+__all__ = ['Status']

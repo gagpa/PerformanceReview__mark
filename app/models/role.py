@@ -4,9 +4,7 @@ from app.db import base
 
 
 class Role(base):
-    """
-    Модель ролей.
-    """
+    """ Модель ролей """
     __tablename__ = 'roles'
     id = Column(Integer, primary_key=True)
 
@@ -14,3 +12,6 @@ class Role(base):
 
     def __repr__(self):
         return f'Role {self.name}'
+
+
+__all__ = ['Role']

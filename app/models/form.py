@@ -7,9 +7,7 @@ from app.db import base
 
 
 class Form(base):
-    """
-    Модель формы заполнения.
-    """
+    """ Модель формы заполнения """
     __tablename__ = 'forms'
     id = Column(Integer, primary_key=True)
 
@@ -28,3 +26,6 @@ class Form(base):
 
     def __repr__(self):
         return f'Form {self.user}'
+
+
+__all__ = ['Form']

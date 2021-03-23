@@ -3,6 +3,7 @@
 """
 
 from app.models.ahcievement import Achievement
+from app.models.boss_review import BossReview
 from app.models.comment import Comment
 from app.models.department import Department
 from app.models.duty import Duty

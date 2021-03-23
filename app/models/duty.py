@@ -7,9 +7,7 @@ from app.db import base
 
 
 class Duty(base):
-    """
-    Модель обязанностей.
-    """
+    """ Модель обязанностей """
     __tablename__ = 'duties'
     id = Column(Integer, primary_key=True)
 
@@ -24,3 +22,6 @@ class Duty(base):
 
     def __repr__(self):
         return f'Duty {self.text}'
+
+
+__all__ = ['Duty']
