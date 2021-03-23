@@ -8,14 +8,13 @@ if os.path.exists(dotenv_path):
 
 from app.tbot import bot
 from loguru import logger
-from configs import logger_config
+from configs.logger_config import init_logger_config
 
 
 @logger.catch
 def main():
-    """
-    Запустить приложение.
-    """
+    """ Запустить приложение """
+    # init_logger_config()
     bot.polling()
 
 
