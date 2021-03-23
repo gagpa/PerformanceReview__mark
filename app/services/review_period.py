@@ -9,3 +9,12 @@ def get_current() -> ReviewPeriod:
     """
     period = db_session.query(ReviewPeriod).filter_by(is_active=True).first()
     return period
+
+
+def is_now() -> bool:
+    """
+    Ответить проходит сейчас ревью.
+    :return:
+    """
+    answer = db_session.query(db_session.query(ReviewPeriod).filter_by(is_active=True).exists()).scalar()
+    return answer
