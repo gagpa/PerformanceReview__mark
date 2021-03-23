@@ -13,3 +13,5 @@ from app.models import *
 
 session_maker = sessionmaker(bind=engine, autoflush=False)
 db_session = session_maker()
+
+__all__ = ['db_session', 'base']
