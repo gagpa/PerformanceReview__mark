@@ -1,10 +1,21 @@
 import telebot
-
-from configs.bot_config import TOKEN
 from telebot import apihelper
 
+from configs.bot_config import TOKEN
+
 apihelper.ENABLE_MIDDLEWARE = True
+
+#  Создание бота
 bot = telebot.TeleBot(TOKEN)
 
-from app.tbot import middlewares
+#  Активация Middlewares
+
+from app.tbot.extensions import OrderMiddlewares
+
+OrderMiddlewares().activate()
+
+#  Активация маршрутов обработчиков
 from app.tbot import routes
+
+
+__all__ = ['bot']
