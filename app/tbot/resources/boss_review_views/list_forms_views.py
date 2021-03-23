@@ -15,11 +15,8 @@ def controller_boss_review_list(message):
         form = get_on_boss_review(user=employee, review_period=review_period['object'])
         if form:
             forms.append(form)
-    template = ListFormReview(forms)
+    template = ListFormReview(forms, on_boss_review=True)
     MessageManager.send_message(message=message, template=template)
 
 
-__all__ = \
-    [
-        'controller_boss_review_list'
-    ]
+__all__ = ['controller_boss_review_list']

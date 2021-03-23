@@ -14,7 +14,12 @@ class ListFormReview:
     __message_builder = MessageBuilder()
     models = []
 
-    def __init__(self, forms: List[Form]):
+    def __init__(self, forms: List[Form],
+                 on_boss_review: bool = False,
+                 on_coworker_review: bool = False,
+                 ):
+        self.on_boss_review = on_boss_review
+        self.on_coworker_review = on_coworker_review
         if forms:
             self.add(forms)
 
@@ -28,24 +33,33 @@ class ListFormReview:
     def __create_markup(self) -> Optional[InlineKeyboardMarkup]:
         """ Создать клавиатуру """
         if self.models:
-            markup = InlineKeyboardBuilder.build_list(self.models, BUTTONS_TEMPLATES['boss_review_form'])
-            return markup
+            if self.on_boss_review:
+                return InlineKeyboardBuilder.build_list(self.models, BUTTONS_TEMPLATES['boss_review_form'])
+            elif self.on_coworker_review:
+                return InlineKeyboardBuilder.build_list(self.models, BUTTONS_TEMPLATES['coworker_review_form'])
 
     def __create_message_text(self) -> Optional[str]:
         """ Вернуть преобразованное сообщение """
         title = '[СПИСОК АНКЕТ НА ПРОВЕРКУ]'
         if self.models:
-            description = 'Можете выбрать форму подчинённого на проверку.'
-            list_data = [f'{self.model.user.fullname}' for self.model in self.models]
-            message_text = self.__message_builder.build_list_message(title=title,
-                                                                     description=description,
-                                                                     list_data=list_data,
-                                                                     )
+            if self.on_boss_review:
+                description = 'Можете выбрать форму подчинённого на проверку.'
+                list_data = [f'{self.model.user.fullname}' for self.model in self.models]
+                return self.__message_builder.build_list_message(title=title,
+                                                                 description=description,
+                                                                 list_data=list_data,
+                                                                 )
+            elif self.on_coworker_review:
+                description = 'Можете выбрать форму коллеги на оценку.'
+                list_data = [f'{self.model.user.fullname}' for self.model in self.models]
+                return self.__message_builder.build_list_message(title=title,
+                                                                 description=description,
+                                                                 list_data=list_data,
+                                                                 )
         else:
             description = ''
             text = 'Нет форм на проверку'
-            message_text = self.__message_builder.build_message(title=title, description=description, text=text)
-        return message_text
+            return self.__message_builder.build_message(title=title, description=description, text=text)
 
     def dump(self) -> Tuple[str, Optional[InlineKeyboardMarkup]]:
         """ Вернуть преобразованное данные """
