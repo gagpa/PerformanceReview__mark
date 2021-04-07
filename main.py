@@ -14,7 +14,7 @@ from configs.logger_config import init_logger_config
 @logger.catch
 def main():
     """ Запустить приложение """
-    # init_logger_config()
+    init_logger_config()
     bot.polling()
 
 

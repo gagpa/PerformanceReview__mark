@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlalchemy import Column, VARCHAR, Integer, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
 
-from app.db import base
+from app.db import Base
 
 
-class Project(base):
+class Project(Base):
     """ Модель проекта """
     __tablename__ = 'projects'
     id = Column(Integer, primary_key=True)
@@ -20,7 +20,8 @@ class Project(base):
     form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
 
     form = relationship('Form', backref='projects')
-    users = relationship('User', secondary='comments')
+    users = relationship('User', secondary='projects_comments')
+    coworker_review = relationship('ProjectComment')
 
     def __repr__(self):
         return f'Project :{self.name}'

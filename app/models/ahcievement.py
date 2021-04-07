@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlalchemy import Column, VARCHAR, Integer, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
 
-from app.db import base
+from app.db import Base
 
 
-class Achievement(base):
+class Achievement(Base):
     """ Модель достижения """
     __tablename__ = 'achievements'
     id = Column(Integer, primary_key=True)

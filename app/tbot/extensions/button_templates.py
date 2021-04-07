@@ -1,33 +1,31 @@
+from urllib.parse import urlencode
+from typing import Optional
+
+
 class ButtonTemplate:
     """ Хранилище информации кнопки """
 
-    def __init__(self, text: str, callback: str):
-        self.text = text
-        self.callback = callback
+    def __init__(self, callback: str, text: Optional[str] = None, **kwargs):
+        self.__text = text or '{}'
+        self.__callback = callback
+        self.kwargs = kwargs
 
+    def __repr__(self):
+        return f'{self.kwargs}'
 
-class ButtonWithPkTemplate:
-    """ Хранилище информации кнопки с pk"""
-    __DEFAULT_TEMPLATE_CALLBACK = '{index}'
+    def add(self, **kwargs):
+        self.kwargs.update(kwargs)
 
-    def __init__(self, text: str, callback: str):
-        self.text = text
-        self.callback = f'{callback} {self.__DEFAULT_TEMPLATE_CALLBACK}'
+    @property
+    def text(self):
+        return self.__text
 
-
-class ListButtonTemplate:
-    """ Хранилище информации кнопки списка """
-    __DEFAULT_TEMPLATE_NAME = '{}'
-    __DEFAULT_TEMPLATE_CALLBACK = '{index}'
-
-    def __init__(self, callback: str):
-        self.text = self.__DEFAULT_TEMPLATE_NAME
-        self.callback = f'{callback} {self.__DEFAULT_TEMPLATE_CALLBACK}'
+    @property
+    def callback(self):
+        self.kwargs.update({'callback': self.__callback})
+        callback = urlencode(self.kwargs)
+        return callback
 
 
 __all__ = \
-    [
-        'ButtonTemplate',
-        'ButtonWithPkTemplate',
-        'ListButtonTemplate',
-    ]
+    ['ButtonTemplate']

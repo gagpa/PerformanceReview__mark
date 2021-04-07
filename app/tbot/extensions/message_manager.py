@@ -1,29 +1,53 @@
 from typing import Callable
 
-from app.tbot import bot
+from loguru import logger
+
+from app.tbot.extensions.request_serializer import RequestSerializer
 
 
 class MessageManager:
     """ Класс для управления сообщениями """
 
-    @classmethod
-    def send_message(cls, message, template) -> None:
+    def __init__(self, bot, commands: dict):
+        self.bot = bot
+        self.commands = commands
+
+    def handle_response(self, message, response):
+        """ Обработать ответ """
+        if isinstance(response, tuple):
+            self.ask_user(message=message, template=response[0], next_view=response[1])
+        else:
+            self.send_message(message=message, template=response)
+
+    def send_message(self, message, template) -> None:
         """ Отправить новое сообщение пользователю """
         text, markup = template.dump()
         chat_id = message.chat.id
-        bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
-        # message_id = message.message_id
-        # bot.edit_message_text(message_id=message_id, chat_id=chat_id, text=text, reply_markup=keyboard, parse_mode='html')
+        if message.from_user.is_bot:
+            message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
+        else:
+            message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
+        return message
 
-    @classmethod
-    def ask_user(cls, message, template, next_controller: Callable) -> None:
+    def ask_user(self, message, template, next_view: Callable) -> None:
         """ Спросить пользователя """
-        cls.send_message(message=message, template=template)
+        self.send_message(message=message, template=template)
         try:
-            model = message.model
-            bot.register_next_step_handler(message=message, callback=next_controller, model=model)
+            self.bot.register_next_step_handler(message=message, callback=self.route(next_view))
         except AttributeError:
-            bot.register_next_step_handler(message=message, callback=next_controller)
+            logger.error(str(message))
+            raise AttributeError
+
+    def route(self, func):
+        def wrapper(message):
+            request = RequestSerializer(message=message)
+            if message.text in self.commands.keys():
+                response = self.commands[message.text](request)
+            else:
+                response = func(request)
+            self.handle_response(message, response)
+
+        return wrapper
 
 
 __all__ = ['MessageManager']

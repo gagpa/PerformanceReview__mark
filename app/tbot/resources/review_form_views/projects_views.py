@@ -1,36 +1,38 @@
-from app.services.project import is_exist, get_all_in_form
-from app.tbot.extensions import MessageManager
+from app.tbot.services import ProjectsServiceTBot
 from app.tbot.services.forms import ProjectsForm
 
 
-def controller_projects(message):
+def list_view(request):
     """ Показать все проекте в анкете """
-    form = message.form
-    projects = get_all_in_form(form) if is_exist(form=form) else None
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    projects = service.all
     can_edit = bool(projects)
-    template = ProjectsForm(projects, can_add=True, can_edit=can_edit, can_del=can_edit)
-    MessageManager.send_message(message=message, template=template)
+    template = ProjectsForm(models=projects, can_add=True, can_edit=can_edit, can_del=can_edit)
+    return template
 
 
-def controller_project_edit_choose(message):
+def edit_choose_view(request):
     """ Выбрать проект для изменения """
-    form = message.form
-    projects = get_all_in_form(form)
-    template = ProjectsForm(projects, can_edit=True)
-    MessageManager.send_message(message=message, template=template)
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    projects = service.all
+    template = ProjectsForm(models=projects, can_edit=True)
+    return template
 
 
-def controller_project_delete_choose(message):
+def delete_choose_view(request):
     """ Выбрать проект для удаления """
-    form = message.form
-    projects = get_all_in_form(form)
-    template = ProjectsForm(projects, can_del=True)
-    MessageManager.send_message(message=message, template=template)
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    projects = service.all
+    template = ProjectsForm(models=projects, can_del=True)
+    return template
 
 
 __all__ = \
     [
-        'controller_projects',
-        'controller_project_edit_choose',
-        'controller_project_delete_choose',
+        'list_view',
+        'edit_choose_view',
+        'delete_choose_view',
     ]

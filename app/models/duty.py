@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlalchemy import Column, VARCHAR, Integer, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship, backref
 
-from app.db import base
+from app.db import Base
 
 
-class Duty(base):
+class Duty(Base):
     """ Модель обязанностей """
     __tablename__ = 'duties'
     id = Column(Integer, primary_key=True)

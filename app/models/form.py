@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, ForeignKey, SmallInteger, TIMESTAMP
 from sqlalchemy.orm import relationship
 
-from app.db import base
+from app.db import Base
 
 
-class Form(base):
+class Form(Base):
     """ Модель формы заполнения """
     __tablename__ = 'forms'
     id = Column(Integer, primary_key=True)

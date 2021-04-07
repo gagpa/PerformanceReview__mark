@@ -1,9 +1,9 @@
 from sqlalchemy import Column, VARCHAR, Integer
 
-from app.db import base
+from app.db import Base
 
 
-class Position(base):
+class Position(Base):
     """ Модель должности """
     __tablename__ = 'positions'
     id = Column(Integer, primary_key=True)

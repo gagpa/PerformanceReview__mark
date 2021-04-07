@@ -1,34 +1,31 @@
-from app.services.achievement import get_for_pk, delete
-from app.tbot.extensions import MessageManager
-from app.tbot.resources.review_form_views.achievements_views import controller_achievements
-from app.tbot.services.achievement import edit_wrapper
+from app.services.form_review import AchievementService
+from app.tbot.resources.review_form_views.achievements_views import list_view
+from app.tbot.services import AchievementServiceTBot
 from app.tbot.services.forms import AchievementForm
 
 
-def controller_achievement_delete(message):
+def delete_view(request):
     """ Удалить достижение """
-    pk = message.pk
-    achievement = get_for_pk(pk)
-    delete(achievement)
+    pk = request.pk()
+    form = request.form
+    service = AchievementService(form=form)
+    achievement = service.by_pk(pk=pk)
+    service.delete(achievement)
+    return list_view(request=request)
 
-    controller_achievements(message=message)
 
-
-def controller_achievement_edit(message):
+def edit_view(request):
     """ Изменить достижение """
-    pk = message.pk
-
-    achievement = get_for_pk(pk)
-    message.model = achievement
-    template = AchievementForm(achievement)
-    MessageManager.ask_user(message=message,
-                            next_controller=edit_wrapper(controller_achievements),
-                            template=template,
-                            )
+    pk = request.pk()
+    form = request.form
+    service = AchievementServiceTBot(form=form)
+    achievement = service.by_pk(pk=pk)
+    template = AchievementForm(model=achievement)
+    return template, service.update_before(list_view)
 
 
 __all__ = \
     [
-        'controller_achievement_delete',
-        'controller_achievement_edit',
+        'delete_view',
+        'edit_view',
     ]

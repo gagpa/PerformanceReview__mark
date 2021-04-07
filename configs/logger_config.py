@@ -8,7 +8,6 @@ from loguru import logger
 
 __LOG_FORMAT = os.environ['LOG_FORMAT']
 __LOG_ROTATION = os.environ['LOG_ROTATION']
-__LOG_LEVEL = os.environ['LOG_LEVEL']
 __LOG_PATH = os.environ['LOG_PATH']
 
 

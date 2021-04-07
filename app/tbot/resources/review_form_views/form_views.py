@@ -1,27 +1,33 @@
-from app.tbot.extensions import MessageManager
 from app.tbot.services.forms import ReviewForm
-from app.services.status import change_boss_review, get_boss_review
+from app.services.dictinary import StatusService
+from app.services.user import EmployeeService
+from app.services.form_review import FormService
 
 
-def controller_form(message):
+def form_view(request):
     """ Покзать анкету """
-    form = message.form
-    on_write = form.status != get_boss_review()
-    template = ReviewForm(form, on_write=on_write)
-    MessageManager.send_message(message=message, template=template)
+    form = request.form
+    form_service = FormService(form)
+    status_service = StatusService()
+    write_in = form_service.is_current_status(status_service.write_in)
+    template = ReviewForm(model=form, write_in=write_in)
+    return template
 
 
-def controller_send_to_boss(message):
+def send_to_boss_view(request):
     """ Отправить руководителю """
-    form = message.form
-    change_boss_review(form)
-    on_write = form.status != get_boss_review()
-    template = ReviewForm(form, on_write=on_write)
-    MessageManager.send_message(message=message, template=template)
+    form = request.form
+    employee = request.user
+    employee_service = EmployeeService(employee)
+    status_service = StatusService()
+    employee_service.send_boss(form)
+    form_service = FormService(form)
+    write_in = form_service.is_current_status(status_service.write_in)  # TODO не обновляется form в сессии
+    template = ReviewForm(model=form, write_in=write_in)
+    return template
 
 
-__all__ = \
-    [
-        'controller_form',
-        'controller_send_to_boss',
+__all__ = [
+        'form_view',
+        'send_to_boss_view',
     ]

@@ -1,9 +1,9 @@
 from sqlalchemy import Column, VARCHAR, SmallInteger
 
-from app.db import base
+from app.db import Base
 
 
-class Status(base):
+class Status(Base):
     """ Модель статуса формы """
     __tablename__ = 'statuses'
     id = Column(SmallInteger, primary_key=True)

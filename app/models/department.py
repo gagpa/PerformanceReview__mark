@@ -1,9 +1,9 @@
 from sqlalchemy import Column, VARCHAR, Integer
 
-from app.db import base
+from app.db import Base
 
 
-class Department(base):
+class Department(Base):
     """ Модель отдела """
     __tablename__ = 'departments'
     id = Column(Integer, primary_key=True)

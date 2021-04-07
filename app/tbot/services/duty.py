@@ -1,28 +1,31 @@
-from app.services.duty import add, edit
+from app.db import Session
+from app.services.form_review import DutyService
 
 
-def add_wrapper(func):
-    """ Декоратор для создания обязанности за текущее review """
+class DutyServiceTBot(DutyService):
+    """ """
 
-    def wrapper(message):
-        add(text=message.text, form=message.form)
-        func(message=message)
+    def create_before(self, func):
+        """ Декоратор для создания обязанности за текущее review """
 
-    return wrapper
+        def wrapper(message):
+            self.create(text=message.text, form=message.form)
+            Session.commit()
+            Session.remove()
+            return func(request=message)
+
+        return wrapper
+
+    def update_before(self, func):
+        """ Декоратор для изменения обязанности за текущее review """
+
+        def wrapper(request):
+            self.update(text=request.text)
+            Session.commit()
+            Session.remove()
+            return func(request=request)
+
+        return wrapper
 
 
-def edit_wrapper(func):
-    """ Декоратор для изменения обязанности за текущее review """
-
-    def wrapper(message):
-        edit(text=message.text, form=message.form)
-        func(message=message)
-
-    return wrapper
-
-
-__all__ = \
-    [
-        'add_wrapper',
-        'edit_wrapper',
-    ]
+__all__ = ['DutyServiceTBot']

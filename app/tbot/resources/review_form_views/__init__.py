@@ -1,44 +1,44 @@
 from app.tbot.resources.review_form_views.achievement_views import \
-    controller_achievement_edit, \
-    controller_achievement_delete
+    edit_view as review_form_achievement_edit_view, \
+    delete_view as review_form_achievement_delete_view
 
 from app.tbot.resources.review_form_views.achievements_views import \
-    controller_achievements, \
-    controller_achievements_add, \
-    controller_achievements_edit_choose, \
-    controller_achievements_delete_choose
+    list_view as review_form_achievements_list_view, \
+    add_view as review_form_achievements_add_view, \
+    edit_choose_view as review_form_achievements_edit_choose_view, \
+    delete_choose_view as review_form_achievements_delete_choose_view
 
 from app.tbot.resources.review_form_views.duty_views import \
-    controller_duty, \
-    controller_duty_add, \
-    controller_duty_edit
+    list_view as review_form_duty_list_view, \
+    add_view as review_form_duty_add_view, \
+    edit_view as review_form_duty_edit_view
 
 from app.tbot.resources.review_form_views.fail_views import \
-    controller_fail_delete, \
-    controller_fail_edit
+    delete_view as review_form_fail_delete_view, \
+    edit_view as review_form_fail_edit_view
 
 from app.tbot.resources.review_form_views.fails_views import \
-    controller_fails, \
-    controller_fails_add, \
-    controller_fails_edit_choose, \
-    controller_fails_delete_choose
+    list_view as review_form_fails_list_view, \
+    add_view as review_form_fails_add_view, \
+    edit_choose_view as review_form_fails_edit_choose_view, \
+    delete_choose_view as review_form_fails_delete_choose_view
 
 from app.tbot.resources.review_form_views.form_views import \
-    controller_form, \
-    controller_send_to_boss
+    form_view as review_form_view, \
+    send_to_boss_view as review_form_send_to_boss_view
 
 from app.tbot.resources.review_form_views.project_views import \
-    controller_project_edit, \
-    controller_project_delete, \
-    controller_project_edit_contacts, \
-    controller_project_edit_name, \
-    controller_project_edit_description, \
-    controller_add_project_contacts, \
-    controller_add_project_name, \
-    controller_add_project_description, \
-    controller_project_add
+    edit_view as review_form_project_edit_view, \
+    delete_view as review_form_project_delete_view, \
+    edit_contacts_view as review_form_project_edit_contacts_view, \
+    edit_name_view as review_form_project_edit_name_view, \
+    edit_description_view as review_form_project_edit_description_view, \
+    add_name_view as review_form_project_add_name_view, \
+    add_view as review_form_project_add_view, \
+    add_contacts_view as review_form_project_add_contacts_view, \
+    add_description_view as review_form_project_add_description_view
 
 from app.tbot.resources.review_form_views.projects_views import \
-    controller_projects, \
-    controller_project_delete_choose, \
-    controller_project_edit_choose
+    list_view as review_form_projects_list_view, \
+    delete_choose_view as review_form_projects_delete_choose_view, \
+    edit_choose_view as review_form_projects_edit_choose_view

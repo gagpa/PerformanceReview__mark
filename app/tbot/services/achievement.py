@@ -1,32 +1,32 @@
-from app.services.achievement import save, create_empty
+from app.services.form_review import AchievementService
+from app.db import Session
 
 
-def add_wrapper(func):
-    """ Декоратор для создания достижений за текущее review """
+class AchievementServiceTBot(AchievementService):
+    """ """
 
-    def wrapper(message):
-        for text in message.text.split(';'):
-            achievement = create_empty(form=message.form)
-            achievement.text = text
-            save(achievement=achievement)
-        func(message=message)
+    def create_before(self, func):
+        """ Декоратор для создания достижений за текущее review """
 
-    return wrapper
+        def wrapper(request):
+            achievements = [self.create(text=text, form=self.form) for text in request.split_text]
+            Session.commit()
+            Session.remove()
+            return func(request=request)
+
+        return wrapper
+
+    def update_before(self, func):
+        """ Декоратор для изменения достижений за текущее review """
+
+        def wrapper(request):
+            text = request.text
+            self.update(text=text)
+            Session.commit()
+            Session.remove()
+            return func(request=request)
+
+        return wrapper
 
 
-def edit_wrapper(func):
-    """ Декоратор для изменения достижений за текущее review """
-
-    def wrapper(message, model):
-        model.text = message.text
-        save(achievement=model)
-        func(message=message)
-
-    return wrapper
-
-
-__all__ = \
-    [
-        'add_wrapper',
-        'edit_wrapper',
-    ]
+__all__ = ['AchievementServiceTBot']

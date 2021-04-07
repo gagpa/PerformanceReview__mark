@@ -3,7 +3,9 @@ from app.tbot.middlewares.generals_middlewares import \
     add_review_period as general_add_review_period, \
     add_form as general_add_form, \
     add_keyboard as general_add_keyboard, \
-    log_user as general_log_user, log_unknown as general_log_unknown
+    log_user as general_log_user, \
+    log_unknown as general_log_unknown, \
+    parse_command
 
 
 def add_user(bot_instance, message):
@@ -38,12 +40,13 @@ def log_unknown(bot_instance, message):
 
 ORDER_MESSAGE_MIDDLEWARES = \
     [
-        log_unknown,
+        # log_unknown,
+        parse_command,
         add_user,
         add_review_period,
         add_form,
         add_keyboard,
-        log_user,
+        # log_user,
     ]
 
 

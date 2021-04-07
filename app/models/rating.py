@@ -1,9 +1,9 @@
 from sqlalchemy import Column, VARCHAR, SmallInteger
 
-from app.db import base
+from app.db import Base
 
 
-class Rating(base):
+class Rating(Base):
     """ Модель рейтинга """
     __tablename__ = 'ratings'
     id = Column(SmallInteger, primary_key=True)

@@ -1,38 +1,30 @@
-from app.services.achievement import get_for_pk, delete
-from app.services.fail import get_for_pk, delete
-from app.tbot.extensions import MessageManager
-from app.tbot.resources.review_form_views.fails_views import controller_fails
-from app.tbot.services.achievement import edit_wrapper
-from app.tbot.services.fail import edit_wrapper
+from app.tbot.resources.review_form_views.fails_views import list_view
+from app.tbot.services import FailServiceTBot
 from app.tbot.services.forms import FailForm
 
 
-def controller_fail_delete(message):
+def delete_view(request):
     """ Удлаить провал """
-    pk = message.pk
+    pk = request.pk()
+    form = request.form
+    service = FailServiceTBot(form=form)
+    fail = service.by_pk(pk=pk)
+    service.delete(fail)
+    return list_view(request=request)
 
-    fail = get_for_pk(pk)
-    delete(fail)
 
-    controller_fails(message=message)
-
-
-def controller_fail_edit(message):
+def edit_view(request):
     """ Изменить провал """
-    pk = message.pk
-
-    fail = get_for_pk(pk)
-    template = FailForm(fail)
-    message.model = fail
-
-    MessageManager.ask_user(message=message,
-                            next_controller=edit_wrapper(controller_fails),
-                            template=template,
-                            )
+    pk = request.pk()
+    form = request.form
+    service = FailServiceTBot(form=form)
+    fail = service.by_pk(pk=pk)
+    template = FailForm(model=fail)
+    return template, service.update_before(list_view)
 
 
 __all__ = \
     [
-        'controller_fail_delete',
-        'controller_fail_edit',
+        'delete_view',
+        'edit_view',
     ]

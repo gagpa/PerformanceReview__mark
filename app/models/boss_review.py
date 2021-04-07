@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlalchemy import Column, VARCHAR, Integer, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship, backref
 
-from app.db import base
+from app.db import Base
 
 
-class BossReview(base):
+class BossReview(Base):
     """ Модель проверки босса """
     __tablename__ = 'boss_reviews'
     id = Column(Integer, primary_key=True)

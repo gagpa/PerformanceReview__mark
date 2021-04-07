@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, VARCHAR, TIMESTAMP, SmallInteger, ForeignKey
 from sqlalchemy.orm import relationship
 
-from app.db import base
+from app.db import Base
 
 
-class User(base):
+class User(Base):
     """ Модель пользователя """
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
@@ -27,7 +27,7 @@ class User(base):
     department = relationship('Department', backref='users')
     role = relationship('Role', backref='users')
     position = relationship('Position', backref='users')
-    projects = relationship('Project', secondary='comments')
+    projects = relationship('Project', secondary='projects_comments')
 
     def __repr__(self):
         return f'User: {self.username} {self.chat_id}'

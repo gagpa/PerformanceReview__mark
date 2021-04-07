@@ -1,93 +1,90 @@
-from typing import Optional, Tuple
-
 from telebot.types import InlineKeyboardMarkup
 
-from app.models import Project
+from app.services.dictinary.rating import RatingService
 from app.tbot.extensions import InlineKeyboardBuilder
-from app.tbot.extensions import MessageBuilder
+from app.tbot.extensions.template import Template
 from app.tbot.storages import BUTTONS_TEMPLATES
 
 
-class ProjectForm:
+class ProjectForm(Template):
     """ Шаблон формы проектов """
-    __message_builder = MessageBuilder()
-    model = None
 
-    def __init__(self, model: Optional[Project] = None,
-                 can_add: bool = False,
-                 can_edit: bool = False,
-                 can_del: bool = False,
-                 is_name: bool = False,
-                 is_description: bool = False,
-                 is_contacts: bool = False,
-                 ):
-        self.can_add = can_add
-        self.can_edit = can_edit
-        self.can_del = can_del
-        self.is_name = is_name
-        self.is_description = is_description
-        self.is_contacts = is_contacts
-        if model:
-            self.add(model)
-
-    def add(self, model: Optional[Project]):
-        """ Добавить проект в шаблон"""
-        self.model = model
-
-    def __create_markup(self) -> Optional[InlineKeyboardMarkup]:
+    def create_markup(self) -> InlineKeyboardMarkup:
         """ Создать клавиатуру """
-        if self.can_add:
-            if self.is_name:
-                self.markup = None
-            elif self.is_description:
-                self.markup = None
-            elif self.is_contacts:
-                self.markup = None
-        elif self.can_edit:
-            if self.is_name:
-                row_1 = [BUTTONS_TEMPLATES['project_edit_description'],
-                         BUTTONS_TEMPLATES['project_edit_contacts']]
-            elif self.is_description:
-                row_1 = [BUTTONS_TEMPLATES['project_edit_name'],
-                         BUTTONS_TEMPLATES['project_edit_contacts']]
-            elif self.is_contacts:
-                row_1 = [BUTTONS_TEMPLATES['project_edit_name'],
-                         BUTTONS_TEMPLATES['project_edit_description']]
+        if self.args.get('can_edit'):
+            rows = []
+
+            if self.args.get('is_name'):
+                rows.append([BUTTONS_TEMPLATES['review_form_project_edit_description'],
+                             BUTTONS_TEMPLATES['review_form_project_edit_contacts']])
+
+            elif self.args.get('is_description'):
+                rows.append([BUTTONS_TEMPLATES['review_form_project_edit_name'],
+                             BUTTONS_TEMPLATES['review_form_project_edit_contacts']])
+
+            elif self.args.get('is_contacts'):
+                rows.append([BUTTONS_TEMPLATES['review_form_project_edit_name'],
+                             BUTTONS_TEMPLATES['review_form_project_edit_description']])
+
             else:
-                row_1 = [BUTTONS_TEMPLATES['project_edit_name'],
-                         BUTTONS_TEMPLATES['project_edit_description'],
-                         BUTTONS_TEMPLATES['project_edit_contacts']]
-            row_2 = [BUTTONS_TEMPLATES['projects']]
-            self.markup = InlineKeyboardBuilder.build_with_pk(row_1, row_2, pk=self.model.id)
+                rows.append([BUTTONS_TEMPLATES['review_form_project_edit_name'],
+                             BUTTONS_TEMPLATES['review_form_project_edit_description'],
+                             BUTTONS_TEMPLATES['review_form_project_edit_contacts']])
+            rows.append([BUTTONS_TEMPLATES['review_form_projects_list']])
+            markup = InlineKeyboardBuilder.build(*rows, pk=self.args['model'].id)
+            return markup
 
-        return self.markup
+        elif self.args.get('on_rate'):
+            arrow_btns = InlineKeyboardBuilder.build_btns_paginator_arrows(
+                BUTTONS_TEMPLATES['coworker_review_projects_choose'],
+                left_model=self.args.get('left_project'),
+                right_model=self.args.get('right_project'),
+            )
+            form_btn = InlineKeyboardBuilder.build_btns(BUTTONS_TEMPLATES['coworker_review_form'],
+                                                        pk=self.args['model'].form_id)
+            markup = InlineKeyboardBuilder.build_list(RatingService().all,
+                                                      BUTTONS_TEMPLATES['coworker_review_project_choose_rate'],
+                                                      arrow_btns,
+                                                      form_btn,
+                                                      project_pk=self.args['model'].id
+                                                      )
+            return markup
 
-    def __create_message_text(self) -> Optional[str]:
+    def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
         title = '[Проект]'
-        if self.is_name:
+        text = ''
+
+        if self.args.get('is_name'):
             description = 'Отправьте в сообщении название проекта'
-        elif self.is_description:
+
+        elif self.args.get('is_description'):
             description = 'Отправьте в сообщении краткое описание проекта и своей роли на нём'
-        elif self.is_contacts:
+
+        elif self.args.get('is_contacts'):
             description = 'Отправьте в сообщении логины коллег кто может оценить'
-        elif self.can_edit:
+
+        elif self.args.get('can_edit'):
             description = 'Выберите что вы хотите изменить в проекте'
+
+        elif self.args.get('on_rate'):
+            description = 'Оцените проект от 1 🌟 до 5 🌟\n'
+            for i, rating in enumerate(RatingService().all):
+                description += f'{"🌟" * rating.value} - {rating.name}\n'
+            if self.args.get('rating'):
+                stars = '🌟' * self.args['rating'].value
+                text += f'Ваша оценка: {stars}\n'
+            if self.args.get('comment'):
+                text += 'Ваш комментарий {comment}\n'.format(comment=self.args['comment'])
         else:
             description = ''
-        text = f'{self.model.name} {self.model.description} {self.model.users}'
+        text += f'{self.args["model"].name} {self.args["model"].description} {self.args["model"].users}'
 
-        message_text = self.__message_builder.build_message(title=title,
-                                                            description=description,
-                                                            text=text,
-                                                            )
+        message_text = self.message_builder.build_message(title=title,
+                                                          description=description,
+                                                          text=text,
+                                                          )
         return message_text
-
-    def dump(self) -> Tuple[str, Optional[InlineKeyboardMarkup]]:
-        """ Вернуть преобразованное данные """
-        message_text = self.__create_message_text()
-        markup = self.__create_markup()
-        return message_text, markup
 
 
 __all__ = ['ProjectForm']

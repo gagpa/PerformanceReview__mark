@@ -1,10 +1,6 @@
-from typing import Optional, Tuple
-
 from telebot.types import InlineKeyboardMarkup
 
-from app.models import Form
-from app.tbot.extensions import InlineKeyboardBuilder
-from app.tbot.extensions import MessageBuilder
+from app.tbot.extensions.template import Template
 from app.tbot.services.forms.achievements_form import AchievementsForm
 from app.tbot.services.forms.duty_form import DutyForm
 from app.tbot.services.forms.fails_form import FailsForm
@@ -12,81 +8,65 @@ from app.tbot.services.forms.projects_form import ProjectsForm
 from app.tbot.storages import BUTTONS_TEMPLATES
 
 
-class ReviewForm:
+class ReviewForm(Template):
     """ Шаблон формы анкеты """
-    __message_builder = MessageBuilder()
-    __ORDER = ['duty', 'projects', 'achievements', 'fails']
+    __ORDER = ['review_form_duty', 'review_form_projects_list', 'review_form_achievements_list', 'review_form_fails']
     templates = {
-        'achievements': AchievementsForm(can_edit=True, can_del=True),
-        'duty': DutyForm(can_add=True),
-        'fails': FailsForm(can_edit=True, can_del=True),
-        'projects': ProjectsForm(can_edit=True, can_del=True),
+        'review_form_achievements_list': AchievementsForm(can_edit=True, can_del=True),
+        'review_form_duty': DutyForm(can_add=True),
+        'review_form_fails': FailsForm(can_edit=True, can_del=True),
+        'review_form_projects_list': ProjectsForm(can_edit=True, can_del=True),
     }
-    model = None
-    markup = None
 
-    def __init__(self, form: Optional[Form],
-                 on_write: bool = False,
-                 on_boss_review: bool = False,
-                 on_coworker_review: bool = False,
-                 ):
-        self.on_boss_review = on_boss_review
-        self.on_write = on_write
-        self.on_coworker_review = on_coworker_review
-        if form:
-            self.add(form)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.add()
 
-    def add(self, model: Form):
+    def add(self):
         """ Добавить данные из словаря в форму """
-        self.model = model
-        self.templates['achievements'].add(model.achievements)
-        self.templates['duty'].add(model.duty)
-        self.templates['fails'].add(model.fails)
-        self.templates['projects'].add(model.projects)
+        self.templates['review_form_achievements_list'].args['models'] = self.args['model'].achievements
+        self.templates['review_form_duty'].args['model'] = self.args['model'].duty
+        self.templates['review_form_fails'].args['models'] = self.args['model'].fails
+        self.templates['review_form_projects_list'].args['models'] = self.args['model'].projects
 
-    def __create_markup(self) -> Optional[InlineKeyboardMarkup]:
-        """ Создать клавиатуру """
+    def create_markup(self) -> InlineKeyboardMarkup:
         rows = []
-        if self.on_write:
+
+        if self.args.get('write_in'):
             rows.append([BUTTONS_TEMPLATES[self.__ORDER[0]], BUTTONS_TEMPLATES[self.__ORDER[1]]])
             rows.append([BUTTONS_TEMPLATES[self.__ORDER[2]], BUTTONS_TEMPLATES[self.__ORDER[3]]])
-            rows.append([BUTTONS_TEMPLATES['send_to_boss']])
-            self.markup = InlineKeyboardBuilder.build(*rows)
-            return self.markup
-        elif self.on_boss_review:
+            rows.append([BUTTONS_TEMPLATES['review_form_send_to_boss']])
+            markup = self.markup_builder.build(*rows)
+            return markup
+
+        elif self.args.get('on_boss_review'):
             rows.append([BUTTONS_TEMPLATES['boss_review_accept'],
                          BUTTONS_TEMPLATES['boss_review_decline'],
                          ])
-            self.markup = InlineKeyboardBuilder.build_with_pk(*rows, pk=self.model.id)
-            return self.markup
-        elif self.on_coworker_review:
+            markup = self.markup_builder.build(*rows, pk=self.args['model'].id)
+            return markup
+
+        elif self.args.get('on_coworker_review'):
             rows.append([BUTTONS_TEMPLATES['coworker_review_projects'],
                          BUTTONS_TEMPLATES['coworker_review_todo'],
                          BUTTONS_TEMPLATES['coworker_review_not_todo'],
                          ])
-            rows.append([BUTTONS_TEMPLATES['coworker_review_send_to_hr']])
-            self.markup = InlineKeyboardBuilder.build_with_pk(*rows, pk=self.model.id)
-            return self.markup
+            rows.append([BUTTONS_TEMPLATES['coworker_review_form_send_to_hr']])
+            markup = self.markup_builder.build(*rows, pk=self.args['model'].id)
+            return markup
 
-    def __create_message_text(self) -> str:
-        """ Вернуть преобразованное сообщение """
+    def create_message(self) -> str:
         text = ''
         title = '[АНКЕТА]'
-        description = f'Review период:{self.model.review_period}\n' \
-                      f'Статус формы: {self.model.status.name}'
+        description = f'Review период:{self.args["model"].review_period}\n' \
+                      f'Статус формы: {self.args["model"].status.name}'
         for name_template in self.__ORDER:
             text += f'{self.templates[name_template].dump()[0]}\n'
-        message_text = self.__message_builder.build_message(title=title,
-                                                            description=description,
-                                                            text=text,
-                                                            )
+        message_text = self.message_builder.build_message(title=title,
+                                                          description=description,
+                                                          text=text,
+                                                          )
         return message_text
-
-    def dump(self) -> Tuple[str, Optional[InlineKeyboardMarkup]]:
-        """ Вернуть преобразованное данные """
-        message_text = self.__create_message_text()
-        markup = self.__create_markup()
-        return message_text, markup
 
 
 __all__ = ['ReviewForm']

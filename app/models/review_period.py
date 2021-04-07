@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, TIMESTAMP, Boolean
 
-from app.db import base
+from app.db import Base
 
 
-class ReviewPeriod(base):
+class ReviewPeriod(Base):
     """ Модель периода review """
     __tablename__ = 'review_periods'
     id = Column(Integer, primary_key=True)

@@ -3,7 +3,7 @@ from app.tbot.services.forms.achievements_form import AchievementsForm
 from app.tbot.services.forms.duty_form import DutyForm
 from app.tbot.services.forms.fail_form import FailForm
 from app.tbot.services.forms.fails_form import FailsForm
-from app.tbot.services.forms.list_user_review import ListFormReview
+from app.tbot.services.forms.list_form_review import ListFormReview
 from app.tbot.services.forms.project_form import ProjectForm
 from app.tbot.services.forms.projects_form import ProjectsForm
 from app.tbot.services.forms.review_form import ReviewForm

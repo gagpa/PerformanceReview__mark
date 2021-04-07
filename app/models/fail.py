@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlalchemy import Column, VARCHAR, Integer, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import relationship
 
-from app.db import base
+from app.db import Base
 
 
-class Fail(base):
+class Fail(Base):
     """ Модель провала """
     __tablename__ = 'fails'
     id = Column(Integer, primary_key=True)

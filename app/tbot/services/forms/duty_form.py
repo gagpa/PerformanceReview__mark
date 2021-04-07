@@ -1,64 +1,49 @@
-from typing import Optional, Tuple
-
 from telebot.types import InlineKeyboardMarkup
 
-from app.models import Duty
 from app.tbot.extensions import InlineKeyboardBuilder
-from app.tbot.extensions import MessageBuilder
+from app.tbot.extensions.template import Template
 from app.tbot.storages import BUTTONS_TEMPLATES
 
 
-class DutyForm:
+class DutyForm(Template):
     """ Шаблон формы обязанностей """
-    __message_builder = MessageBuilder()
-    markup = None
-    model = None
 
-    def __init__(self, model: Optional[Duty] = None, can_add: bool = False, can_edit: bool = False):
-        self.can_add = can_add
-        self.can_edit = can_edit
-        if model:
-            self.add(model)
-
-    def add(self, duty: Duty):
-        """ Добавить обязанности """
-        self.model = duty
-
-    def __create_markup(self) -> Optional[InlineKeyboardMarkup]:
+    def create_markup(self) -> InlineKeyboardMarkup:
         """ Создать клавиатуру """
-        if self.can_add:
-            row_1 = [BUTTONS_TEMPLATES['duty_add']]
-        elif self.can_edit:
-            row_1 = [BUTTONS_TEMPLATES['duty_edit']]
-        else:
-            return
-        row_2 = [BUTTONS_TEMPLATES['form']]
-        self.markup = InlineKeyboardBuilder.build(row_1, row_2)
-        return self.markup
+        rows = []
+        if self.args.get('can_add'):
+            rows.append([BUTTONS_TEMPLATES['review_form_duty_add']])
+            rows.append([BUTTONS_TEMPLATES['review_form']])
+            markup = InlineKeyboardBuilder.build(*rows)
+            return markup
 
-    def __create_message_text(self) -> str:
+        elif self.args.get('can_edit'):
+            rows.append([BUTTONS_TEMPLATES['review_form_duty_edit']])
+            rows.append([BUTTONS_TEMPLATES['review_form']])
+            markup = InlineKeyboardBuilder.build(*rows)
+            return markup
+
+    def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
         title = '[ОБЯЗАННОСТИ]'
-        if self.can_add:
+
+        if self.args.get('can_add'):
             description = 'Функционал, который ты выполняешь в ходе своей работы'
-            text = self.model.text if self.model else ''
-        elif self.can_edit:
+            text = self.args['model'].text if self.args['model'] else ''
+
+        elif self.args.get('can_edit'):
             description = 'Внесите изменения или вернитесь к анкете'
-            text = self.model.text
+            text = self.args['model'].text
+
         else:
             description = 'Отправьте в сообщении свои обязанности'
             text = ''
-        message_text = self.__message_builder.build_message(title=title,
-                                                            description=description,
-                                                            text=text,
-                                                            )
-        return message_text
 
-    def dump(self) -> Tuple[str, Optional[InlineKeyboardMarkup]]:
-        """ Вернуть преобразованное данные """
-        message_text = self.__create_message_text()
-        markup = self.__create_markup()
-        return message_text, markup
+        message_text = self.message_builder.build_message(title=title,
+                                                          description=description,
+                                                          text=text,
+                                                          )
+        return message_text
 
 
 __all__ = ['DutyForm']

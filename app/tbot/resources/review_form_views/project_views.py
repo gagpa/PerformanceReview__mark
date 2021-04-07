@@ -1,100 +1,111 @@
-from app.services.project import create_empty
-from app.services.project import delete, get_for_pk
-from app.tbot.extensions import MessageManager
-from app.tbot.resources.review_form_views.projects_views import controller_projects
+from app.tbot.resources.review_form_views.projects_views import list_view
+from app.tbot.services import ProjectsServiceTBot
 from app.tbot.services.forms import ProjectForm
-from app.tbot.services.project import add_wrapper
-from app.tbot.services.project import edit_name_wrapper, edit_contacts_wrapper, edit_description_wrapper
 
 
-def controller_project_edit(message):
+def edit_view(request):
     """ Изменить проект """
-    pk = message.pk
-    project = get_for_pk(pk)
-    template = ProjectForm(project, can_edit=True)
-    MessageManager.send_message(message=message, template=template)
+    pk = request.pk()
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.by_pk(pk=pk)
+    template = ProjectForm(model=project, can_edit=True)
+    return template
 
 
-def controller_project_edit_name(message):
+def edit_name_view(request):
     """ Изменить имя проекта """
-    pk = message.pk
-    project = get_for_pk(pk)
-    template = ProjectForm(project, can_add=True, is_name=True)
-    message.model = project
-    MessageManager.ask_user(message=message, template=template,
-                            next_controller=edit_name_wrapper(controller_project_edit))
+    pk = request.pk()
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.by_pk(pk=pk)
+    template = ProjectForm(model=project, can_add=True, is_name=True)
+    next_view = service.update_name_before(edit_view)
+    return template, next_view
 
 
-def controller_project_edit_contacts(message):
+def edit_contacts_view(request):
     """ Изменить контакты к проекту """
-    pk = message.pk
-    project = get_for_pk(pk)
-    template = ProjectForm(project, can_add=True, is_contacts=True)
-    message.model = project
-    MessageManager.ask_user(message=message, template=template,
-                            next_controller=edit_contacts_wrapper(controller_project_edit))
+    pk = request.pk()
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.by_pk(pk=pk)
+    template = ProjectForm(model=project, can_add=True, is_contacts=True)
+    next_view = service.update_contacts_before(edit_view)
+    return template, next_view
 
 
-def controller_project_edit_description(message):
+def edit_description_view(request):
     """ Измнить описание проекта """
-    pk = message.pk
-    project = get_for_pk(pk)
-    template = ProjectForm(project, can_add=True, is_description=True)
-    message.model = project
-    MessageManager.ask_user(message=message, template=template,
-                            next_controller=edit_description_wrapper(controller_project_edit))
+    pk = request.pk()
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.by_pk(pk=pk)
+    template = ProjectForm(model=project, can_add=True, is_description=True)
+    next_view = service.update_description_before(edit_view)
+    return template, next_view
 
 
-def controller_project_delete(message):
+def delete_view(request):
     """ Удалить проект """
-    pk = message.pk
-    project = get_for_pk(pk)
-    delete(project)
-    controller_projects(message=message)
+    pk = request.pk()
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.by_pk(pk=pk)
+    service.delete(project)
+    return list_view(request=request)
 
 
-def controller_project_add(message):
+def add_view(request):
     """ Добавить новый проект """
-    form = message.form
-    message.model = create_empty(form)
-    template = ProjectForm(message.model, can_add=True, is_name=True)
-    MessageManager.ask_user(message=message, template=template, next_controller=controller_add_project_name)
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.create(form=form)
+    template = ProjectForm(model=project, can_add=True, is_name=True)
+    return template, service.add_model(add_name_view)
 
 
-def controller_add_project_name(message, model):
+def add_name_view(request):
     """ Добавить название проекта """
-    model.name = message.text
-    message.model = model
-    template = ProjectForm(model, can_add=True, is_description=True)
-    next_controller = controller_add_project_description
-    MessageManager.ask_user(message=message, template=template, next_controller=next_controller)
+    model = request.model
+    text = request.text
+    form = request.form
+    service = ProjectsServiceTBot(model, form=form)
+    template = ProjectForm(model=model, can_add=True, is_description=True)
+    service.name = text
+    return template, service.add_model(add_description_view)
 
 
-def controller_add_project_description(message, model):
+def add_description_view(request):
     """ Добавить описание проекта """
-    model.description = message.text
-    message.model = model
-    template = ProjectForm(model, can_add=True, is_contacts=True)
-    next_controller = controller_add_project_contacts
-    MessageManager.ask_user(message=message, template=template, next_controller=next_controller)
+    model = request.model
+    text = request.text
+    form = request.form
+    service = ProjectsServiceTBot(model, form=form)
+    template = ProjectForm(model=model, can_add=True, is_contacts=True)
+    service.description = text
+    return template, service.add_model(add_contacts_view)
 
 
-def controller_add_project_contacts(message, model):
+def add_contacts_view(request):
     """ Добавить контакты проекта """
-    # message.data.users = message.text
-    message.model = model
-    add_wrapper(controller_projects)(message)
+    model = request.model
+    usernames = request.split_text
+    form = request.form
+    service = ProjectsServiceTBot(model, form=form)
+    service.contacts = usernames
+    return list_view(request=request)
 
 
 __all__ = \
     [
-        'controller_project_edit',
-        'controller_project_edit_name',
-        'controller_project_edit_contacts',
-        'controller_project_edit_description',
-        'controller_project_delete',
-        'controller_project_add',
-        'controller_add_project_name',
-        'controller_add_project_description',
-        'controller_add_project_contacts',
+        'edit_view',
+        'edit_name_view',
+        'edit_contacts_view',
+        'edit_description_view',
+        'delete_view',
+        'add_view',
+        'add_name_view',
+        'add_contacts_view',
+        'add_description_view',
     ]

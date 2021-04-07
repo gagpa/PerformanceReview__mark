@@ -6,7 +6,7 @@ from app.tbot.middlewares.generals_middlewares import \
     log_user as general_log_user, \
     log_bot as general_log_bot, \
     log_unknown as general_log_unknown, \
-    parse_pk as general_parse_pk
+    parse_url
 
 
 def add_user(bot_instance, call):
@@ -34,7 +34,7 @@ def log_user(bot_instance, call):
     general_log_user(message=call.message)
 
 
-def log_unknown_user(bot_isntance, call):
+def log_unknown_user(bot_instance, call):
     """ """
     general_log_unknown(call.message)
 
@@ -44,19 +44,14 @@ def log_bot(bot_instance, call):
     general_log_bot(message=call.message)
 
 
-def parse_pk(bot_instance, call):
-    """ """
-    general_parse_pk(call=call)
-
-
 ORDER_CALLBACK_QUERY_MIDDLEWARES = \
     [
+        parse_url,
         add_user,
         add_review_period,
         add_form,
         add_keyboard,
-        parse_pk,
-        log_bot,
+        # log_bot,
     ]
 
 

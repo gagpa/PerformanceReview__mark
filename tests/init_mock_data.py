@@ -3,7 +3,7 @@ from datetime import datetime
 
 from loguru import logger
 
-from app.db import db_session
+from app.db import Session as db_session
 from app.models import User, Role, Position, Department, Status,\
     ReviewPeriod, Rating, Duty, Project, Achievement, Fail, Form
 

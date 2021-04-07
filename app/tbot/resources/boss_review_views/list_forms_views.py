@@ -1,22 +1,14 @@
-from app.services.form import get_on_boss_review
-from app.services.lead import get_all_employees
-from app.tbot.extensions import MessageManager
+from app.services.user import BossService
 from app.tbot.services.forms import ListFormReview
 
 
-def controller_boss_review_list(message):
+def list_forms_view(request):
     """ Контроллер списка review начальника """
-    lead = message.user
-    review_period = message.review_period
-
-    employees = get_all_employees(lead)
-    forms = []
-    for employee in employees:
-        form = get_on_boss_review(user=employee, review_period=review_period['object'])
-        if form:
-            forms.append(form)
-    template = ListFormReview(forms, on_boss_review=True)
-    MessageManager.send_message(message=message, template=template)
+    boss = request.user
+    boss_service = BossService(model=boss)
+    forms = boss_service.forms_on_review
+    template = ListFormReview(models=forms, on_boss_review=True)
+    return template
 
 
-__all__ = ['controller_boss_review_list']
+__all__ = ['list_forms_view']
