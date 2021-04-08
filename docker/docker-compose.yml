@@ -3,14 +3,14 @@ version: "3.3"
 services:
   hr-test-bot:
     build:
-      context: ..
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/Dockerfile
     image: hr-test-bot
     restart: always
-    env_file: ../.env
+    env_file: .env
     volumes:
-      - .:/usr/app/hr-test-bot
-    command: python main.py
+      - .:/usr/src/hr-test-bot
+    command: python bot.py
     depends_on:
       - hr_postgres_db
     tty: True
@@ -18,12 +18,12 @@ services:
 #  hr-test-bot-migrate:
 #    build:
 #      context: .
-#      dockerfile: ./Dockerfile
+#      dockerfile: docker/Dockerfile
 #    image: hr-test-bot
 #    env_file: .env
 #    volumes:
-#      - .:/usr/app/hr-test-bot
-#    command: bash -c "alembic stamp head && alembic revision --autogenerate -m "update" && alembic upgrade head"
+#      - .:/usr/src/hr-test-bot
+#    command: bash -c "alembic init alembic && alembic stamp head && alembic revision --autogenerate -m "update" && alembic upgrade head"
 #    depends_on:
 #      - hr_postgres_db
 
@@ -33,6 +33,6 @@ services:
     environment:
       POSTGRES_PASSWORD: psql_pass
     ports:
-      - 5432
+      - 5432:5432
     volumes:
       - /opt/disk/hr-test-bot/postgres:/var/lib/postgresql/data
