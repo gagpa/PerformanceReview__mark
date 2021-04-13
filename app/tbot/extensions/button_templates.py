@@ -15,6 +15,7 @@ class ButtonTemplate:
 
     def add(self, **kwargs):
         self.kwargs.update(kwargs)
+        return self
 
     @property
     def text(self):

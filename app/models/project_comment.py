@@ -19,7 +19,6 @@ class ProjectComment(Base):
     project_id = Column(Integer, ForeignKey('projects.id', ondelete='CASCADE'), nullable=False)
     rating_id = Column(Integer, ForeignKey('ratings.id'), nullable=True)
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-
     user = relationship('User', backref='projects_comments')
     rating = relationship('Rating', backref='projects_comments')
     project = relationship('Project', backref='comments')

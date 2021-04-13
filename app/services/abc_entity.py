@@ -41,9 +41,10 @@ class Entity(ABC):
         self.save(model)
         self.model = model
 
-    def save(self, *models):
+    def save_all(self, *models):
         """ """
         Session().add_all(models)
+        Session.commit()
 
     def delete(self, *models):
         """ """

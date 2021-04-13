@@ -25,9 +25,9 @@ class CoworkerServiceTBot(CoworkerService):
         def wrapper(request):
             text = request.text
             self.give_todo(text=text, form=self.form)
+            request.add('pk', self.form.id)
             Session.commit()
             Session.remove()
-            request.add('pk', self.form.id)
             return func(request=request)
         return wrapper
 

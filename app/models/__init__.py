@@ -9,6 +9,8 @@ from app.models.department import Department
 from app.models.duty import Duty
 from app.models.fail import Fail
 from app.models.form import Form
+from app.models.hr_comment import HrComment
+from app.models.hr_review_status import HrReviewStatus
 from app.models.position import Position
 from app.models.project import Project
 from app.models.project_comment import ProjectComment

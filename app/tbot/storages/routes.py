@@ -19,6 +19,13 @@ from app.tbot.resources.coworker_review_views import \
     coworker_review_project_comment_on_view, \
     coworker_review_advice_not_todo_view
 
+from app.tbot.resources.hr_review_views import \
+    hr_review_list_forms_view,\
+    hr_review_form_view, \
+    hr_review_accept_view, \
+    hr_review_decline_view, \
+    hr_review_todo_view
+
 from app.tbot.resources.review_form_views import \
     review_form_view, \
     review_form_achievements_add_view, \
@@ -92,6 +99,12 @@ ROUTES = \
         'coworker_review_todo': coworker_review_advice_todo_view,
         'coworker_review_not_todo': coworker_review_advice_not_todo_view,
         'coworker_review_project_comment_on': coworker_review_project_comment_on_view,
+
+        'hr_review_list': hr_review_list_forms_view,
+        'hr_review_form': hr_review_form_view,
+        'hr_review_accept': hr_review_accept_view,
+        'hr_review_decline': hr_review_decline_view,
+        'hr_review_todo': hr_review_todo_view,
     }
 
 __all__ = ['ROUTES']

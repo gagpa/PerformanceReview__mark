@@ -51,6 +51,14 @@ BUTTONS_TEMPLATES = \
         'review_form_project_edit_contacts': ButtonTemplate('review_form_project_edit_contacts', 'Контакты'),
         'review_form_project_delete_choose': ButtonTemplate('review_form_project_delete_choose', 'Удалить'),
         'review_form_project_edit_choose': ButtonTemplate('review_form_project_edit_choose', 'Изменить'),
+
+        'hr_review_list': ButtonTemplate('hr_review_list', 'К списку'),
+        'hr_review_form': ButtonTemplate('hr_review_form'),
+        'hr_review_accept': ButtonTemplate('hr_review_accept', 'Принять'),
+        'hr_review_decline': ButtonTemplate('hr_review_decline', 'Отклонить'),
+        'hr_review_todo': ButtonTemplate('hr_review_todo', 'TODO'),
+        'hr_review_ratings': ButtonTemplate('hr_review_ratings', 'Оценки'),
+        'hr_review_back_to_form': ButtonTemplate('hr_review_back_to_form', '<<Назад'),
     }
 
 __all__ = ['BUTTONS_TEMPLATES']

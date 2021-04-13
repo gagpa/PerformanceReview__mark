@@ -1,5 +1,7 @@
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from copy import deepcopy
+from typing import List, Optional
+
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 class InlineKeyboardBuilder:
@@ -18,6 +20,27 @@ class InlineKeyboardBuilder:
                                              ))
         markup = InlineKeyboardMarkup(row_width=row_width)
         markup.add(*btns)
+
+        for row in rows:
+            markup.add(*row)
+
+        return markup
+
+    @staticmethod
+    def build_list_up(button_template, unique_args: List[dict], general_args: Optional[dict] = None, *rows):
+        """ Построить клавиатуру списка """
+        row_width = 5
+        btns = []
+        if general_args:
+            button_template.add(**general_args)
+        for i, args in enumerate(unique_args):
+            button_template.add(**args)
+            btns.append(InlineKeyboardButton(text=button_template.text.format(i + 1),
+                                             callback_data=button_template.callback
+                                             ))
+        markup = InlineKeyboardMarkup(row_width=row_width)
+        markup.add(*btns)
+
         for row in rows:
             markup.add(*row)
 

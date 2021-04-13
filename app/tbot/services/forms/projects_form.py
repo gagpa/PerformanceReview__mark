@@ -41,6 +41,9 @@ class ProjectsForm(Template):
             markup = InlineKeyboardBuilder.build_list(self.args['models'], btn)
             return markup
 
+        # elif self.args.get('on_hr_review'):
+
+
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
 

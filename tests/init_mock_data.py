@@ -5,7 +5,7 @@ from loguru import logger
 
 from app.db import Session as db_session
 from app.models import User, Role, Position, Department, Status,\
-    ReviewPeriod, Rating, Duty, Project, Achievement, Fail, Form
+    ReviewPeriod, Rating, Duty, Project, Achievement, Fail, Form, HrReviewStatus
 
 
 def get_mock_data() -> dict:
@@ -39,6 +39,7 @@ def add_all_mock_data_in_db():
     add_all_projects_in_db(mock_data['projects'])
     add_all_achievements_in_db(mock_data['achievements'])
     add_all_fails_in_db(mock_data['fails'])
+    add_all_hr_statuses_in_db(mock_data['hr_review_statuses'])
 
 
 def add_all_roles_in_db(roles_mock_data):
@@ -202,4 +203,10 @@ def add_all_fails_in_db(fails_mock_data):
             fail.form = form
             db_session.add(fail)
 
+    db_session.commit()
+
+
+def add_all_hr_statuses_in_db(hr_statuses_mock_data):
+    for status in hr_statuses_mock_data:
+        db_session.add(HrReviewStatus(**status))
     db_session.commit()

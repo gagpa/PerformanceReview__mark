@@ -48,8 +48,8 @@ class MessageDecorator:
 
 class MessageBuilder(MessageDecorator):
     """ Строитель сообщений от телеграмм бота """
-    __LIST_TEMPLATE = '{title}\n{description}\n{list_data}'
-    __DEFAULT_TEMPLATE = '{title}\n{description}\n\n{text}'
+    __LIST_TEMPLATE = '{title}\n{list_data}\n{description}'
+    __DEFAULT_TEMPLATE = '{title}\n{text}\n{description}'
 
     def build_list_message(self, title: str, description: Optional[str], list_data: Optional[list] = None):
         """ Построить сообщения списка данных """
