@@ -7,4 +7,7 @@ from app.tbot.resources.hr_review_views.form_views import \
     decline_view as hr_review_decline_view
 
 from app.tbot.resources.hr_review_views.review_views import \
-    todo_view as hr_review_todo_view
+    todo_view as hr_review_todo_view, \
+    ratings_view as hr_review_ratings_view,\
+    comment_rating_view as hr_review_comment_rating_view, \
+    send_back_view as hr_review_send_back_view

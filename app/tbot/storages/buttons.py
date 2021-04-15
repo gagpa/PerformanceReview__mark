@@ -58,7 +58,13 @@ BUTTONS_TEMPLATES = \
         'hr_review_decline': ButtonTemplate('hr_review_decline', 'Отклонить'),
         'hr_review_todo': ButtonTemplate('hr_review_todo', 'TODO'),
         'hr_review_ratings': ButtonTemplate('hr_review_ratings', 'Оценки'),
-        'hr_review_back_to_form': ButtonTemplate('hr_review_back_to_form', '<<Назад'),
+        'hr_review_back_to_form': ButtonTemplate('hr_review_form', '<<Назад'),
+        'hr_review_comment_rating': ButtonTemplate('hr_review_comment_rating'),
+        'hr_review_back_to_decline': ButtonTemplate('hr_review_decline', '<<Назад'),
+        'hr_review_send_back': ButtonTemplate('hr_review_send_back', 'Вернуть форму'),
+        'hr_review_update_list': ButtonTemplate('hr_review_list', 'Обновить список'),
+        'hr_review_sort_asc': ButtonTemplate('hr_review_list', '🔺').add(asc=True),
+        'hr_review_sort_desc': ButtonTemplate('hr_review_list', '🔻').add(asc=False)
     }
 
 __all__ = ['BUTTONS_TEMPLATES']

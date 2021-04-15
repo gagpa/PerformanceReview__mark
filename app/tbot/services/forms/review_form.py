@@ -12,10 +12,10 @@ class ReviewForm(Template):
     """ Шаблон формы анкеты """
     __ORDER = ['review_form_duty', 'review_form_projects_list', 'review_form_achievements_list', 'review_form_fails']
     templates = {
-        'review_form_achievements_list': AchievementsForm(can_edit=True, can_del=True),
-        'review_form_duty': DutyForm(can_add=True),
-        'review_form_fails': FailsForm(can_edit=True, can_del=True),
-        'review_form_projects_list': ProjectsForm(can_edit=True, can_del=True),
+        'review_form_achievements_list': AchievementsForm(form=True),
+        'review_form_duty': DutyForm(form=True),
+        'review_form_fails': FailsForm(form=True),
+        'review_form_projects_list': ProjectsForm(form=True),
     }
 
     def __init__(self, **kwargs):
@@ -66,6 +66,7 @@ class ReviewForm(Template):
                 rows.append([BUTTONS_TEMPLATES['hr_review_todo'],
                              BUTTONS_TEMPLATES['hr_review_ratings']])
                 rows.append([BUTTONS_TEMPLATES['hr_review_back_to_form']])
+                rows.append([BUTTONS_TEMPLATES['hr_review_send_back']])
                 args = {'advice': advice.id, 'form': advice.form.id, 'coworker': coworker.id}
                 markup = self.markup_builder.build(*rows, **args)
                 return markup

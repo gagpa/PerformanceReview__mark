@@ -75,6 +75,14 @@ class FailsForm(Template):
                                                                    description=description,
                                                                    list_data=list_data,
                                                                    )
+        elif self.args.get('form'):
+            description = ''
+            list_data = [f'{self.model.text}' for self.model in self.args['models']]
+            message_text = self.message_builder.build_list_message(title=title,
+                                                                   description=description,
+                                                                   list_data=list_data,
+                                                                   )
+            return message_text
 
         else:
             description = 'Отправьте в сообщении свои основные провалы'

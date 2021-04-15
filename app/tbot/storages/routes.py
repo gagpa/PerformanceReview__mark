@@ -24,7 +24,10 @@ from app.tbot.resources.hr_review_views import \
     hr_review_form_view, \
     hr_review_accept_view, \
     hr_review_decline_view, \
-    hr_review_todo_view
+    hr_review_todo_view, \
+    hr_review_ratings_view, \
+    hr_review_comment_rating_view, \
+    hr_review_send_back_view
 
 from app.tbot.resources.review_form_views import \
     review_form_view, \
@@ -105,6 +108,9 @@ ROUTES = \
         'hr_review_accept': hr_review_accept_view,
         'hr_review_decline': hr_review_decline_view,
         'hr_review_todo': hr_review_todo_view,
+        'hr_review_ratings': hr_review_ratings_view,
+        'hr_review_comment_rating': hr_review_comment_rating_view,
+        'hr_review_send_back': hr_review_send_back_view,
     }
 
 __all__ = ['ROUTES']

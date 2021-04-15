@@ -61,6 +61,22 @@ class InlineKeyboardBuilder:
         return btns
 
     @staticmethod
+    def build_paginator_arrows(button_template, page, max_page, **kwargs):
+        """ Постоить клавиатуру пагинатор стрелок """
+        left_arw = None
+        right_arw = None
+        if page != 1:
+            left_arw = InlineKeyboardButton(text='⬅', callback_data=button_template.add(pg=page-1, **kwargs).callback)
+        if page != max_page:
+            right_arw = InlineKeyboardButton(text='➡', callback_data=button_template.add(pg=page+1, **kwargs).callback)
+        btns = []
+        if left_arw:
+            btns.append(left_arw)
+        if right_arw:
+            btns.append(right_arw)
+        return btns
+
+    @staticmethod
     def build_btns(*template_btns, **kwargs):
         btns = []
         for template_btn in template_btns:
@@ -72,7 +88,7 @@ class InlineKeyboardBuilder:
     @staticmethod
     def build(*rows: list, **kwargs):
         """ Построить клавиатуру по строчно """
-        markup = InlineKeyboardMarkup(row_width=3)
+        markup = InlineKeyboardMarkup(row_width=5)
         for row in rows:
             btns = []
             for btn in row:

@@ -16,7 +16,8 @@ class MessageDecorator:
 
     def do_description(self, description: str):
         """ Оформить описание """
-        description = self.__DECOR['description'].format(description)
+        if description:
+            description = self.__DECOR['description'].format(description)
         return description
 
     def do_text(self, text: str):
@@ -48,7 +49,7 @@ class MessageDecorator:
 
 class MessageBuilder(MessageDecorator):
     """ Строитель сообщений от телеграмм бота """
-    __LIST_TEMPLATE = '{title}\n{list_data}\n{description}'
+    __LIST_TEMPLATE = '{title}\n{list_data}\n\n{description}'
     __DEFAULT_TEMPLATE = '{title}\n{text}\n{description}'
 
     def build_list_message(self, title: str, description: Optional[str], list_data: Optional[list] = None):
@@ -56,6 +57,8 @@ class MessageBuilder(MessageDecorator):
         title = self.do_title(title)
         description = self.do_description(description)
         list_data = self.do_list(list_data)
+        if not description:
+            return self.__LIST_TEMPLATE.replace('\n{description}', '').format(title=title, list_data=list_data)
         message = self.__LIST_TEMPLATE.format(title=title, description=description, list_data=list_data)
         return message
 
@@ -64,6 +67,8 @@ class MessageBuilder(MessageDecorator):
         title = self.do_title(title)
         description = self.do_description(description)
         data = self.do_text(text)
+        if not description:
+            return self.__DEFAULT_TEMPLATE.replace('\n{description}', '').format(title=title, text=data)
         message = self.__DEFAULT_TEMPLATE.format(title=title, description=description, text=data)
         return message
 

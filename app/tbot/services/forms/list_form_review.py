@@ -17,7 +17,16 @@ class ListFormReview(Template):
 
         elif self.args.get('on_hr_review'):
             unique_args = [{'advice': advice.id, 'form': advice.form.id} for advice in self.args['advices']]
-            return self.markup_builder.build_list_up(BUTTONS_TEMPLATES['hr_review_form'], unique_args=unique_args)
+            update = self.markup_builder.build_btns(BUTTONS_TEMPLATES['hr_review_update_list'])
+            if self.args['is_asc']:
+                sort_btn = self.markup_builder.build_btns(BUTTONS_TEMPLATES['hr_review_sort_desc'])
+            else:
+                sort_btn = self.markup_builder.build_btns(BUTTONS_TEMPLATES['hr_review_sort_asc'])
+            pagination_row = self.markup_builder.build_paginator_arrows(BUTTONS_TEMPLATES['hr_review_list'],
+                                                                        self.args['page'],
+                                                                        self.args['max_page'])
+            return self.markup_builder.build_list_up(BUTTONS_TEMPLATES['hr_review_form'],
+                                                     unique_args, None, update, sort_btn, pagination_row)
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
@@ -39,7 +48,8 @@ class ListFormReview(Template):
 
         elif self.args.get('on_hr_review'):
             description = 'Можете выбрать форму на проверку.'
-            list_data = [f'{advice.coworker.fullname} - {advice.form.user.username}' for advice in self.args['advices']]
+            list_data = [f'{advice.coworker.fullname} - {advice.form.user.username}\n {advice.updated_at}'
+                         for advice in self.args['advices']]
             return self.message_builder.build_list_message(title=title,
                                                            description=description,
                                                            list_data=list_data)
