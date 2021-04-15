@@ -7,3 +7,5 @@ ADD ../requirements.txt /usr/src/hr-test-bot/requirements.txt
 RUN apt update
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+
+COPY . /usr/src/hr-test-bot/

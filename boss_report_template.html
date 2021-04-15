@@ -16,11 +16,6 @@
             vertical-align: top;
             text-align: left;
         }
-
-        th {
-            font-size: 14px;
-            font-style: italic;
-        }
     </style>
 </head>
 <body>
@@ -69,23 +64,6 @@
     {% for fail in fails %}
     <tr>
         <td>{{fail.text}}</td>
-    </tr>
-    {% endfor %}
-</table>
-<h4>Отзывы о сотруднике</h4>
-<table>
-    <tr>
-        <th>Оценивающий</th>
-        <th>Роль</th>
-        <th>Оценка</th>
-        <th>Комментарии</th>
-    </tr>
-    {% for review in reviews %}
-    <tr>
-        <td>Оценивающий</td>
-        <td>Роль</td>
-        <td>Оценка</td>
-        <td>Комментарии</td>
     </tr>
     {% endfor %}
 </table>

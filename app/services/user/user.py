@@ -15,7 +15,8 @@ class UserService(Entity):
         """ Найти в БД пользователя по username """
         return self.by(username=username)
 
-    def create_default(self, chat_id: str, username: str, fullname: str):  # TODO Некомитеть эту функцию
+    def create_default(self, chat_id: str, username: str,
+                       fullname: str):  # TODO Некомитеть эту функцию
         """ Создать стандартного пользователя гостя """
         departament = Session().query(Department).all()[0]
         position = Session().query(Position).all()[0]

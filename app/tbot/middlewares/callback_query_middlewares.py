@@ -46,8 +46,8 @@ def log_bot(bot_instance, call):
 
 ORDER_CALLBACK_QUERY_MIDDLEWARES = \
     [
-        parse_url,
         add_user,
+        parse_url,
         add_review_period,
         add_form,
         add_keyboard,

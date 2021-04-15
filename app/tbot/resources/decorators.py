@@ -1,13 +1,13 @@
-from app.db import db_session
+from app.db import Session
 from app.models import User
-from app.tbot.create_bot import bot
+from app.tbot import bot
 
 
 def role_required(role):
     def decorator(func):
         def wrapper(*args, **kwargs):
             message = args[0]
-            user = db_session.query(User).get(message.chat.id)
+            user = Session().query(User).get(message.chat.id)
             if user and (user.role == role):
                 func(*args, **kwargs)
             else:
