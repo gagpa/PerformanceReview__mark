@@ -18,7 +18,7 @@ def project_rate_choose_view(request):
     project = project_service.by_pk(pk=pk)
     coworker_service = CoworkerServiceTBot(coworker, project=project)
     rating = coworker_service.find_rating(project)
-    comment = coworker_service.find_comment(project)
+    comment = coworker_service.find_comment(project).text
     left_project, right_project = coworker_service.find_right_left_project(project=project)
 
     template = ProjectForm(model=project, on_rate=True, rating=rating, comment=comment,

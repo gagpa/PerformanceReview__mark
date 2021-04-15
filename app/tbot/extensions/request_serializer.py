@@ -95,3 +95,12 @@ class RequestSerializer:
     def args(self):
         """ Запарсить аргументы """
         return self.__message.args
+
+    @staticmethod
+    def send_args(func, **kwargs):
+        def wrapper(request):
+            for key, value in kwargs.items():
+                request.add(key, value)
+            response = func(request)
+            return response
+        return wrapper

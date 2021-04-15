@@ -71,7 +71,7 @@ class CoworkerService(UserService):
     def find_comment(self, project: Project):
         """ """
         project_comment = Session().query(ProjectComment).filter_by(project=project, user=self.model).first()
-        return project_comment.text
+        return project_comment
 
     def rate_project(self, project: Project, rating: Rating):
         """ Оценить проект """

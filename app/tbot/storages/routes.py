@@ -23,13 +23,15 @@ from app.tbot.resources.coworker_review_views import \
     coworker_review_project_comment_on_view, \
     coworker_review_advice_not_todo_view
 
-from app.tbot.resources.request_views import \
-    request_view, \
-    request_list_view
-
-from app.tbot.resources.request_views.request_view import \
-    delete_request_view, \
-    accept_request_view
+from app.tbot.resources.hr_review_views import \
+    hr_review_list_forms_view,\
+    hr_review_form_view, \
+    hr_review_accept_view, \
+    hr_review_decline_view, \
+    hr_review_todo_view, \
+    hr_review_ratings_view, \
+    hr_review_comment_rating_view, \
+    hr_review_send_back_view
 
 from app.tbot.resources.review_form_views import \
     review_form_view, \
@@ -122,30 +124,14 @@ ROUTES = \
         'coworker_review_not_todo': coworker_review_advice_not_todo_view,
         'coworker_review_project_comment_on': coworker_review_project_comment_on_view,
 
-        'request_view': request_view,
-        'request_delete_view': delete_request_view,
-        'request_view_back': request_list_view,
-        'request_accept_view': accept_request_view,
-
-        'user_view': user_view,
-        'user_delete_view': delete_user_view,
-        'user_view_back': users_list_view,
-        'user_edit_view': edit_user_view,
-
-        'user_edit_fullname': user_edit_fullname,
-        'user_edit_role': user_edit_role,
-        'user_edit_position': user_edit_position,
-        'user_edit_boss': user_edit_boss,
-        'user_edit_department': user_edit_department,
-
-        'review_period_start': review_period_start,
-        'review_period_stop': review_period_stop,
-        'first_date_period': calendar_handler,
-        'date_period_2': calendar_handler,
-
-        'get_rapport': get_rapport,
-        'get_hr_rapport': get_hr_rapport,
-        'get_boss_rapport': get_boss_rapport,
+        'hr_review_list': hr_review_list_forms_view,
+        'hr_review_form': hr_review_form_view,
+        'hr_review_accept': hr_review_accept_view,
+        'hr_review_decline': hr_review_decline_view,
+        'hr_review_todo': hr_review_todo_view,
+        'hr_review_ratings': hr_review_ratings_view,
+        'hr_review_comment_rating': hr_review_comment_rating_view,
+        'hr_review_send_back': hr_review_send_back_view,
     }
 
 __all__ = ['ROUTES']

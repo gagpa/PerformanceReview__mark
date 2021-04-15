@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: a85a769369be
+Revision ID: 6ee506fe8acd
 Revises: 
-Create Date: 2021-03-29 02:32:57.969853
+Create Date: 2021-04-13 15:55:41.214369
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a85a769369be'
+revision = '6ee506fe8acd'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,6 +21,17 @@ def upgrade():
     op.create_table('departments',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.VARCHAR(length=255), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
+    op.create_table('hr_comments',
+    sa.Column('id', sa.SmallInteger(), nullable=False),
+    sa.Column('text', sa.VARCHAR(length=1000), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('hr_review_statuses',
+    sa.Column('id', sa.SmallInteger(), nullable=False),
+    sa.Column('name', sa.VARCHAR(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
@@ -118,7 +129,13 @@ def upgrade():
     sa.Column('updated_at', sa.TIMESTAMP(), nullable=True),
     sa.Column('form_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('hr_user_id', sa.Integer(), nullable=True),
+    sa.Column('hr_review_status_id', sa.Integer(), nullable=True),
+    sa.Column('hr_comment_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['form_id'], ['forms.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['hr_comment_id'], ['hr_comments.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['hr_review_status_id'], ['hr_review_statuses.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['hr_user_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -159,9 +176,15 @@ def upgrade():
     sa.Column('project_id', sa.Integer(), nullable=False),
     sa.Column('rating_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['project_id'], ['projects.id'], ),
+    sa.Column('hr_user_id', sa.Integer(), nullable=True),
+    sa.Column('hr_review_status_id', sa.Integer(), nullable=True),
+    sa.Column('hr_comment_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['hr_comment_id'], ['hr_comments.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['hr_review_status_id'], ['hr_review_statuses.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['hr_user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['project_id'], ['projects.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['rating_id'], ['ratings.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
@@ -183,5 +206,7 @@ def downgrade():
     op.drop_table('review_periods')
     op.drop_table('ratings')
     op.drop_table('positions')
+    op.drop_table('hr_review_statuses')
+    op.drop_table('hr_comments')
     op.drop_table('departments')
     # ### end Alembic commands ###

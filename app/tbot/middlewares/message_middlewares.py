@@ -3,7 +3,7 @@ from app.tbot.middlewares.generals_middlewares import \
     add_review_period as general_add_review_period, \
     add_form as general_add_form, \
     add_keyboard as general_add_keyboard, \
-    log_user as general_log_user, \
+    log_command as general_log_user, \
     log_unknown as general_log_unknown, \
     parse_command
 
@@ -46,7 +46,7 @@ ORDER_MESSAGE_MIDDLEWARES = \
         add_review_period,
         add_form,
         add_keyboard,
-        # log_user,
+        log_user,
     ]
 
 

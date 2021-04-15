@@ -78,10 +78,15 @@ def add_keyboard(message):
     pass
 
 
-def log_user(message):
+def log_command(message):
     """ Логировать действия пользователей """
     user = message.user
-    logger.debug(f'\nUSER {user} CHAT_ID: {message.chat.id}\nMESSAGE:\n{message.text}')
+    logger.debug(f'\nUSER {user} COMMAND: {message.command}')
+
+
+def log_callback(call):
+    user = call.message.user
+    logger.debug(f'\nUSER {user} URL: {call.url}')
 
 
 def log_unknown(message):
@@ -139,7 +144,8 @@ __all__ = \
         'add_review_period',
         'add_form',
         'add_keyboard',
-        'log_user',
+        'log_callback',
+        'log_command',
         'log_unknown',
         'log_bot',
         'parse_url',
