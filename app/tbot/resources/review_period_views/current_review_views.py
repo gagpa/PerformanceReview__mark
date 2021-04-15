@@ -11,3 +11,7 @@ def current_forms_list(request):
         return CurrentReviewForm(models=current_reviews, forms_list=True)
     else:
         return CurrentReviewForm()
+
+
+def employee_review(request):
+    pk = request.pk()

@@ -19,3 +19,4 @@ from app.models.review_period import ReviewPeriod
 from app.models.role import Role
 from app.models.status import Status
 from app.models.user import User
+from app.models.summary import Summary
