@@ -5,7 +5,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeybo
     KeyboardButton
 from telegram_bot_pagination import InlineKeyboardPaginator
 
-from app.tbot.create_bot import bot
+from app.tbot import bot
 
 
 class MyPaginator(InlineKeyboardPaginator):

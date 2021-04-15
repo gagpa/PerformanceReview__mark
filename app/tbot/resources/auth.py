@@ -1,6 +1,6 @@
-from app.db import db_session
+from app.db import Session
 from app.models import User, Department, Position, Role
-from app.tbot.create_bot import bot
+from app.tbot import bot
 
 
 def process_name_step(message, user):
@@ -42,14 +42,16 @@ def process_chef_step(message, user):
         chat_id = message.chat.id
         boss_login = message.text.lower().replace('@', '')
         if boss_login != 'нет':
-            boss = db_session.query(User).filter_by(username=boss_login).one_or_none()
+            boss = Session().query(User).filter_by(username=boss_login).one_or_none()
             if boss:
                 user.boss = boss
             else:
                 bot.send_message(chat_id, 'Вашего руководителя еще нет в системе')
-        user.role = db_session.query(Role).get(0)
-        db_session.add(user)
-        db_session.commit()
+        else:
+            user.bose = None
+        user.role = Session().query(Role).get(0)
+        Session().add(user)
+        Session().commit()
         bot.send_message(chat_id, 'Спасибо. Ожидайте разрешения доступа. Вам поступит сообщение.')
     except Exception as e:
         print(e)

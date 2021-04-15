@@ -90,3 +90,8 @@ class RequestSerializer:
             self.__message.args[key] = value
         except AttributeError:
             self.__message.args = {key: value}
+
+    @property
+    def args(self):
+        """ Запарсить аргументы """
+        return self.__message.args

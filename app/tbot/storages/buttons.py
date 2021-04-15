@@ -51,6 +51,29 @@ BUTTONS_TEMPLATES = \
         'review_form_project_edit_contacts': ButtonTemplate('review_form_project_edit_contacts', 'Контакты'),
         'review_form_project_delete_choose': ButtonTemplate('review_form_project_delete_choose', 'Удалить'),
         'review_form_project_edit_choose': ButtonTemplate('review_form_project_edit_choose', 'Изменить'),
+
+        'request_view': ButtonTemplate('request_view'),
+        'request_delete_view': ButtonTemplate('request_delete_view', 'Удалить'),
+        'request_accept_view': ButtonTemplate('request_accept_view', 'Принять'),
+        'request_view_back': ButtonTemplate('request_view_back', 'Назад'),
+
+        'user_view': ButtonTemplate('user_view'),
+        'user_delete_view': ButtonTemplate('user_delete_view', 'Удалить'),
+        'user_view_back': ButtonTemplate('user_view_back', 'Назад'),
+        'user_edit_view': ButtonTemplate('user_edit_view', 'Редактировать'),
+
+        'user_edit_fullname': ButtonTemplate('user_edit_fullname', 'ФИО'),
+        'user_edit_role': ButtonTemplate('user_edit_role', 'Роль'),
+        'user_edit_position': ButtonTemplate('user_edit_position', 'Должность'),
+        'user_edit_boss': ButtonTemplate('user_edit_boss', 'Руководитель'),
+        'user_edit_department': ButtonTemplate('user_edit_department', 'Отдел'),
+
+        'review_period_start': ButtonTemplate('review_period_start', 'Запуск'),
+        'review_period_stop': ButtonTemplate('review_period_stop', 'Остановка'),
+
+        'get_rapport': ButtonTemplate('get_rapport'),
+        'get_hr_rapport': ButtonTemplate('get_hr_rapport', 'Для HR'),
+        'get_boss_rapport': ButtonTemplate('get_boss_rapport', 'Для руководителя'),
     }
 
 __all__ = ['BUTTONS_TEMPLATES']

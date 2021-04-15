@@ -1,5 +1,8 @@
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+import datetime
 from copy import deepcopy
+
+import telebot_calendar
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 class InlineKeyboardBuilder:
@@ -58,6 +61,16 @@ class InlineKeyboardBuilder:
                                                  callback_data=btn.callback,
                                                  ))
             markup.add(*btns)
+        return markup
+
+    @staticmethod
+    def build_calendar(call_data):
+        now = datetime.datetime.now()
+        # документация по календарю: https://github.com/FlymeDllVa/telebot-calendar
+        calendar = telebot_calendar.CallbackData(call_data, "action", "year", "month", "day")
+        markup = telebot_calendar.create_calendar(name=calendar.prefix,
+                                                  year=now.year,
+                                                  month=now.month)
         return markup
 
 

@@ -34,16 +34,14 @@ class Entity(ABC):
     def save(self, model):
         """ """
         s = Session.object_session(model)
+        if not s:
+            s = Session()
         s.add(model)
 
     def add(self, model):
         """ """
         self.save(model)
         self.model = model
-
-    def save(self, *models):
-        """ """
-        Session().add_all(models)
 
     def delete(self, *models):
         """ """
@@ -58,6 +56,10 @@ class Entity(ABC):
     def by(self, **kwargs):
         """ """
         self.model = Session().query(self.Model).filter_by(**kwargs).first()
+        return self.model
+
+    def all_by(self, **kwargs):
+        self.model = Session().query(self.Model).filter_by(**kwargs).all()
         return self.model
 
     def is_exist(self, **kwargs):

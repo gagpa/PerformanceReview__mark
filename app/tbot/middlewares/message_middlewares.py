@@ -41,8 +41,8 @@ def log_unknown(bot_instance, message):
 ORDER_MESSAGE_MIDDLEWARES = \
     [
         # log_unknown,
-        parse_command,
         add_user,
+        parse_command,
         add_review_period,
         add_form,
         add_keyboard,

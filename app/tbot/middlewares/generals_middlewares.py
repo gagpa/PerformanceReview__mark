@@ -17,20 +17,19 @@ def add_user(message):
     answer = user_service.is_exist(chat_id=chat_id)
     if answer:
         user = user_service.by_chat_id(chat_id=chat_id)
+        message.user = \
+            {
+                'is_new': not answer,
+                'is_exist': True,
+                'pk': user.id,
+                'role': user.role.name,
+                'have_boss': True if user.boss else False,
+                'boss': user.boss.username if user.boss else None,
+
+            }
     else:
-        user_info = message.from_user
-        user = user_service.create_default(chat_id=chat_id,
-                                           username=f'{user_info.last_name}{user_info.id}',
-                                           fullname=f'{user_info.last_name} {user_info.first_name}',
-                                           )
-    Session().commit()
-    message.user = \
-        {
-            'is_new': not answer,
-            'pk': user.id,
-            'role': user.role.name,
-            'have_boss': True if user.boss else False,
-            'boss': user.boss.username if user.boss else None,
+        message.user = {
+            'is_exist': False
         }
 
 
@@ -49,14 +48,15 @@ def add_review_period(message):
 def add_form(message):
     """ Добавить форму """
     form_service = FormService()
-    if message.review_period['is_active']:
+    if message.review_period['is_active'] and message.user['is_exist']:
         review_period_pk = message.review_period['pk']
         if form_service.is_exist(user_id=message.user['pk'], review_period_id=review_period_pk):
             form = form_service.by(user_id=message.user['pk'], review_period_id=review_period_pk)
         else:
             status_service = StatusService()
             status = status_service.write_in
-            form = form_service.create(user_id=message.user['pk'], review_period_id=review_period_pk, status=status)
+            form = form_service.create(user_id=message.user['pk'],
+                                       review_period_id=review_period_pk, status=status)
         Session().commit()
 
         message.form = \
@@ -92,21 +92,45 @@ def log_unknown(message):
 def log_bot(message):
     """ Логировать действия бота """
     user = message.user
-    logger.debug(f'\nUSER {user} CHAT_ID: {message.chat.id}\nBOT_CALLBACK_MESSAGE:\n{message.text}')
+    logger.debug(
+        f'\nUSER {user} CHAT_ID: {message.chat.id}\nBOT_CALLBACK_MESSAGE:\n{message.text}')
 
 
 def parse_command(bot_instance, message):
     """ Запарсить команду и поместить её объект сообщения"""
-    message.command = message.text.replace('/', '')
-    message.is_exist = message.command in COMMANDS.keys()
+    if message.text:
+        if message.user['is_exist']:
+            message.command = message.text.replace('/', '')
+            message.is_exist = message.command in COMMANDS.keys()
+        elif message.text.replace('/', '') in COMMANDS.keys():
+            message.is_exist = True
+            message.command = 'start'
+        else:
+            message.is_exist = False
+    else:
+        message.is_exist = False
 
 
 def parse_url(bot_instance, call):
     """ Запарсить URL callback с аргумантами и поместить их в обзъект сообщения"""
-    args = parse_qs(call.data)
-    call.message.args = args
-    call.url = args['callback'][0]
-    call.is_exist = call.url in ROUTES.keys()
+    if call.message.user['is_exist']:
+        if ':' in call.data: # TODO: решить проблему с сепаратором
+            args = dict()
+            args['calendar'] = call.data
+            if '|' in call.data:
+                args['callback'], args['first_date'] = call.data.split(':')[0].split('|')
+            else:
+                args['callback'] = call.data.split(':')[0]
+            args['call'] = call
+            call.url = args['callback']
+        else:
+            args = parse_qs(call.data)
+            call.url = args['callback'][0]
+
+        call.message.args = args
+        call.is_exist = call.url in ROUTES.keys()
+    else:
+        call.url = 'auth'
 
 
 __all__ = \

@@ -1,11 +1,15 @@
 """
 Файл с маршрутами.
 """
+from app.tbot.resources.review_period_views.archive_views import get_rapport, get_hr_rapport, \
+    get_boss_rapport
 from app.tbot.resources.boss_review_views import \
     boss_review_form_view, \
     boss_review_list_forms_view, \
     boss_review_decline_form_view, \
     boss_review_accept_form_view
+
+from app.tbot.resources.calendar_views import calendar_handler
 
 from app.tbot.resources.coworker_review_views import \
     coworker_review_projects_view, \
@@ -18,6 +22,14 @@ from app.tbot.resources.coworker_review_views import \
     coworker_review_advice_todo_view, \
     coworker_review_project_comment_on_view, \
     coworker_review_advice_not_todo_view
+
+from app.tbot.resources.request_views import \
+    request_view, \
+    request_list_view
+
+from app.tbot.resources.request_views.request_view import \
+    delete_request_view, \
+    accept_request_view
 
 from app.tbot.resources.review_form_views import \
     review_form_view, \
@@ -42,10 +54,27 @@ from app.tbot.resources.review_form_views import \
     review_form_projects_delete_choose_view, \
     review_form_projects_edit_choose_view, \
     review_form_send_to_boss_view, \
-    review_form_achievement_edit_view,\
+    review_form_achievement_edit_view, \
     review_form_achievements_edit_choose_view, \
-    review_form_achievement_delete_view,\
+    review_form_achievement_delete_view, \
     review_form_achievements_delete_choose_view
+
+from app.tbot.resources.review_period_views.review_period_views import \
+    review_period_start, \
+    review_period_stop
+
+from app.tbot.resources.user_views.user_views import \
+    delete_user_view, \
+    edit_user_view, \
+    user_edit_fullname, \
+    user_edit_role, \
+    user_edit_position, \
+    user_edit_boss, \
+    user_edit_department
+
+from app.tbot.resources.user_views.users_list_views import \
+    user_view, \
+    users_list_view
 
 ROUTES = \
     {
@@ -92,6 +121,31 @@ ROUTES = \
         'coworker_review_todo': coworker_review_advice_todo_view,
         'coworker_review_not_todo': coworker_review_advice_not_todo_view,
         'coworker_review_project_comment_on': coworker_review_project_comment_on_view,
+
+        'request_view': request_view,
+        'request_delete_view': delete_request_view,
+        'request_view_back': request_list_view,
+        'request_accept_view': accept_request_view,
+
+        'user_view': user_view,
+        'user_delete_view': delete_user_view,
+        'user_view_back': users_list_view,
+        'user_edit_view': edit_user_view,
+
+        'user_edit_fullname': user_edit_fullname,
+        'user_edit_role': user_edit_role,
+        'user_edit_position': user_edit_position,
+        'user_edit_boss': user_edit_boss,
+        'user_edit_department': user_edit_department,
+
+        'review_period_start': review_period_start,
+        'review_period_stop': review_period_stop,
+        'first_date_period': calendar_handler,
+        'date_period_2': calendar_handler,
+
+        'get_rapport': get_rapport,
+        'get_hr_rapport': get_hr_rapport,
+        'get_boss_rapport': get_boss_rapport,
     }
 
 __all__ = ['ROUTES']
