@@ -49,5 +49,12 @@ class StatusService(Entity):
         self.save(form)
         Session.commit()
 
+    def change_to_done(self, form: Form):
+        """ Сменить статус на форма принята """
+        form = Session.merge(form)
+        form.status = self.review_done
+        self.save(form)
+        Session.commit()
+
 
 __all__ = ['StatusService']

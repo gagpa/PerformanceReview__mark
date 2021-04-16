@@ -1,6 +1,9 @@
 from app.db import Session
-from app.models import Form, ReviewPeriod, User, Status, CoworkerAdvice
+from app.models import Form, ReviewPeriod, User, Status, CoworkerAdvice, ProjectComment, Project
+from app.services.dictinary import StatusService
 from app.services.dictinary.summary import SummaryService
+from app.services.form_review import FormService
+from app.services.review import CoworkerReviewService
 from app.tbot.services.forms.current_review_form import CurrentReviewForm
 
 
@@ -21,10 +24,7 @@ def employee_review(request):
         .filter(Form.id == pk).one_or_none()
     coworker_advices = Session().query(CoworkerAdvice).filter_by(form_id=pk).all()
     summary = SummaryService().by_form_id(pk)
-    if not summary:
-        return CurrentReviewForm(model=current_review, advices=coworker_advices, summary=summary)
-    else:
-        return CurrentReviewForm(model=current_review, advices=coworker_advices, summary=summary)
+    return CurrentReviewForm(model=current_review, advices=coworker_advices, summary=summary)
 
 
 def input_summary(request):
@@ -36,9 +36,25 @@ def change_summary(request):
     pk = request.args['pk'][0]
     summary = SummaryService().by_form_id(pk)
     if not summary:
-        summary = SummaryService().create(form_id=pk, from_hr_id=request.user.id, text=request.text)
+        summary = SummaryService().create(form_id=pk, from_hr_id=request.user.id,
+                                          text=request.text)
+        form = FormService().by_pk(pk)
+        StatusService().change_to_done(form)
+        advices = CoworkerReviewService().all_by(form_id=pk)
+        ratings = Session.query(ProjectComment). \
+            join(Project, ProjectComment.project) \
+            .filter(Project.form_id == pk).all()
+        for rating in ratings:
+            rating.hr_review_status_id = 3
+            Session.add(rating)
+            Session.commit()
+
+        for advice in advices:
+            advice.hr_review_status_id = 3
+            Session.add(advice)
+            Session.commit()
     else:
         summary.text = request.text
-    Session().add(summary)
-    Session().commit()
+    Session.add(summary)
+    Session.commit()
     return CurrentReviewForm(changed=True)

@@ -24,7 +24,8 @@ class CurrentReviewForm(Template):
         elif self.args.get('model') and self.args.get('summary'):
             rows = list()
             rows.append([BUTTONS_TEMPLATES['change_summary'].add(pk=self.args.get('model').id),
-                         BUTTONS_TEMPLATES['get_current_rapport'].add(pk=self.args.get('model').id),
+                         BUTTONS_TEMPLATES['get_current_rapport'].add(
+                             pk=self.args.get('model').id),
                          BUTTONS_TEMPLATES['current_forms_list']])
             markup = self.markup_builder.build(*rows)
             return markup
@@ -37,8 +38,8 @@ class CurrentReviewForm(Template):
             title = 'Текущий Review'
             list_data = [f'{model.user.fullname},\n' \
                          f'{model.status.name},\n' \
-                         f'{f"Оценка: {model.rating.name}" if model.rating else ""}\n' for
-                         model in self.args["models"]]
+                         f'{f"Оценка: {model.rating.name}" if model.rating and model.status.id == 4 else ""}\n'
+                         for model in self.args["models"]]
             message_text = self.message_builder.build_list_message(title=title,
                                                                    description=description,
                                                                    list_data=list_data,
