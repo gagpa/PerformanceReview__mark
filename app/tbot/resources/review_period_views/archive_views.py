@@ -44,8 +44,7 @@ def get_boss_rapport(request):
 def get_data_for_rapport(pk):
     old_review = Session().query(Form).join(ReviewPeriod, Form.review_period) \
         .join(User, Form.user).join(Rating, Form.rating).join(Status, Form.status) \
-        .filter(Form.id == pk) \
-        .filter(ReviewPeriod.is_active == False).one_or_none()
+        .filter(Form.id == pk).one_or_none()
     duties = Session().query(Duty).filter(Duty.form == old_review)
     projects = Session().query(Project).filter(Project.form == old_review)
     achievements = Session().query(Achievement).filter(Achievement.form == old_review)

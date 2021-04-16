@@ -81,7 +81,7 @@ def add_keyboard(message):
 def log_command(message):
     """ Логировать действия пользователей """
     user = message.user
-    logger.debug(f'\nUSER {user} COMMAND: {message.command}')
+    # logger.debug(f'\nUSER {user} COMMAND: {message.command}')
 
 
 def log_callback(call):
@@ -119,7 +119,7 @@ def parse_command(bot_instance, message):
 def parse_url(bot_instance, call):
     """ Запарсить URL callback с аргумантами и поместить их в обзъект сообщения"""
     if call.message.user['is_exist']:
-        if ':' in call.data: # TODO: решить проблему с сепаратором
+        if ':' in call.data:  # TODO: решить проблему с сепаратором
             args = dict()
             args['calendar'] = call.data
             if '|' in call.data:
@@ -145,7 +145,7 @@ __all__ = \
         'add_form',
         'add_keyboard',
         'log_callback',
-        'log_command',
+        # 'log_command',
         'log_unknown',
         'log_bot',
         'parse_url',

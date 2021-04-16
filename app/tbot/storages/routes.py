@@ -71,6 +71,8 @@ from app.tbot.resources.review_period_views.archive_views import \
     get_rapport, \
     get_hr_rapport, \
     get_boss_rapport
+from app.tbot.resources.review_period_views.current_review_views import employee_review, \
+    current_forms_list, input_summary
 
 from app.tbot.resources.review_period_views.review_period_views import \
     review_period_start, \
@@ -168,6 +170,11 @@ ROUTES = \
         'get_rapport': get_rapport,
         'get_hr_rapport': get_hr_rapport,
         'get_boss_rapport': get_boss_rapport,
+        'employee_review': employee_review,
+        'current_forms_list': current_forms_list,
+        'input_summary': input_summary,
+        'change_summary': input_summary,
+        'get_current_rapport': get_rapport,
     }
 
 __all__ = ['ROUTES']

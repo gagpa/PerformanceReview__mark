@@ -14,8 +14,13 @@ class SummaryService(Entity):
         return summaries
 
     def by_id(self, pk: int) -> Summary:
-        """ Вернуть оценку по pk """
+        """ Вернуть summary по pk """
         summary = Session().query(Summary).get(pk)
+        return summary
+
+    def by_form_id(self, pk: int) -> Summary:
+        """ Вернуть summary по form_id """
+        summary = Session().query(Summary).filter_by(form_id=pk).one_or_none()
         return summary
 
 
