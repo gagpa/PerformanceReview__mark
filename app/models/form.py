@@ -16,12 +16,10 @@ class Form(Base):
 
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     review_period_id = Column(Integer, ForeignKey('review_periods.id'), nullable=False)
-    rating_id = Column(SmallInteger, ForeignKey('ratings.id'), nullable=True)  # TODO Проверить колонку
     status_id = Column(SmallInteger, ForeignKey('statuses.id'), nullable=False)
 
     user = relationship('User', backref='forms')
     review_period = relationship('ReviewPeriod', backref='forms')
-    rating = relationship('Rating', backref='forms')
     status = relationship('Status', backref='forms')
 
     def __repr__(self):

@@ -27,7 +27,6 @@ class User(Base):
     department = relationship('Department', backref='users')
     role = relationship('Role', backref='users')
     position = relationship('Position', backref='users')
-    projects = relationship('Project', secondary='projects_comments')
 
     def __repr__(self):
         return f'User: {self.username} {self.chat_id}'
