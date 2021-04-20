@@ -1,12 +1,10 @@
-from sqlalchemy import Column, VARCHAR, Integer, TIMESTAMP
+from sqlalchemy import Column, VARCHAR, Integer
 
-from app.db import base
+from app.db import Base
 
 
-class Position(base):
-    """
-    Модель должности.
-    """
+class Position(Base):
+    """ Модель должности """
     __tablename__ = 'positions'
     id = Column(Integer, primary_key=True)
 
@@ -14,3 +12,6 @@ class Position(base):
 
     def __repr__(self):
         return f'Position {self.name}'
+
+
+__all__ = ['Position']

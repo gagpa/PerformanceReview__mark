@@ -1,0 +1,2 @@
+from app.tbot.middlewares.callback_query_middlewares import ORDER_CALLBACK_QUERY_MIDDLEWARES
+from app.tbot.middlewares.message_middlewares import ORDER_MESSAGE_MIDDLEWARES
