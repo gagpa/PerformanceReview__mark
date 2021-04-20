@@ -1,15 +1,13 @@
 from datetime import datetime
 
 from sqlalchemy import Column, VARCHAR, Integer, ForeignKey, TIMESTAMP
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
-from app.db import base
+from app.db import Base
 
 
-class Duty(base):
-    """
-    Модель обязанностей.
-    """
+class Duty(Base):
+    """ Модель обязанностей """
     __tablename__ = 'duties'
     id = Column(Integer, primary_key=True)
 
@@ -18,9 +16,12 @@ class Duty(base):
     created_at = Column(TIMESTAMP, default=datetime.now(), nullable=False)
     updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=True)
 
-    form_id = Column(Integer, ForeignKey('forms.id'), nullable=False)
+    form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False, unique=True)
 
-    form = relationship('Form', backref='duties')
+    form = relationship('Form', backref=backref('duty', uselist=False))
 
     def __repr__(self):
-        return f'Duty'
+        return f'Duty {self.text}'
+
+
+__all__ = ['Duty']

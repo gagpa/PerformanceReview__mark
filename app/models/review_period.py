@@ -1,12 +1,10 @@
 from sqlalchemy import Column, Integer, TIMESTAMP, Boolean
 
-from app.db import base
+from app.db import Base
 
 
-class ReviewPeriod(base):
-    """
-    Модель периода review.
-    """
+class ReviewPeriod(Base):
+    """ Модель периода review """
     __tablename__ = 'review_periods'
     id = Column(Integer, primary_key=True)
 
@@ -16,3 +14,6 @@ class ReviewPeriod(base):
 
     def __repr__(self):
         return f'Review period {self.start_date} - {self.end_date}'
+
+
+__all__ = ['ReviewPeriod']

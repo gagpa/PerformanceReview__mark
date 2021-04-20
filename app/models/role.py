@@ -1,12 +1,10 @@
 from sqlalchemy import Column, VARCHAR, Integer
 
-from app.db import base
+from app.db import Base
 
 
-class Role(base):
-    """
-    Модель ролей.
-    """
+class Role(Base):
+    """ Модель ролей """
     __tablename__ = 'roles'
     id = Column(Integer, primary_key=True)
 
@@ -14,3 +12,6 @@ class Role(base):
 
     def __repr__(self):
         return f'Role {self.name}'
+
+
+__all__ = ['Role']

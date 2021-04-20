@@ -1,12 +1,10 @@
 from sqlalchemy import Column, VARCHAR, SmallInteger
 
-from app.db import base
+from app.db import Base
 
 
-class Status(base):
-    """
-    Модель статуса формы.
-    """
+class Status(Base):
+    """ Модель статуса формы """
     __tablename__ = 'statuses'
     id = Column(SmallInteger, primary_key=True)
 
@@ -14,3 +12,6 @@ class Status(base):
 
     def __repr__(self):
         return f'Status: {self.name}'
+
+
+__all__ = ['Status']
