@@ -35,6 +35,15 @@ class DutyForm(Template):
             description = 'Внесите изменения или вернитесь к анкете'
             text = self.args['model'].text
 
+        elif self.args.get('form'):
+            description = ''
+            text = self.args['model'].text
+            message_text = self.message_builder.build_message(title=title,
+                                                              description=description,
+                                                              text=text,
+                                                              )
+            return message_text
+
         else:
             description = 'Отправьте в сообщении свои обязанности'
             text = ''

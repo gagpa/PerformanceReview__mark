@@ -46,14 +46,17 @@ class AchievementsForm(Template):
                                                                    description=description,
                                                                    list_data=list_data,
                                                                    )
+            return message_text
 
         elif self.args.get('can_add'):
             description = 'Факты, которые ты считаешь своими основными достижениями и успехами'
             text = 'Раздел не заполнен'
             message_text = self.message_builder.build_message(title=title,
                                                               description=description,
-                                                              text=text,
-                                                              )
+                                                              text=text)
+
+            return message_text
+
         elif self.args.get('can_del'):
             description = 'Выберите достижение, которое вы хотите удалить'
             list_data = [f'{self.model.text}' for self.model in self.args['models']]
@@ -61,6 +64,7 @@ class AchievementsForm(Template):
                                                                    description=description,
                                                                    list_data=list_data,
                                                                    )
+            return message_text
 
         elif self.args.get('can_edit'):
             description = 'Выберите достижение, которое вы хотите изменить'
@@ -69,6 +73,16 @@ class AchievementsForm(Template):
                                                                    description=description,
                                                                    list_data=list_data,
                                                                    )
+            return message_text
+
+        elif self.args.get('form'):
+            description = ''
+            list_data = [f'{self.model.text}' for self.model in self.args['models']]
+            message_text = self.message_builder.build_list_message(title=title,
+                                                                   description=description,
+                                                                   list_data=list_data,
+                                                                   )
+            return message_text
 
         else:
             description = 'Отправьте в сообщении свои основные достижения и успехи'
@@ -78,7 +92,7 @@ class AchievementsForm(Template):
                                                                    list_data=list_data,
                                                                    )
 
-        return message_text
+            return message_text
 
 
 __all__ = ['AchievementsForm']

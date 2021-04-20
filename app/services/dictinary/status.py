@@ -23,6 +23,11 @@ class StatusService(Entity):
         """ Получить статус на оценке коллег """
         return self.by(name='На оценке коллег')
 
+    @property
+    def review_done(self):
+        """ Получить статус форма прошла все проверки """
+        return self.by(name='Анкета заполена/Review сформаировано')
+
     def change_to_boss_review(self, form: Form):
         """ Сменить статус на проверке у руководителя """
         form = Session.merge(form)
@@ -41,6 +46,13 @@ class StatusService(Entity):
         """ Сменить статус на заполнение формы """
         form = Session.merge(form)
         form.status = self.write_in
+        self.save(form)
+        Session.commit()
+
+    def change_to_done(self, form: Form):
+        """ Сменить статус на форма принята """
+        form = Session.merge(form)
+        form.status = self.review_done
         self.save(form)
         Session.commit()
 

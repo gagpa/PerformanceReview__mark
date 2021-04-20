@@ -1,5 +1,11 @@
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+import datetime
 from copy import deepcopy
+from typing import List, Optional
+
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+import telebot_calendar
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 class InlineKeyboardBuilder:
@@ -18,6 +24,27 @@ class InlineKeyboardBuilder:
                                              ))
         markup = InlineKeyboardMarkup(row_width=row_width)
         markup.add(*btns)
+
+        for row in rows:
+            markup.add(*row)
+
+        return markup
+
+    @staticmethod
+    def build_list_up(button_template, unique_args: List[dict], general_args: Optional[dict] = None, *rows):
+        """ Построить клавиатуру списка """
+        row_width = 5
+        btns = []
+        if general_args:
+            button_template.add(**general_args)
+        for i, args in enumerate(unique_args):
+            button_template.add(**args)
+            btns.append(InlineKeyboardButton(text=button_template.text.format(i + 1),
+                                             callback_data=button_template.callback
+                                             ))
+        markup = InlineKeyboardMarkup(row_width=row_width)
+        markup.add(*btns)
+
         for row in rows:
             markup.add(*row)
 
@@ -38,6 +65,22 @@ class InlineKeyboardBuilder:
         return btns
 
     @staticmethod
+    def build_paginator_arrows(button_template, page, max_page, **kwargs):
+        """ Постоить клавиатуру пагинатор стрелок """
+        left_arw = None
+        right_arw = None
+        if page != 1:
+            left_arw = InlineKeyboardButton(text='⬅', callback_data=button_template.add(pg=page-1, **kwargs).callback)
+        if page != max_page:
+            right_arw = InlineKeyboardButton(text='➡', callback_data=button_template.add(pg=page+1, **kwargs).callback)
+        btns = []
+        if left_arw:
+            btns.append(left_arw)
+        if right_arw:
+            btns.append(right_arw)
+        return btns
+
+    @staticmethod
     def build_btns(*template_btns, **kwargs):
         btns = []
         for template_btn in template_btns:
@@ -49,7 +92,7 @@ class InlineKeyboardBuilder:
     @staticmethod
     def build(*rows: list, **kwargs):
         """ Построить клавиатуру по строчно """
-        markup = InlineKeyboardMarkup(row_width=3)
+        markup = InlineKeyboardMarkup(row_width=5)
         for row in rows:
             btns = []
             for btn in row:
@@ -58,6 +101,16 @@ class InlineKeyboardBuilder:
                                                  callback_data=btn.callback,
                                                  ))
             markup.add(*btns)
+        return markup
+
+    @staticmethod
+    def build_calendar(call_data):
+        now = datetime.datetime.now()
+        # документация по календарю: https://github.com/FlymeDllVa/telebot-calendar
+        calendar = telebot_calendar.CallbackData(call_data, "action", "year", "month", "day")
+        markup = telebot_calendar.create_calendar(name=calendar.prefix,
+                                                  year=now.year,
+                                                  month=now.month)
         return markup
 
 

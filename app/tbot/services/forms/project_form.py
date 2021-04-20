@@ -52,7 +52,7 @@ class ProjectForm(Template):
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
-        title = '[Проект]'
+        title = 'Проект'
         text = ''
 
         if self.args.get('is_name'):
@@ -76,6 +76,26 @@ class ProjectForm(Template):
                 text += f'Ваша оценка: {stars}\n'
             if self.args.get('comment'):
                 text += 'Ваш комментарий {comment}\n'.format(comment=self.args['comment'])
+
+        elif self.args.get('on_hr_review'):
+            description = 'Введите комментарий для оценивающего'
+            project_text = f'Название - {self.args["project"].name}\n' \
+                           f'Описание - {self.args["project"].description}\n'
+            rating_text = self.message_builder.build_message(title='Комментарий и Оценка коллеги',
+                                                              description='',
+                                                              text=f'Оценка: {self.args["rating"].rating.value} - {self.args["rating"].text}')
+            if self.args.get('rating').hr_comment:
+                comment_text = self.message_builder.build_message(title='Комментарий HR',
+                                                                  description='',
+                                                                  text=f'{self.args["rating"].hr_comment.text}')
+            else:
+                comment_text = ''
+            text = f'{project_text}\n▫ {rating_text}\n\n▫️{comment_text}'
+            message_text = self.message_builder.build_message(title=title,
+                                                              description=description,
+                                                              text=text)
+            return message_text
+
         else:
             description = ''
         text += f'{self.args["model"].name} {self.args["model"].description} {self.args["model"].users}'
