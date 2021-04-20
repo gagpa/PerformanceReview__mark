@@ -1,5 +1,6 @@
 from app.db import Session
 from app.models import Position, Department, Role
+from app.services.user import UserService
 from app.tbot.services.auth import UserServiceTBot
 from app.tbot.services.forms.auth_form import AuthForm
 
@@ -9,9 +10,12 @@ def add_new_username(request):
     service = UserServiceTBot()
     username = request.message.chat.username
     chat_id = request.message.chat.id
-    user = service.create(username=username, chat_id=chat_id)
-    template = AuthForm(is_name=True)
-    return template, service.add_model(add_fullname_user)
+    if not UserService().is_exist(chat_id=str(chat_id)):
+        user = service.create(username=username, chat_id=chat_id)
+        template = AuthForm(is_name=True)
+        return template, service.add_model(add_fullname_user)
+    else:
+        return AuthForm(exist=True)
 
 
 def add_fullname_user(request):

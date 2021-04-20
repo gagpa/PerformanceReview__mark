@@ -1,11 +1,14 @@
 import datetime
 from copy import deepcopy
+from math import ceil
 from typing import List, Optional
 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 import telebot_calendar
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+from configs.bot_config import OBJECT_PER_PAGE
 
 
 class InlineKeyboardBuilder:
@@ -39,14 +42,17 @@ class InlineKeyboardBuilder:
             button_template.add(**general_args)
         for i, args in enumerate(unique_args):
             button_template.add(**args)
-            btns.append(InlineKeyboardButton(text=button_template.text.format(i + 1),
+            btns.append(InlineKeyboardButton(text=i + 1,
                                              callback_data=button_template.callback
                                              ))
         markup = InlineKeyboardMarkup(row_width=row_width)
         markup.add(*btns)
 
         for row in rows:
-            markup.add(*row)
+            temp_row = [btn if isinstance(btn, InlineKeyboardButton)
+                        else InlineKeyboardButton(text=btn.add(**general_args).text, callback_data=btn.callback)
+                        for btn in row]
+            markup.add(*temp_row)
 
         return markup
 
@@ -65,14 +71,16 @@ class InlineKeyboardBuilder:
         return btns
 
     @staticmethod
-    def build_paginator_arrows(button_template, page, max_page, **kwargs):
+    def build_paginator_arrows(button_template, page, count_obj, **kwargs):
         """ Постоить клавиатуру пагинатор стрелок """
         left_arw = None
         right_arw = None
+        max_page = ceil(count_obj / OBJECT_PER_PAGE)
         if page != 1:
-            left_arw = InlineKeyboardButton(text='⬅', callback_data=button_template.add(pg=page-1, **kwargs).callback)
+            left_arw = InlineKeyboardButton(text='⬅', callback_data=button_template.add(pg=page - 1, **kwargs).callback)
         if page != max_page:
-            right_arw = InlineKeyboardButton(text='➡', callback_data=button_template.add(pg=page+1, **kwargs).callback)
+            right_arw = InlineKeyboardButton(text='➡',
+                                             callback_data=button_template.add(pg=page + 1, **kwargs).callback)
         btns = []
         if left_arw:
             btns.append(left_arw)

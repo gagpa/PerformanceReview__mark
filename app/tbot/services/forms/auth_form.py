@@ -39,6 +39,9 @@ class AuthForm(Template):
         elif self.args.get('is_not_department'):
             description = 'Такого отдела не существует. Попробуйте снова'
 
+        elif self.args.get('exist'):
+            description = 'Добро пожаловать!'
+
         else:
             description = ''
 

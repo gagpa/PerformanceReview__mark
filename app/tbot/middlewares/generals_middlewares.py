@@ -81,12 +81,17 @@ def add_keyboard(message):
 def log_command(message):
     """ Логировать действия пользователей """
     user = message.user
-    # logger.debug(f'\nUSER {user} COMMAND: {message.command}')
+    if message.user['is_exist']:
+        logger.debug(f'\nUSER {user} COMMAND: {message.command}')
 
 
 def log_callback(call):
+    try:
+        args = call.message.args
+    except AttributeError:
+        args = ''
     user = call.message.user
-    logger.debug(f'\nUSER {user} URL: {call.url}')
+    logger.debug(f'\nUSER {user} URL: {call.url} ARGS: {args}')
 
 
 def log_unknown(message):
@@ -97,8 +102,7 @@ def log_unknown(message):
 def log_bot(message):
     """ Логировать действия бота """
     user = message.user
-    logger.debug(
-        f'\nUSER {user} CHAT_ID: {message.chat.id}\nBOT_CALLBACK_MESSAGE:\n{message.text}')
+    logger.debug(f'\nUSER {user} CHAT_ID: {message.chat.id}\nBOT_CALLBACK_MESSAGE:\n{message.text}')
 
 
 def parse_command(bot_instance, message):
@@ -123,14 +127,14 @@ def parse_url(bot_instance, call):
             args = dict()
             args['calendar'] = call.data
             if '|' in call.data:
-                args['callback'], args['first_date'] = call.data.split(':')[0].split('|')
+                args['cb'], args['first_date'] = call.data.split(':')[0].split('|')
             else:
-                args['callback'] = call.data.split(':')[0]
+                args['cb'] = call.data.split(':')[0]
             args['call'] = call
-            call.url = args['callback']
+            call.url = args['cb']
         else:
             args = parse_qs(call.data)
-            call.url = args['callback'][0]
+            call.url = args['cb'][0]
 
         call.message.args = args
         call.is_exist = call.url in ROUTES.keys()
@@ -145,7 +149,7 @@ __all__ = \
         'add_form',
         'add_keyboard',
         'log_callback',
-        # 'log_command',
+        'log_command',
         'log_unknown',
         'log_bot',
         'parse_url',

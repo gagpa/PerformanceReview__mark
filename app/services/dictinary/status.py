@@ -26,7 +26,11 @@ class StatusService(Entity):
     @property
     def review_done(self):
         """ Получить статус форма прошла все проверки """
-        return self.by(name='Анкета заполена/Review сформаировано')
+        return self.by(name='Review сформировано')
+
+    @property
+    def accepted(self):
+        return self.by(name='Анкета заполена')
 
     def change_to_boss_review(self, form: Form):
         """ Сменить статус на проверке у руководителя """

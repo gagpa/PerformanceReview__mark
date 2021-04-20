@@ -1,15 +1,15 @@
-from app.services.user import CoworkerService
-from app.services.form_review import FormService
+from app.services.review import CoworkerReviewService
 from app.tbot.services.forms import ProjectsForm
 
 
 def projects_view(request):
     """ Просмотр проектов под оценку """
-    coworker = request.user
-    pk = request.pk()
-    form = FormService().by_pk(pk=pk)
-    projects = CoworkerService(coworker).find_project_to_comment(form)
-    template = ProjectsForm(models=projects, on_coworker_review=True)
+    review_pk = request.args['review'][0]
+    review = CoworkerReviewService().by_pk(review_pk)
+    projects = review.projects
+    page = int(request.args['pg'][0]) if request.args.get('pg') else 1
+    template = ProjectsForm(form=review.advice.form, ratings=review.projects_ratings, review=review, projects=projects,
+                            page=page, review_type='coworker', have_markup=True)
     return template
 
 

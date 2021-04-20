@@ -1,6 +1,6 @@
 from app.db import Session
 from app.models import Form, ReviewPeriod, User, Status, CoworkerAdvice, Project, \
-    ProjectComment
+    CoworkerProjectRating
 from app.services.dictinary import StatusService
 from app.services.dictinary.summary import SummaryService
 from app.services.form_review import FormService
@@ -45,8 +45,8 @@ def change_summary(request):
         form = FormService().by_pk(pk)
         StatusService().change_to_done(form)
         advices = CoworkerReviewService().all_by(form_id=pk)
-        ratings = Session.query(ProjectComment). \
-            join(Project, ProjectComment.project) \
+        ratings = Session.query(CoworkerProjectRating). \
+            join(Project, CoworkerProjectRating.project) \
             .filter(Project.form_id == pk).all()
         for rating in ratings:
             rating.hr_review_status_id = 4

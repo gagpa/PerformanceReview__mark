@@ -1,53 +1,45 @@
-from app.services.dictinary.rating import RatingService
-from app.services.form_review import ProjectsService
+from app.services.review import CoworkerReviewService
 from app.services.user import CoworkerService
-from app.tbot.services import CoworkerServiceTBot
 from app.tbot.services.forms import ProjectForm
 
 
 def project_view(request):
     """ Преокт на оценке """
-    return project_rate_choose_view(request)
+    proj_rate_pk = request.args['proj_rate'][0]
+    rating = CoworkerReviewService().rating_by_pk(proj_rate_pk)
+    review = rating.review
+    return ProjectForm(have_markup=True, rating=rating, review=review, project=rating.project, review_type='coworker')
 
 
-def project_rate_choose_view(request):
-    """ Выбор оценки проекта """
-    pk = request.pk()
-    coworker = request.user
-    project_service = ProjectsService()
-    project = project_service.by_pk(pk=pk)
-    coworker_service = CoworkerServiceTBot(coworker, project=project)
-    rating = coworker_service.find_rating(project)
-    comment = coworker_service.find_comment(project).text
-    left_project, right_project = coworker_service.find_right_left_project(project=project)
-
-    template = ProjectForm(model=project, on_rate=True, rating=rating, comment=comment,
-                           left_project=left_project, right_project=right_project)
-    return template, coworker_service.comment_on_before(project_comment_on_view)
-
-
-def project_rate_view(request):
+def rate_view(request):
     """ Оценить проект """
-    pk_rating = request.pk()
-    pk_project = request.pk(key='project_pk')
-    coworker = request.user
-
-    project = ProjectsService().by_pk(pk=pk_project)
-    rating = RatingService().by_pk(pk=pk_rating)
-    CoworkerService(coworker).rate_project(project=project, rating=rating)
-    request.add('pk', pk_project)
-    return project_rate_choose_view(request)
+    proj_rate_pk = request.args['proj_rate'][0]
+    rate_pk = request.args['rate'][0]
+    CoworkerService().rate(proj_rate_pk=proj_rate_pk, rate_pk=rate_pk)
+    return project_view(request=request)
 
 
-def project_comment_on_view(request):
-    """ Прокомментировать проект коллеги """
-    return project_rate_choose_view(request)
+def comment_view(request):
+    """ Прокомментировать проект """
+    proj_rate_pk = request.args['proj_rate'][0]
+    rating = CoworkerReviewService().rating_by_pk(proj_rate_pk)
+    review = rating.review
+    return ProjectForm(have_markup=False, rating=rating, review=review, project=rating.project, review_type='coworker'), \
+           request.send_args(save_comment_view, proj_rate=[proj_rate_pk], review=[review.id])
+
+
+def save_comment_view(request):
+    """ Сохранить комментарий """
+    proj_rate_pk = request.args['proj_rate'][0]
+    comment = request.text
+    CoworkerService().comment_on(proj_rate_pk=proj_rate_pk, text=comment)
+    return project_view(request=request)
 
 
 __all__ = \
     [
         'project_view',
-        'project_comment_on_view',
-        'project_rate_choose_view',
-        'project_rate_view',
+        'rate_view',
+        'comment_view',
+        'save_comment_view'
     ]

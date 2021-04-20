@@ -11,100 +11,96 @@ class ProjectForm(Template):
 
     def create_markup(self) -> InlineKeyboardMarkup:
         """ Создать клавиатуру """
-        if self.args.get('can_edit'):
-            rows = []
+        if self.args.get('have_markup'):
+            form = self.args.get('form')
+            review_type = self.args.get('review_type')
+            review = self.args.get('review')
+            project = self.args.get('project')
+            coworker_comment_rating = self.args.get('rating')
+            page = self.args.get('page')
 
-            if self.args.get('is_name'):
-                rows.append([BUTTONS_TEMPLATES['review_form_project_edit_description'],
-                             BUTTONS_TEMPLATES['review_form_project_edit_contacts']])
+            if review_type == 'write':
+                self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_project_edit_name'],
+                                     BUTTONS_TEMPLATES['review_form_project_edit_description'],
+                                     BUTTONS_TEMPLATES['review_form_project_edit_contacts'])
+                self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'])
+                return self.build(project=project.id)
 
-            elif self.args.get('is_description'):
-                rows.append([BUTTONS_TEMPLATES['review_form_project_edit_name'],
-                             BUTTONS_TEMPLATES['review_form_project_edit_contacts']])
+            elif review_type == 'coworker':
+                unique_args = [{'rate': rating.id} for rating in RatingService().all]
+                rate = BUTTONS_TEMPLATES['coworker_rate']
+                comment = BUTTONS_TEMPLATES['coworker_comment']
+                back = BUTTONS_TEMPLATES['coworker_back_projects'].add(review=review.id)
+                self.extend_keyboard(False, comment)
+                self.extend_keyboard(True, back)
+                return self.build_list(rate, unique_args=unique_args, proj_rate=coworker_comment_rating.id,
+                                       review=review.id)
 
-            elif self.args.get('is_contacts'):
-                rows.append([BUTTONS_TEMPLATES['review_form_project_edit_name'],
-                             BUTTONS_TEMPLATES['review_form_project_edit_description']])
-
-            else:
-                rows.append([BUTTONS_TEMPLATES['review_form_project_edit_name'],
-                             BUTTONS_TEMPLATES['review_form_project_edit_description'],
-                             BUTTONS_TEMPLATES['review_form_project_edit_contacts']])
-            rows.append([BUTTONS_TEMPLATES['review_form_projects_list']])
-            markup = InlineKeyboardBuilder.build(*rows, pk=self.args['model'].id)
-            return markup
-
-        elif self.args.get('on_rate'):
-            arrow_btns = InlineKeyboardBuilder.build_btns_paginator_arrows(
-                BUTTONS_TEMPLATES['coworker_review_projects_choose'],
-                left_model=self.args.get('left_project'),
-                right_model=self.args.get('right_project'),
-            )
-            form_btn = InlineKeyboardBuilder.build_btns(BUTTONS_TEMPLATES['coworker_review_form'],
-                                                        pk=self.args['model'].form_id)
-            markup = InlineKeyboardBuilder.build_list(RatingService().all,
-                                                      BUTTONS_TEMPLATES['coworker_review_project_choose_rate'],
-                                                      arrow_btns,
-                                                      form_btn,
-                                                      project_pk=self.args['model'].id
-                                                      )
-            return markup
+            elif self.args.get('on_rate'):
+                arrow_btns = InlineKeyboardBuilder.build_btns_paginator_arrows(
+                    BUTTONS_TEMPLATES['coworker_review_projects_choose'],
+                    left_model=self.args.get('left_project'),
+                    right_model=self.args.get('right_project'),
+                )
+                form_btn = InlineKeyboardBuilder.build_btns(BUTTONS_TEMPLATES['coworker_review_form'],
+                                                            pk=self.args['model'].form_id)
+                markup = InlineKeyboardBuilder.build_list(RatingService().all,
+                                                          BUTTONS_TEMPLATES['coworker_review_project_choose_rate'],
+                                                          arrow_btns,
+                                                          form_btn,
+                                                          project_pk=self.args['model'].id
+                                                          )
+                return markup
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
         title = 'Проект'
         text = ''
-
-        if self.args.get('is_name'):
-            description = 'Отправьте в сообщении название проекта'
-
-        elif self.args.get('is_description'):
-            description = 'Отправьте в сообщении краткое описание проекта и своей роли на нём'
-
-        elif self.args.get('is_contacts'):
-            description = 'Отправьте в сообщении логины коллег кто может оценить'
-
-        elif self.args.get('can_edit'):
-            description = 'Выберите что вы хотите изменить в проекте'
-
-        elif self.args.get('on_rate'):
+        form = self.args.get('form')
+        review_type = self.args.get('review_type')
+        review = self.args.get('review')
+        project = self.args.get('project')
+        coworker_comment_rating = self.args.get('rating')
+        page = self.args.get('page')
+        if review_type == 'coworker':
+            self.build_message(title=project.name, text=f'{project.description}')
             description = 'Оцените проект от 1 🌟 до 5 🌟\n'
             for i, rating in enumerate(RatingService().all):
                 description += f'{"🌟" * rating.value} - {rating.name}\n'
-            if self.args.get('rating'):
-                stars = '🌟' * self.args['rating'].value
-                text += f'Ваша оценка: {stars}\n'
-            if self.args.get('comment'):
-                text += 'Ваш комментарий {comment}\n'.format(comment=self.args['comment'])
+            self.build_message(description=description)
+            if coworker_comment_rating.rating:
+                self.build_message(title='Текущая оценка', text='🌟' * coworker_comment_rating.rating.value)
+            if coworker_comment_rating.text:
+                self.build_message(title='Комментарий', text=coworker_comment_rating.text)
+            return self.MESSAGE
 
-        elif self.args.get('on_hr_review'):
-            description = 'Введите комментарий для оценивающего'
-            project_text = f'Название - {self.args["project"].name}\n' \
-                           f'Описание - {self.args["project"].description}\n'
-            rating_text = self.message_builder.build_message(title='Комментарий и Оценка коллеги',
-                                                              description='',
-                                                              text=f'Оценка: {self.args["rating"].rating.value} - {self.args["rating"].text}')
-            if self.args.get('rating').hr_comment:
-                comment_text = self.message_builder.build_message(title='Комментарий HR',
-                                                                  description='',
-                                                                  text=f'{self.args["rating"].hr_comment.text}')
+        elif review_type == 'hr':
+            self.build_message(title='Комментарий для оценивающего',
+                               text=f'Название - {self.args["project"].name}\n' \
+                                    f'Описание - {self.args["project"].description}\n')
+            if coworker_comment_rating.rating:
+                self.build_message(title='Текущая оценка', text='🌟' * coworker_comment_rating.rating.value)
+            if coworker_comment_rating.text:
+                self.build_message(title='Комментарий к проекту', text=coworker_comment_rating.text)
+            if coworker_comment_rating.hr_comment:
+                self.build_message(title='Комментарий HR', text=coworker_comment_rating.hr_comment)
+            return self.MESSAGE
+        elif review_type == 'write':
+            if not project.name:
+                self.build_message(title='Заполнение проекта', description='Напишите название проекта')
+            elif not project.description:
+                self.build_message(title='Заполнение проекта', description='Опишите цель проекта и свои обязанности',
+                                   text=f'Название проекта: {project.name}')
+            elif not project.reviews:
+                self.build_message(title='Заполнение проекта',
+                                   description='Введите username коллеги, который может оценить ваш вклад в проект',
+                                   text=f'Название проекта: {project.name}\n'
+                                        f'Цели и обязаннсоти: {project.description}')
             else:
-                comment_text = ''
-            text = f'{project_text}\n▫ {rating_text}\n\n▫️{comment_text}'
-            message_text = self.message_builder.build_message(title=title,
-                                                              description=description,
-                                                              text=text)
-            return message_text
-
-        else:
-            description = ''
-        text += f'{self.args["model"].name} {self.args["model"].description} {self.args["model"].users}'
-
-        message_text = self.message_builder.build_message(title=title,
-                                                          description=description,
-                                                          text=text,
-                                                          )
-        return message_text
+                coworkers = ' '.join([f"@{review.coworker.username}" for review in project.reviews])
+                self.build_message(title=f'Проект - {project.name}', text=f'Цели и обязаннсоти: {project.description}\n'
+                                                                          f'Коллеги: {coworkers}')
+            return self.MESSAGE
 
 
 __all__ = ['ProjectForm']

@@ -1,7 +1,7 @@
 from statistics import mean
 
 from app.db import Session
-from app.models import Form, User, ProjectComment, Project
+from app.models import Form, User, Project, CoworkerProjectRating
 from app.services.abc_entity import Entity
 from app.services.form_review import FormService
 
@@ -14,20 +14,20 @@ class ProjectCommentService(Entity):
     def boss_projects_comments(pk):
         """ Комментарии руководителя о проектах формы"""
         form = FormService().by_pk(pk)
-        projects_comments = Session().query(ProjectComment) \
-            .join(Project, ProjectComment.project) \
+        projects_comments = Session().query(CoworkerProjectRating) \
+            .join(Project, CoworkerProjectRating.project) \
             .join(Form, Project.form).join(User, Form.user)
         boss_comments = projects_comments \
             .filter(Form.id == form.id) \
-            .filter(ProjectComment.user_id == form.user.boss_id).all()
+            .filter(CoworkerProjectRating.coworker_review_id == form.user.boss_id).all()
         return boss_comments
 
     @staticmethod
     def coworkers_projects_comments(pk):
         """ Комментарии коллег о проектах формы"""
         form = FormService().by_pk(pk)
-        projects_comments = Session().query(ProjectComment) \
-            .join(Project, ProjectComment.project) \
+        projects_comments = Session().query(CoworkerProjectRating) \
+            .join(Project, CoworkerProjectRating.project) \
             .join(Form, Project.form).join(User, Form.user)
         coworkers_comments = projects_comments \
             .filter(Form.id == form.id) \
@@ -38,8 +38,8 @@ class ProjectCommentService(Entity):
     def subordinate_projects_comments(pk):
         """ Комментарии подчиненных о проектах формы"""
         form = FormService().by_pk(pk)
-        projects_comments = Session().query(ProjectComment) \
-            .join(Project, ProjectComment.project) \
+        projects_comments = Session().query(CoworkerProjectRating) \
+            .join(Project, CoworkerProjectRating.project) \
             .join(Form, Project.form).join(User, Form.user)
         subordinate_comments = projects_comments.filter(Form.id == form.id) \
             .filter(User.boss_id == form.user.id).all()
@@ -62,4 +62,4 @@ class ProjectCommentService(Entity):
                                   self.subordinate_projects_comments(pk)]
             all_ratings.append(mean(subordinate_rating))
 
-        return mean(all_ratings)
+        return mean(all_ratings) if all_ratings else None

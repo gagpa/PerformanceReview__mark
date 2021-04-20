@@ -7,13 +7,13 @@ class HrReviewStatusService(Entity):
     Model = HrReviewStatus
 
     @property
-    def not_reviewed(self):
-        return self.by(name='Не проверяна')
+    def hr(self):
+        return self.by(name='hr review')
 
     @property
-    def reform(self):
-        return self.by(name='На исправление')
+    def coworker(self):
+        return self.by(name='coworker review')
 
     @property
     def accept(self):
-        return self.by(name='Принята')
+        return self.by(name='accept')

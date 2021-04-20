@@ -6,8 +6,17 @@ def list_forms_view(request):
     """ Контроллер списка review коллеги """
     coworker = request.user
     service = CoworkerService(coworker)
-    forms = service.forms_on_review
-    template = ListFormReview(models=forms, on_coworker_review=True)
+    if request.args.get('asc'):
+        if request.args['asc'][0] == 'True':
+            is_asc = True
+        else:
+            is_asc = False
+    else:
+        is_asc = True
+    reviews = service.reviews
+    forms = [review.advice.form for review in reviews]
+    page = int(request.args['pg'][0]) if request.args.get('pg') else 1
+    template = ListFormReview(forms=forms, reviews=reviews, review='coworker', page=page, is_asc=is_asc)
     return template
 
 

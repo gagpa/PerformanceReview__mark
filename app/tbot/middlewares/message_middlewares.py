@@ -40,7 +40,7 @@ def log_unknown(bot_instance, message):
 
 ORDER_MESSAGE_MIDDLEWARES = \
     [
-        # log_unknown,
+        log_unknown,
         add_user,
         parse_command,
         add_review_period,

@@ -1,64 +1,51 @@
-from app.services.form_review import FormService, ProjectsService
 from app.services.review import CoworkerReviewService
-from app.services.user import HRService, CoworkerService
+from app.services.user import HRService
 from app.tbot.resources.hr_review_views.form_views import decline_view
-from app.tbot.services.forms import ReviewForm, ProjectsForm, ProjectForm
 from app.tbot.resources.hr_review_views.list_forms_views import list_forms_view
-from app.tbot.resources.hr_review_views.form_views import data_form_views
+from app.tbot.services.forms import ReviewForm, ProjectsForm, ProjectForm
 
 
 def todo_view(request):
     """ Заполнение """
-    pk_advice = request.args['advice'][0]
-    pk_form = request.args['form'][0]
-    service = FormService()
-    service.by_pk(pk=pk_form)
-    form_data = service.data_for_hr(pk_advice=pk_advice)
-    next_view = request.send_args(comment_todo_view, advice=pk_advice, form=pk_form)
-    return ReviewForm(on_hr_review=True, accept=True, todo=True, **form_data), request.send_args(next_view, )
+    pk_review = request.args['review'][0]
+    review = CoworkerReviewService().by_pk(pk_review)
+    advice = review.advice
+    next_view = request.send_args(comment_todo_view, review=[review.id])
+    return ReviewForm(review_type='hr', advice=advice, form=advice.form), next_view
 
 
 def comment_todo_view(request):
     comment = request.text
     user = request.user
-    pk_advice = request.args['advice'][0]
-    advice = CoworkerReviewService().by_pk(pk_advice)
-    HRService(user).comment_on(model=advice, text=comment)
+    pk_review = request.args['review'][0]
+    review = CoworkerReviewService().by_pk(pk_review)
+    HRService(user).comment_on(model=review.advice, text=comment)
     return decline_view(request)
 
 
 def ratings_view(request):
     """ Оценки """
-    pk_form = request.args['form'][0]
-    pk_coworker = request.args['coworker'][0]
-    pk_advice = request.args['advice'][0]
-    service = CoworkerService()
-    form = FormService().by_pk(pk_form)
-    coworker = service.by_pk(pk_coworker)
-    projects = service.find_project_to_comment(form)
-    ratings = list(map(service.find_comment, projects))
-    return ProjectsForm(projects=projects, advice=pk_advice, ratings=ratings, coworker=coworker, form=form, on_hr_review=True)
+    pk_review = request.args['review'][0]
+    review = CoworkerReviewService().by_pk(pk_review)
+    projects = review.projects
+    page = int(request.args['pg'][0]) if request.args.get('pg') else 1
+    return ProjectsForm(form=review.advice.form, ratings=review.projects_ratings, review=review, projects=projects,
+                        page=page, review_type='hr', have_markup=True)
 
 
 def comment_rating_view(request):
     """ Прокомментировать оценку """
-    pk_project = request.args['project'][0]
-    pk_coworker = request.args['cw'][0]
-    pk_advice = request.args['adv'][0]
-    project = ProjectsService().by_pk(pk_project)
-    service = CoworkerService()
-    service.by_pk(pk_coworker)
-    rating = service.find_comment(project)
-    return ProjectForm(project=project, rating=rating, on_hr_review=True), request.send_args(save_comment_rating_view,
-                                                                                             form=request.args['f'],
-                                                                                             coworker=request.args['cw'],
-                                                                                             rating=rating.id,
-                                                                                             advice=pk_advice)
+    proj_rate_pk = request.args['proj_rate'][0]
+    rating = CoworkerReviewService().rating_by_pk(proj_rate_pk)
+    review = rating.review
+    next_view = request.send_args(save_comment_rating_view, proj_rate=[proj_rate_pk], review=[review.id])
+    return ProjectForm(have_markup=False, rating=rating, review=review, project=rating.project, review_type='hr'), \
+           next_view
 
 
 def save_comment_rating_view(request):
     """ Сохранить прокомментированную оценку """
-    pk_rating = request.args['rating']
+    pk_rating = request.args['proj_rate'][0]
     user = request.user
     HRService(user).comment_rating(pk=int(pk_rating), text=request.text)
     return ratings_view(request)
@@ -66,7 +53,6 @@ def save_comment_rating_view(request):
 
 def send_back_view(request):
     """ Отправить форму обратно """
-    form_data = data_form_views(request)
-    HRService(model=request.user).decline_coworker_review(advice=form_data['advice'], ratings=form_data['ratings'])
+    pk_review = request.args['review'][0]
+    HRService(model=request.user).decline_coworker_review(pk_review)
     return list_forms_view(request)
-

@@ -137,14 +137,12 @@ def add_all_forms_in_db():
     users = db_session.query(User).all()
     status = db_session.query(Status).filter_by(name='Заполнение анкеты').one()
     review_period = db_session.query(ReviewPeriod).first()
-    rating = db_session.query(Rating).filter_by(value=3).one()
 
     for user in users:
         form = Form()
         form.user = user
         form.status = status
         form.review_period = review_period
-        form.rating = rating
         db_session.add(form)
 
     db_session.commit()
