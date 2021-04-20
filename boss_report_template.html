@@ -24,14 +24,24 @@
 <table>
     <tr>
         <td><b>Сотрудник: </b>{{fullname}}</td>
-        <td><b>Оценка:</b></td>
+        <td><b>Средняя оценка: {{rating}}</b></td>
     </tr>
     <tr>
         <td><b>Ник в Telegram: </b>@{{username}}</td>
-        <td>{{rating}}</td>
+        <td>
+            {% if boss_rating %}
+                от руководителя: {{boss_rating}}<br>
+            {% endif %}
+            {% if coworkers_rating %}
+                от коллег: {{coworkers_rating}}
+            {% endif %}
+        </td>
     </tr>
     <tr>
         <td><b>Руководитель: </b>{{boss}}</td>
+        {% if subordinate_rating %}
+            <td>от подчиненных: {{subordinate_rating}}<br></td>
+        {% endif %}
     </tr>
 </table>
 <br>

@@ -36,9 +36,10 @@ class CurrentReviewForm(Template):
 
         if self.args.get('models') and self.args.get('forms_list'):
             title = 'Текущий Review'
+            rating = self.args.get("rating")
             list_data = [f'{model.user.fullname},\n' \
                          f'{model.status.name},\n' \
-                         f'{f"Оценка: {model.rating.name}" if model.rating and model.status.id == 4 else ""}\n'
+                         f'{f"Оценка: {rating}" if rating and model.status.id == 4 else ""}\n'
                          for model in self.args["models"]]
             message_text = self.message_builder.build_list_message(title=title,
                                                                    description=description,
@@ -49,9 +50,10 @@ class CurrentReviewForm(Template):
             to_do = '\n'.join([advice.todo for advice in self.args.get('advices')])
             not_todo = '\n'.join([advice.not_todo for advice in self.args.get('advices')])
             summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
+            rating = self.args.get("rating")
             text = f"ФИО: {self.args.get('model').user.fullname}\n" \
                    f"Статус: {self.args.get('model').status.name}\n" \
-                   f"Оценка: {self.args.get('model').rating.value}\n" \
+                   f"Оценка: {rating}\n" \
                    f"\nЧто делать:\n" \
                    f"{to_do}" \
                    f"\nЧто не делать:\n" \

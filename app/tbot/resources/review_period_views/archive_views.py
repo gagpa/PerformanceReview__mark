@@ -1,11 +1,13 @@
 import datetime
 import os
+from statistics import mean
 
 from jinja2 import FileSystemLoader, Environment
 from weasyprint import HTML
 
 from app.db import Session
 from app.models import Form, ReviewPeriod, User, Rating, Status, Duty, Project, Achievement, Fail
+from app.services.form_review.project_comments import ProjectCommentService
 from app.tbot import bot
 from app.tbot.services.forms.archive_form import ArchiveForm
 
@@ -29,7 +31,9 @@ def get_hr_rapport(request):
     pk = request.args['pk'][0]
     user = request.user
     template_vars = get_data_for_rapport(pk)
-    template_vars.update(reviews=[1,3,2])
+    final_rating = ProjectCommentService().final_rating(pk)
+    template_vars.update(rating=final_rating)
+    template_vars.update(reviews=[1, 3, 2])
     create_and_send_pdf(user.chat_id, "hr_report_template.html", template_vars)
     return
 
@@ -37,7 +41,19 @@ def get_hr_rapport(request):
 def get_boss_rapport(request):
     pk = request.args['pk'][0]
     user = request.user
-    create_and_send_pdf(user.chat_id, "boss_report_template.html", get_data_for_rapport(pk))
+    template_vars = get_data_for_rapport(pk)
+    coworkers_comments = ProjectCommentService().coworkers_projects_comments(pk)
+    coworkers_rating = [comment.rating.value for comment in coworkers_comments]
+    boss_comments = ProjectCommentService().boss_projects_comments(pk)
+    boss_rating = [comment.rating.value for comment in boss_comments]
+    subordinate_comments = ProjectCommentService().subordinate_projects_comments(pk)
+    subordinate_rating = [comment.rating.value for comment in subordinate_comments]
+    final_rating = ProjectCommentService().final_rating(pk)
+    template_vars.update(rating=final_rating,
+                         boss_rating=mean(boss_rating) if boss_rating else None,
+                         coworkers_rating=mean(coworkers_rating) if coworkers_rating else None,
+                         subordinate_rating=mean(subordinate_rating) if subordinate_rating else None)
+    create_and_send_pdf(user.chat_id, "boss_report_template.html", template_vars)
     return
 
 
@@ -53,7 +69,6 @@ def get_data_for_rapport(pk):
                      "end": old_review.review_period.end_date.date(),
                      "fullname": old_review.user.fullname,
                      "username": old_review.user.username,
-                     "rating": old_review.rating.name,
                      "boss": old_review.user.boss.fullname if old_review.user.boss else 'Нет',
                      "duties": duties,
                      "projects": projects,
