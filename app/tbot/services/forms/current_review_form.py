@@ -50,17 +50,17 @@ class CurrentReviewForm(Template):
             to_do = ''
             not_todo = ''
             for advice in self.args.get('advices'):
-                to_do += f'{advice.todo}\n'
-                not_todo += f'{advice.not_todo}\n'
+                to_do += f"{f'{advice.todo}' if advice.todo else 'отсутсвует'}\n"
+                not_todo += f"{f'{advice.not_todo}' if advice.not_todo else 'отсутсвует'}\n"
             summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
             rating = self.args.get("rating")
             text = f"ФИО: {self.args.get('model').user.fullname}\n" \
                    f"Статус: {self.args.get('model').status.name}\n" \
                    f"Оценка: {rating}\n" \
                    f"\nЧто делать:\n" \
-                   f"{to_do}" if to_do else 'отсутсвует'\
+                   f'{f"{to_do}" if to_do else "отсутсвует"}' \
                    f"\nЧто не делать:\n" \
-                   f"{not_todo}" if not_todo else 'отсутсвует'\
+                   f'{f"{not_todo}" if not_todo else "отсутсвует"}' \
                    f"\nSummary:" \
                    f"\n{summary}"
             message_text = self.message_builder.build_message(title, '', text)
