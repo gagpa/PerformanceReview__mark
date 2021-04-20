@@ -17,10 +17,10 @@ class ProjectCommentService(Entity):
         projects_comments = Session().query(ProjectComment) \
             .join(Project, ProjectComment.project) \
             .join(Form, Project.form).join(User, Form.user)
-        comments = projects_comments \
+        boss_comments = projects_comments \
             .filter(Form.id == form.id) \
             .filter(ProjectComment.user_id == form.user.boss_id).all()
-        return comments
+        return boss_comments
 
     @staticmethod
     def coworkers_projects_comments(pk):
@@ -29,10 +29,10 @@ class ProjectCommentService(Entity):
         projects_comments = Session().query(ProjectComment) \
             .join(Project, ProjectComment.project) \
             .join(Form, Project.form).join(User, Form.user)
-        comments = projects_comments \
+        coworkers_comments = projects_comments \
             .filter(Form.id == form.id) \
             .filter(User.boss_id == form.user.boss_id).all()
-        return comments
+        return coworkers_comments
 
     @staticmethod
     def subordinate_projects_comments(pk):
@@ -41,9 +41,9 @@ class ProjectCommentService(Entity):
         projects_comments = Session().query(ProjectComment) \
             .join(Project, ProjectComment.project) \
             .join(Form, Project.form).join(User, Form.user)
-        comments = projects_comments.filter(Form.id == form.id) \
+        subordinate_comments = projects_comments.filter(Form.id == form.id) \
             .filter(User.boss_id == form.user.id).all()
-        return comments
+        return subordinate_comments
 
     def final_rating(self, pk):
         """ Средняя оценка по проектам формы"""

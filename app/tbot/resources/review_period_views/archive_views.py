@@ -6,7 +6,9 @@ from jinja2 import FileSystemLoader, Environment
 from weasyprint import HTML
 
 from app.db import Session
-from app.models import Form, ReviewPeriod, User, Rating, Status, Duty, Project, Achievement, Fail
+from app.models import Form, ReviewPeriod, User, Rating, Status, Duty, Project, Achievement, Fail, \
+    CoworkerAdvice
+from app.services.dictinary.summary import SummaryService
 from app.services.form_review.project_comments import ProjectCommentService
 from app.tbot import bot
 from app.tbot.services.forms.archive_form import ArchiveForm
@@ -33,8 +35,12 @@ def get_hr_rapport(request):
     template_vars = get_data_for_rapport(pk)
     final_rating = ProjectCommentService().final_rating(pk)
     template_vars.update(rating=final_rating)
-    template_vars.update(reviews=[1, 3, 2])
-    create_and_send_pdf(user.chat_id, "hr_report_template.html", template_vars)
+    # boss_comments = ProjectCommentService().boss_projects_comments(pk)
+    # boss_advices = Session().query(CoworkerAdvice)\
+    #     .filter_by(form_id=pk, user_id=boss_comments.user_id).all()
+    # reviews = []
+    template_vars.update(reviews=[])
+    create_and_send_pdf(user.chat_id, "templates/hr_report_template.html", template_vars)
     return
 
 
@@ -53,7 +59,7 @@ def get_boss_rapport(request):
                          boss_rating=mean(boss_rating) if boss_rating else None,
                          coworkers_rating=mean(coworkers_rating) if coworkers_rating else None,
                          subordinate_rating=mean(subordinate_rating) if subordinate_rating else None)
-    create_and_send_pdf(user.chat_id, "boss_report_template.html", template_vars)
+    create_and_send_pdf(user.chat_id, "templates/boss_report_template.html", template_vars)
     return
 
 
@@ -65,6 +71,7 @@ def get_data_for_rapport(pk):
     projects = Session().query(Project).filter(Project.form == old_review)
     achievements = Session().query(Achievement).filter(Achievement.form == old_review)
     fails = Session().query(Fail).filter(Fail.form == old_review)
+    summary = SummaryService().by_form_id(pk)
     template_vars = {"start": old_review.review_period.start_date.date(),
                      "end": old_review.review_period.end_date.date(),
                      "fullname": old_review.user.fullname,
@@ -74,7 +81,7 @@ def get_data_for_rapport(pk):
                      "projects": projects,
                      "achievements": achievements,
                      "fails": fails,
-                     "summary": 'summary'}
+                     "summary": summary.text if summary else 'Отсутсвует'}
 
     return template_vars
 

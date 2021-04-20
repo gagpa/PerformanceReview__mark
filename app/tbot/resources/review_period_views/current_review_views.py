@@ -1,5 +1,3 @@
-from statistics import mean
-
 from app.db import Session
 from app.models import Form, ReviewPeriod, User, Status, CoworkerAdvice, Project, \
     ProjectComment
@@ -18,40 +16,6 @@ def current_forms_list(request):
         .filter(ReviewPeriod.is_active == True).all()
 
     return CurrentReviewForm(models=current_reviews, forms_list=True)
-
-
-def get_final_rating(form_pk):
-    form = Session().query(Form).join(User).filter(Form.id == form_pk).one_or_none()
-
-    projects_comments = Session().query(ProjectComment) \
-        .join(Project, ProjectComment.project) \
-        .join(Form, Project.form).join(User, Form.user)
-
-    boss_projects_comments = projects_comments \
-        .filter(Form.id == form_pk).filter(ProjectComment.user_id == form.user.boss_id).all()
-
-    coworkers_projects_comments = projects_comments \
-        .filter(Form.id == form_pk).filter(User.boss_id == form.user.boss_id).all()
-
-    subordinate_projects_comments = projects_comments \
-        .filter(Form.id == form_pk).filter(User.boss_id == form.user.id).all()
-
-    all_ratings = []
-    if boss_projects_comments:
-        boss_rating = mean([boss_comment.rating.value for boss_comment in boss_projects_comments])
-        all_ratings.append(boss_rating)
-
-    if coworkers_projects_comments:
-        coworkers_rating = mean(
-            [coworker_comment.rating.value for coworker_comment in coworkers_projects_comments])
-        all_ratings.append(coworkers_rating)
-
-    if subordinate_projects_comments:
-        subordinate_rating = mean([subordinate_comment.rating.value for subordinate_comment in
-                                   subordinate_projects_comments])
-        all_ratings.append(subordinate_rating)
-
-    return mean(all_ratings)
 
 
 def employee_review(request):
