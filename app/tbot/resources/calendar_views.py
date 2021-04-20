@@ -3,6 +3,7 @@ import telebot_calendar
 from app.tbot import bot
 from app.tbot.resources.review_period_views.review_period_views import first_date_period, \
     second_date_period
+from app.tbot.services.forms.review_period_form import ReviewPeriodForm
 
 
 def calendar_handler(request):
@@ -18,4 +19,4 @@ def calendar_handler(request):
         elif 'date_period_2' in call_data:
             return second_date_period(request, date)
     elif action == "CANCEL":
-        return 'Календарь закрыт'
+        return ReviewPeriodForm(cancel=True)

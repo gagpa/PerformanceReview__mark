@@ -1,8 +1,12 @@
 import datetime
 
+from loguru import logger
+from telebot.apihelper import ApiTelegramException
+
 from app.db import Session
-from app.models import ReviewPeriod
+from app.models import ReviewPeriod, User
 from app.services.review import ReviewPeriodService
+from app.tbot import bot
 from app.tbot.services.forms.review_period_form import ReviewPeriodForm
 
 
@@ -31,6 +35,14 @@ def second_date_period(request, date):
     service = ReviewPeriodService()
     service.create(is_active=True, start_date=first_date, end_date=second_date)
     Session.commit()
+    users = Session().query(User).all()
+    # TODO: убрать в отделбную функцию
+    for user in users:
+        try:
+            msg = 'Необходимо заполнить анкету в разделе "Заполнение анкеты"'
+            bot.send_message(user.chat_id, msg)
+        except ApiTelegramException as e:
+            logger.error(f'{user.chat_id} - {user.username} --- {e}')
     return ReviewPeriodForm(started=True)
 
 

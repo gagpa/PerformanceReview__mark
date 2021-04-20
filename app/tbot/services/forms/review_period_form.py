@@ -71,6 +71,12 @@ class ReviewPeriodForm(Template):
                                                               description=description,
                                                               text=text,
                                                               )
+        elif self.args.get('cancel'):
+            title = 'Календарь закрыт.'
+            message_text = self.message_builder.build_message(title=title,
+                                                              description=description,
+                                                              text=text,
+                                                              )
         else:
             message_text = self.message_builder.build_message('', '', 'Нет Review')
 

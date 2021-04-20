@@ -44,19 +44,19 @@ def change_summary(request):
                                           text=request.text)
         form = FormService().by_pk(pk)
         StatusService().change_to_done(form)
-        advices = CoworkerReviewService().all_by(form_id=pk)
-        ratings = Session.query(CoworkerProjectRating). \
-            join(Project, CoworkerProjectRating.project) \
-            .filter(Project.form_id == pk).all()
-        for rating in ratings:
-            rating.hr_review_status_id = 4
-            Session.add(rating)
-            Session.commit()
-
-        for advice in advices:
-            advice.hr_review_status_id = 4
-            Session.add(advice)
-            Session.commit()
+        # advices = CoworkerReviewService().all_by(form_id=pk)
+        # ratings = Session.query(CoworkerProjectRating). \
+        #     join(Project, CoworkerProjectRating.project) \
+        #     .filter(Project.form_id == pk).all()
+        # for rating in ratings:
+        #     rating.hr_review_status_id = 4
+        #     Session.add(rating)
+        #     Session.commit()
+        #
+        # for advice in advices:
+        #     advice.hr_review_status_id = 5
+        #     Session.add(advice)
+        #     Session.commit()
     else:
         summary.text = request.text
     Session.add(summary)

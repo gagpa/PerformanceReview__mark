@@ -64,19 +64,19 @@ def get_boss_rapport(request):
 
 
 def get_data_for_rapport(pk):
-    old_review = Session().query(Form).join(ReviewPeriod, Form.review_period) \
-        .join(User, Form.user).join(Rating, Form.rating).join(Status, Form.status) \
+    review = Session().query(Form).join(ReviewPeriod, Form.review_period) \
+        .join(User, Form.user).join(Status, Form.status) \
         .filter(Form.id == pk).one_or_none()
-    duties = Session().query(Duty).filter(Duty.form == old_review)
-    projects = Session().query(Project).filter(Project.form == old_review)
-    achievements = Session().query(Achievement).filter(Achievement.form == old_review)
-    fails = Session().query(Fail).filter(Fail.form == old_review)
+    duties = Session().query(Duty).filter(Duty.form == review)
+    projects = Session().query(Project).filter(Project.form == review)
+    achievements = Session().query(Achievement).filter(Achievement.form == review)
+    fails = Session().query(Fail).filter(Fail.form == review)
     summary = SummaryService().by_form_id(pk)
-    template_vars = {"start": old_review.review_period.start_date.date(),
-                     "end": old_review.review_period.end_date.date(),
-                     "fullname": old_review.user.fullname,
-                     "username": old_review.user.username,
-                     "boss": old_review.user.boss.fullname if old_review.user.boss else 'Нет',
+    template_vars = {"start": review.review_period.start_date.date(),
+                     "end": review.review_period.end_date.date(),
+                     "fullname": review.user.fullname,
+                     "username": review.user.username,
+                     "boss": review.user.boss.fullname if review.user.boss else 'Нет',
                      "duties": duties,
                      "projects": projects,
                      "achievements": achievements,
