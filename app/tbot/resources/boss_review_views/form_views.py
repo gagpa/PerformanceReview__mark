@@ -1,40 +1,40 @@
-from app.services.form_review import FormService
+from app.services.review import BossReviewService
+from app.services.user import BossService
 from app.tbot.resources.boss_review_views.list_forms_views import list_forms_view
-from app.tbot.services import BossServiceTBot
 from app.tbot.services.forms import ReviewForm
 
 
 def form_view(request):
     """ Анкета на проврке босса """
-    pk = request.pk()
-    form_service = FormService()
-    form = form_service.by_pk(pk=pk)
-    template = ReviewForm(model=form, on_boss_review=True)
-
-    return template
+    pk = request.args['review'][0]
+    review = BossReviewService().by_pk(pk)
+    return ReviewForm(form=review.form, have_markup=True, review_type='boss', review=review)
 
 
 def accept_form_view(request):
     """ Принять """
-    pk = request.pk()
+    pk = request.args['review'][0]
     boss = request.user
-    form_service = FormService()
-    form = form_service.by_pk(pk=pk)
-    boss_service = BossServiceTBot(boss, form=form)
-    boss_service.accept(form)
+    review = BossReviewService().by_pk(pk)
+    BossService(boss).accept(review.form)
     return list_forms_view(request)
 
 
 def decline_form_view(request):
     """ Отклонить """
-    pk = request.pk()
+    pk = request.args['review'][0]
+    review = BossReviewService().by_pk(pk)
+    return ReviewForm(form=review.form, have_markup=False, review_type='boss', review=review), \
+           request.send_args(send_form_view, review=[pk])
+
+
+def send_form_view(request):
+    pk = request.args['review'][0]
     boss = request.user
-    form_service = FormService()
-    form = form_service.by_pk(pk=pk)
-    template = ReviewForm(model=form)
-    boss_service = BossServiceTBot(boss, form=form)
-    boss_service.decline(form, text='')
-    return template, boss_service.decline_before(list_forms_view)
+    text = request.text
+    review = BossReviewService().by_pk(pk)
+    BossService(boss).decline(review.form, text)
+    return list_forms_view(request)
 
 
 __all__ = \

@@ -34,21 +34,25 @@ class BossService(UserService):
         return employees
 
     @property
-    def forms_on_review(self):
+    def reviews(self):
         """ Вернуть все формы на boss review """
         review_period = ReviewPeriodService().current
         status = StatusService().boss_review
         forms = Session.query(Form).\
             join(User).\
-            filter(Form.review_period == review_period,
-                   User.boss == self.model,
+            filter(User.boss == self.model,
                    Form.status == status
                    ).all()
-        # forms = Session.query(Form).filter(
-        #     Form.review_period == review_period,
-        #     Form.status == status).all()
-        if forms:
-            return forms
+        reviews = []
+        for form in forms:
+            if form.boss_review:
+                reviews.append(form.boss_review)
+            else:
+                review = BossReview(form=form, boss=self.model)
+                reviews.append(review)
+                Session().add(review)
+                Session.commit()
+        return reviews
 
 
 __all__ = ['BossService']

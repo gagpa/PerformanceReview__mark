@@ -94,7 +94,10 @@ class RequestSerializer:
     @property
     def args(self):
         """ Запарсить аргументы """
-        return self.__message.args
+        try:
+            return self.__message.args
+        except AttributeError:
+            return {}
 
     @staticmethod
     def send_args(func, **kwargs):

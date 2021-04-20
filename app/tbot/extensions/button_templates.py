@@ -11,7 +11,7 @@ class ButtonTemplate:
         self.kwargs = kwargs
 
     def __repr__(self):
-        return f'{self.kwargs}'
+        return f'{self.__text}:{self.__callback}'
 
     def add(self, **kwargs):
         self.kwargs.update(kwargs)
@@ -23,7 +23,7 @@ class ButtonTemplate:
 
     @property
     def callback(self):
-        self.kwargs.update({'callback': self.__callback})
+        self.kwargs.update({'cb': self.__callback})
         callback = urlencode(self.kwargs)
         return callback
 

@@ -19,7 +19,7 @@ class BossReview(Base):
     form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
     boss_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
-    form = relationship('Form', backref=backref('form', uselist=False))
+    form = relationship('Form', backref=backref('boss_review', uselist=False))
     boss = relationship('User', backref='boss_reviews')
 
 

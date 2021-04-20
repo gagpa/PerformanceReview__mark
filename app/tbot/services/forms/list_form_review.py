@@ -9,50 +9,84 @@ class ListFormReview(Template):
 
     def create_markup(self) -> InlineKeyboardMarkup:
         """ Создать клавиатуру """
-        if self.args.get('on_boss_review'):
-            return self.markup_builder.build_list(self.args['models'], BUTTONS_TEMPLATES['boss_review_form'])
+        forms = self.args.get('forms')
+        advices = self.args.get('advices')
+        review = self.args.get('review')
+        page = self.args.get('page')
+        is_asc = self.args.get('is_asc')
+        reviews = self.args.get('reviews')
+        if review == 'boss':
+            reviews = self.cut_per_page(reviews, page)
+            unique_args = [{'review': review.id} for review in reviews]
+            main_template = BUTTONS_TEMPLATES['boss_review_form']
+            update_template = BUTTONS_TEMPLATES['boss_review_update_list']
+            pagination_template = BUTTONS_TEMPLATES['boss_review_list']
+            asc_template = BUTTONS_TEMPLATES['boss_review_sort_asc']
+            desc_template = BUTTONS_TEMPLATES['boss_review_sort_desc']
+            self.add_sorting(asc=asc_template, desc=desc_template, is_asc=is_asc)
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=len(forms))
+            self.add_update(update=update_template)
+            return self.build_list(main_template, unique_args)
 
-        elif self.args.get('on_coworker_review'):
-            return self.markup_builder.build_list(self.args['models'], BUTTONS_TEMPLATES['coworker_review_form'])
+        elif review == 'coworker':
+            reviews = self.cut_per_page(reviews, page)
+            unique_args = [{'review': review.id} for review in reviews]
+            update_template = BUTTONS_TEMPLATES['coworker_review_update_list']
+            pagination_template = BUTTONS_TEMPLATES['coworker_review_list']
+            asc_template = BUTTONS_TEMPLATES['coworker_review_sort_asc']
+            desc_template = BUTTONS_TEMPLATES['coworker_review_sort_desc']
+            main_template = BUTTONS_TEMPLATES['coworker_review_form']
+            self.add_sorting(asc=asc_template, desc=desc_template, is_asc=is_asc)
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=len(forms))
+            self.add_update(update=update_template)
+            return self.build_list(main_template, unique_args)
 
-        elif self.args.get('on_hr_review'):
-            unique_args = [{'advice': advice.id, 'form': advice.form.id} for advice in self.args['advices']]
-            update = self.markup_builder.build_btns(BUTTONS_TEMPLATES['hr_review_update_list'])
-            if self.args['is_asc']:
-                sort_btn = self.markup_builder.build_btns(BUTTONS_TEMPLATES['hr_review_sort_desc'])
-            else:
-                sort_btn = self.markup_builder.build_btns(BUTTONS_TEMPLATES['hr_review_sort_asc'])
-            pagination_row = self.markup_builder.build_paginator_arrows(BUTTONS_TEMPLATES['hr_review_list'],
-                                                                        self.args['page'],
-                                                                        self.args['max_page'])
-            return self.markup_builder.build_list_up(BUTTONS_TEMPLATES['hr_review_form'],
-                                                     unique_args, None, update, sort_btn, pagination_row)
+        elif review == 'hr':
+            update_template = BUTTONS_TEMPLATES['hr_review_update_list']
+            pagination_template = BUTTONS_TEMPLATES['hr_review_list']
+            asc_template = BUTTONS_TEMPLATES['hr_review_sort_asc']
+            desc_template = BUTTONS_TEMPLATES['hr_review_sort_desc']
+            main_template = BUTTONS_TEMPLATES['hr_review_form']
+            unique_args = [{'review': review.id} for review in reviews]
+            self.add_sorting(asc=asc_template, desc=desc_template, is_asc=is_asc)
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=len(forms))
+            self.add_update(update=update_template)
+            return self.build_list(main_template, unique_args)
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
+        forms = self.args.get('forms')
+        advices = self.args.get('advices')
+        review = self.args.get('review')
+        reviews = self.args.get('reviews')
+        page = self.args.get('page')
+
         title = '[СПИСОК АНКЕТ НА ПРОВЕРКУ]'
-
-        if self.args.get('on_boss_review'):
+        if review == 'boss':
             description = 'Можете выбрать форму подчинённого на проверку.'
-            list_data = [f'{self.model.user.fullname}' for self.model in self.args['models']]
-            return self.message_builder.build_list_message(title=title,
-                                                           description=description,
-                                                           list_data=list_data)
+            list_data = [f'@{review.form.user.username}' for review in reviews]
+            self.build_list_message(title=title,
+                                    description=description,
+                                    list_text=list_data)
+            return self.MESSAGE
 
-        elif self.args.get('on_coworker_review'):
+        elif review == 'coworker':
             description = 'Можете выбрать форму коллеги на оценку.'
-            list_data = [f'{self.model.coworker.fullname}' for self.model in self.args['models']]
-            return self.message_builder.build_list_message(title=title,
-                                                           description=description,
-                                                           list_data=list_data)
+            reviews = self.cut_per_page(reviews, page)
+            list_data = [f'{review.advice.form.user.fullname}' for review in reviews]
+            self.build_list_message(title=title,
+                                    description=description,
+                                    list_text=list_data)
+            return self.MESSAGE
 
-        elif self.args.get('on_hr_review'):
-            description = 'Можете выбрать форму на проверку.'
-            list_data = [f'{advice.coworker.fullname} - {advice.form.user.username}\n {advice.updated_at}'
-                         for advice in self.args['advices']]
-            return self.message_builder.build_list_message(title=title,
-                                                           description=description,
-                                                           list_data=list_data)
+        elif review == 'hr':
+            description = 'Можете выбрать форму на проверку'
+            reviews = self.cut_per_page(reviews, page)
+            list_data = [f'@{review.advice.form.user.username} - @{review.coworker.username}' for review in reviews]
+            self.build_list_message(title=title,
+                                    description=description,
+                                    list_text=list_data)
+            return self.MESSAGE
 
 
 __all__ = ['ListFormReview']

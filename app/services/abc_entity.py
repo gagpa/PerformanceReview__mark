@@ -33,8 +33,9 @@ class Entity(ABC):
 
     def save(self, model):
         """ """
-        s = Session.object_session(model)
-        s.add(model)
+        if not Session.object_session(model):
+            model = Session().merge(model)
+        Session().add(model)
 
     def add(self, model):
         """ """

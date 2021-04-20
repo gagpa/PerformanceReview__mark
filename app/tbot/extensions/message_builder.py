@@ -11,7 +11,8 @@ class MessageDecorator:
 
     def do_title(self, title: str):
         """ Оформить заголовок """
-        title = self.__DECOR['title'].format(title)
+        if title:
+            title = self.__DECOR['title'].format(title)
         return title
 
     def do_description(self, description: str):
@@ -22,7 +23,8 @@ class MessageDecorator:
 
     def do_text(self, text: str):
         """ Оформить текст """
-        text = self.__DECOR['text'].format(text)
+        if text:
+            text = self.__DECOR['text'].format(text)
         return text
 
     def do_list(self, items: Optional[list]):
@@ -49,27 +51,37 @@ class MessageDecorator:
 
 class MessageBuilder(MessageDecorator):
     """ Строитель сообщений от телеграмм бота """
-    __LIST_TEMPLATE = '{title}\n{list_data}\n\n{description}'
+    __LIST_TEMPLATE = '{title}\n{list_data}\n{description}'
     __DEFAULT_TEMPLATE = '{title}\n{text}\n{description}'
 
-    def build_list_message(self, title: str, description: Optional[str], list_data: Optional[list] = None):
+    def build_list_message(self, title: str = None, description: Optional[str] = None, list_data: Optional[list] = None):
         """ Построить сообщения списка данных """
+        template = self.__LIST_TEMPLATE
         title = self.do_title(title)
         description = self.do_description(description)
         list_data = self.do_list(list_data)
+        if not title:
+            template = template.replace('{title}\n', '')
         if not description:
-            return self.__LIST_TEMPLATE.replace('\n{description}', '').format(title=title, list_data=list_data)
-        message = self.__LIST_TEMPLATE.format(title=title, description=description, list_data=list_data)
+            template = template.replace('\n{description}', '')
+        if not list_data:
+            template = template.replace('{text}\n', '')
+        message = template.format(title=title, description=description, list_data=list_data)
         return message
 
-    def build_message(self, title: str, description: Optional[str], text: Optional[str] = None):
+    def build_message(self, title: str = None, description: Optional[str] = None, text: Optional[str] = None):
         """ Посторить сообщение """
+        template = self.__DEFAULT_TEMPLATE
         title = self.do_title(title)
         description = self.do_description(description)
         data = self.do_text(text)
+        if not title:
+            template = template.replace('{title}', '')
         if not description:
-            return self.__DEFAULT_TEMPLATE.replace('\n{description}', '').format(title=title, text=data)
-        message = self.__DEFAULT_TEMPLATE.format(title=title, description=description, text=data)
+            template = template.replace('{description}', '')
+        if not data:
+            template = template.replace('{text}', '')
+        message = template.format(title=title, description=description, text=data)
         return message
 
 

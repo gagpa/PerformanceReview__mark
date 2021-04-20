@@ -13,10 +13,10 @@ from app.tbot.resources.coworker_review_views import \
     coworker_review_project_view, \
     coworker_review_form_view, \
     coworker_review_form_send_to_hr, \
-    coworker_review_project_rate_choose_view, \
+    coworker_review_project_comment_view, \
     coworker_review_project_rate_view, \
     coworker_review_advice_todo_view, \
-    coworker_review_project_comment_on_view, \
+    coworker_review_project_save_comment_view, \
     coworker_review_advice_not_todo_view
 
 from app.tbot.resources.hr_review_views import \
@@ -95,13 +95,12 @@ ROUTES = \
         'coworker_review_form_send_to_hr': coworker_review_form_send_to_hr,
         'coworker_review_form': coworker_review_form_view,
         'coworker_review_list': coworker_review_list_forms_view,
-        'coworker_review_projects': coworker_review_projects_view,
-        'coworker_review_project': coworker_review_project_view,
-        'coworker_review_project_rate_choose': coworker_review_project_rate_choose_view,
-        'coworker_review_project_rate': coworker_review_project_rate_view,
+        'coworker_projects': coworker_review_projects_view,
+        'coworker_project': coworker_review_project_view,
+        'coworker_rate': coworker_review_project_rate_view,
         'coworker_review_todo': coworker_review_advice_todo_view,
         'coworker_review_not_todo': coworker_review_advice_not_todo_view,
-        'coworker_review_project_comment_on': coworker_review_project_comment_on_view,
+        'coworker_comment': coworker_review_project_comment_view,
 
         'hr_review_list': hr_review_list_forms_view,
         'hr_review_form': hr_review_form_view,

@@ -26,7 +26,7 @@ class FormService(Entity):
             {
                 'advice': advice,
                 'coworker': advice.coworker,
-                'model': advice.form,
+                'form': advice.form,
                 'ratings': [service.find_comment(project) for project in service.find_project_to_comment(advice.form)],
             }
         return data

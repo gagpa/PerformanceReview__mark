@@ -85,8 +85,12 @@ def log_command(message):
 
 
 def log_callback(call):
+    try:
+        args = call.message.args
+    except AttributeError:
+        args = ''
     user = call.message.user
-    logger.debug(f'\nUSER {user} URL: {call.url}')
+    logger.debug(f'\nUSER {user} URL: {call.url} ARGS: {args}')
 
 
 def log_unknown(message):
@@ -110,7 +114,7 @@ def parse_url(bot_instance, call):
     """ Запарсить URL callback с аргумантами и поместить их в обзъект сообщения"""
     args = parse_qs(call.data)
     call.message.args = args
-    call.url = args['callback'][0]
+    call.url = args['cb'][0]
     call.is_exist = call.url in ROUTES.keys()
 
 

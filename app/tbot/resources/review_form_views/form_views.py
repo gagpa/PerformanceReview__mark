@@ -10,7 +10,7 @@ def form_view(request):
     form_service = FormService(form)
     status_service = StatusService()
     write_in = form_service.is_current_status(status_service.write_in)
-    template = ReviewForm(model=form, write_in=write_in)
+    template = ReviewForm(form=form, review_type='write', have_markup=write_in)
     return template
 
 
@@ -23,7 +23,7 @@ def send_to_boss_view(request):
     employee_service.send_boss(form)
     form_service = FormService(form)
     write_in = form_service.is_current_status(status_service.write_in)  # TODO не обновляется form в сессии
-    template = ReviewForm(model=form, write_in=write_in)
+    template = ReviewForm(form=form, review_type='write', write_in=write_in)
     return template
 
 

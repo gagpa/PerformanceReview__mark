@@ -32,7 +32,7 @@ class ProjectsServiceTBot(ProjectsService):
 
         def wrapper(request):
             self.model.name = request.text
-            request.add('pk', self.model.id)
+            request.add('project', [self.model.id])
             Session.add(self.model)
             Session.commit()
             Session.remove()
@@ -45,7 +45,7 @@ class ProjectsServiceTBot(ProjectsService):
 
         def wrapper(request):
             self.description = request.text
-            request.add('pk', self.model.id)
+            request.add('project', [self.model.id])
             Session.add(self.model)
             Session.commit()
             Session.remove()
@@ -58,7 +58,7 @@ class ProjectsServiceTBot(ProjectsService):
 
         def wrapper(request):
             self.contacts = request.split_text
-            request.add('pk', self.model.id)
+            request.add('project', [self.model.id])
             Session.commit()
             Session.remove()
             return func(request=request)

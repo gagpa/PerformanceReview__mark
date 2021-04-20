@@ -17,10 +17,10 @@ class CoworkerAdvice(Base):
     created_at = Column(TIMESTAMP, default=datetime.now(), nullable=False)
     updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=True)
 
-    coworker_review_id = Column(Integer, ForeignKey('coworker_reviews.id'), nullable=False)
+    coworker_review_id = Column(Integer, ForeignKey('coworker_reviews.id', ondelete='CASCADE'), nullable=False)
     form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
 
-    coworker_review = relationship('CoworkerReview', backref=backref('advice', uselist=False))
+    coworker_review = relationship('CoworkerReview', uselist=False, backref=backref('advice', uselist=False))
     form = relationship('Form', backref='advices')
 
     def __repr__(self):

@@ -1,6 +1,7 @@
-from app.models import Form, Project, User
-from app.services.abc_entity import Entity
 from app.db import Session
+from app.models import Form, Project, User, CoworkerReview, CoworkerAdvice, CoworkerProjectRating
+from app.services.abc_entity import Entity
+from app.services.dictinary import HrReviewStatusService
 
 
 class ProjectsService(Entity):
@@ -46,13 +47,30 @@ class ProjectsService(Entity):
 
     @property
     def contacts(self):
-        return self.model.users
+        return [review.coworker for review in self.model.reviews]
 
     @contacts.setter
     def contacts(self, contacts):  # TODO Обдумать .merge()
-        users = Session().query(User).filter(User.username.in_(contacts)).all()
         if not Session.object_session(self.model):
             self.model = Session().merge(self.model)
-        self.model.users = users
-        Session().add(self.model)
+        users = Session().query(User).filter(User.username.in_(contacts)).all()
+        form = self.model.form
+        hr_status = HrReviewStatusService().coworker
+        for user in users:
+            reviews = user.coworker_reviews
+            if form not in [review.advice.form for review in reviews]:
+                review = CoworkerReview(coworker=user, hr_status=hr_status)
+                advice = CoworkerAdvice(coworker_review=review, form=form)
+                proj_rating = CoworkerProjectRating(review=review, project=self.model)
+                self.save_all(review, advice, proj_rating)
+            else:
+                is_exist = Session().query(Session().query(CoworkerProjectRating).
+                                           join(CoworkerReview, Project).
+                                           filter(CoworkerReview.coworker == user, CoworkerProjectRating == self.model).
+                                           exists()).scalar()
+                if not is_exist:
+                    review = Session().query(CoworkerReview).join(CoworkerAdvice). \
+                        filter(CoworkerReview.coworker == user, CoworkerAdvice.form == form).first()
+                    proj_rating = CoworkerProjectRating(review=review, project=self.model)
+                    self.save_all(proj_rating)
         Session().commit()

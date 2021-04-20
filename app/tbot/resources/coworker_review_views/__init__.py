@@ -7,9 +7,9 @@ from app.tbot.resources.coworker_review_views.list_forms_views import \
 
 from app.tbot.resources.coworker_review_views.project_review_views import \
     project_view as coworker_review_project_view, \
-    project_rate_view as coworker_review_project_rate_view, \
-    project_comment_on_view as coworker_review_project_comment_on_view, \
-    project_rate_choose_view as coworker_review_project_rate_choose_view
+    rate_view as coworker_review_project_rate_view, \
+    comment_view as coworker_review_project_comment_view, \
+    save_comment_view as coworker_review_project_save_comment_view
 
 from app.tbot.resources.coworker_review_views.projects_review_views import \
     projects_view as coworker_review_projects_view

@@ -131,7 +131,10 @@
       "name": "На оценке коллег"
     },
     {
-      "name": "Анкета заполена/Review сформаировано"
+      "name": "Анкета заполена"
+    },
+    {
+      "name": "Review сформировано"
     }
   ],
 
@@ -149,13 +152,13 @@
   ],
   "hr_review_statuses": [
     {
-      "name": "Не проверяна"
+      "name": "hr review"
     },
     {
-      "name": "На исправление"
+      "name": "coworker review"
     },
     {
-      "name": "Принята"
+      "name": "accept"
     }
   ]
 }

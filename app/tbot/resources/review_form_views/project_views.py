@@ -5,53 +5,53 @@ from app.tbot.services.forms import ProjectForm
 
 def edit_view(request):
     """ Изменить проект """
-    pk = request.pk()
+    pk = request.args['project'][0]
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    template = ProjectForm(model=project, can_edit=True)
-    return template
+    return ProjectForm(project=project, review_type='write', have_markup=True)
 
 
 def edit_name_view(request):
     """ Изменить имя проекта """
-    pk = request.pk()
+    pk = request.args['project'][0]
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    template = ProjectForm(model=project, can_add=True, is_name=True)
+    template = ProjectForm(project=project, review_type='write')
     next_view = service.update_name_before(edit_view)
     return template, next_view
 
 
 def edit_contacts_view(request):
     """ Изменить контакты к проекту """
-    pk = request.pk()
+    pk = request.args['project'][0]
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    template = ProjectForm(model=project, can_add=True, is_contacts=True)
+    template = ProjectForm(project=project, review_type='write')
     next_view = service.update_contacts_before(edit_view)
     return template, next_view
 
 
 def edit_description_view(request):
     """ Измнить описание проекта """
-    pk = request.pk()
+    pk = request.args['project'][0]
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    template = ProjectForm(model=project, can_add=True, is_description=True)
+    template = ProjectForm(project=project, review_type='write')
     next_view = service.update_description_before(edit_view)
     return template, next_view
 
 
 def delete_view(request):
     """ Удалить проект """
-    pk = request.pk()
+    pk = request.args['project'][0]
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
+    service.delete(*project.ratings)
     service.delete(project)
     return list_view(request=request)
 
@@ -61,38 +61,38 @@ def add_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.create(form=form)
-    template = ProjectForm(model=project, can_add=True, is_name=True)
+    template = ProjectForm(project=project, review_type='write')
     return template, service.add_model(add_name_view)
 
 
 def add_name_view(request):
     """ Добавить название проекта """
-    model = request.model
+    project = request.model
     text = request.text
     form = request.form
-    service = ProjectsServiceTBot(model, form=form)
-    template = ProjectForm(model=model, can_add=True, is_description=True)
+    service = ProjectsServiceTBot(project, form=form)
+    template = ProjectForm(project=project, review_type='write')
     service.name = text
     return template, service.add_model(add_description_view)
 
 
 def add_description_view(request):
     """ Добавить описание проекта """
-    model = request.model
+    project = request.model
     text = request.text
     form = request.form
-    service = ProjectsServiceTBot(model, form=form)
-    template = ProjectForm(model=model, can_add=True, is_contacts=True)
+    service = ProjectsServiceTBot(project, form=form)
+    template = ProjectForm(project=project, review_type='write')
     service.description = text
     return template, service.add_model(add_contacts_view)
 
 
 def add_contacts_view(request):
     """ Добавить контакты проекта """
-    model = request.model
+    project = request.model
     usernames = request.split_text
     form = request.form
-    service = ProjectsServiceTBot(model, form=form)
+    service = ProjectsServiceTBot(project)
     service.contacts = usernames
     return list_view(request=request)
 
