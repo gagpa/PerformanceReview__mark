@@ -20,31 +20,31 @@ def current_forms_list(request):
 
 def employee_review(request):
     """Информация о пользователе за текущие Review"""
-    pk = request.pk()
+    form_id = request.args['pk'][0]
     current_review = Session().query(Form).join(User, Form.user).join(Status, Form.status) \
-        .filter(Form.id == pk).one_or_none()
-    coworker_advices = Session().query(CoworkerAdvice).filter_by(form_id=pk).all()
+        .filter(Form.id == form_id).one_or_none()
+    coworker_advices = Session().query(CoworkerAdvice).filter_by(form_id=form_id).all()
     # TODO: добавить проверку для кнопки Summary на то, что все коллеги оценили проекты
-    summary = SummaryService().by_form_id(pk)
-    rating = ProjectCommentService().final_rating(pk)
+    summary = SummaryService().by_form_id(form_id)
+    rating = ProjectCommentService().final_rating(form_id)
     return CurrentReviewForm(model=current_review, advices=coworker_advices, summary=summary,
                              rating=rating)
 
 
 def input_summary(request):
     """Предлагаем HR ввести summary"""
-    pk = request.args['pk'][0]
-    return CurrentReviewForm(change_summary=True), request.send_args(change_summary, pk=pk)
+    form_id = request.args['form_id'][0]
+    return CurrentReviewForm(change_summary=True), request.send_args(change_summary, form_id=form_id)
 
 
 def change_summary(request):
     """Записсываем summary и меняем статус формы и оценок"""
-    pk = request.args['pk'][0]
-    summary = SummaryService().by_form_id(pk)
+    form_id = request.args['form_id'][0]
+    summary = SummaryService().by_form_id(form_id)
     if not summary:
-        summary = SummaryService().create(form_id=pk, from_hr_id=request.user.id,
+        summary = SummaryService().create(form_id=form_id, from_hr_id=request.user.id,
                                           text=request.text)
-        form = FormService().by_pk(pk)
+        form = FormService().by_pk(form_id)
         StatusService().change_to_done(form)
         # TODO: изменять статус у оценок
         # advices = CoworkerReviewService().all_by(form_id=pk)

@@ -19,15 +19,15 @@ class CurrentReviewForm(Template):
             return markup
         elif self.args.get('model') and not self.args.get('summary'):
             rows = list()
-            rows.append([BUTTONS_TEMPLATES['input_summary'].add(pk=self.args.get('model').id),
+            rows.append([BUTTONS_TEMPLATES['input_summary'].add(form_id=self.args.get('model').id),
                          BUTTONS_TEMPLATES['current_forms_list']])
             markup = self.markup_builder.build(*rows)
             return markup
         elif self.args.get('model') and self.args.get('summary'):
             rows = list()
-            rows.append([BUTTONS_TEMPLATES['change_summary'].add(pk=self.args.get('model').id),
+            rows.append([BUTTONS_TEMPLATES['change_summary'].add(form_id=self.args.get('model').id),
                          BUTTONS_TEMPLATES['get_current_rapport'].add(
-                             pk=self.args.get('model').id),
+                             form_id=self.args.get('model').id),
                          BUTTONS_TEMPLATES['current_forms_list']])
             markup = self.markup_builder.build(*rows)
             return markup
