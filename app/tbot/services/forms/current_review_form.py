@@ -55,8 +55,8 @@ class CurrentReviewForm(Template):
             to_do = ''
             not_todo = ''
             for advice in self.args.get('advices'):
-                to_do += f"{f'{advice.todo}' if advice.todo else 'отсутсвует'}\n"
-                not_todo += f"{f'{advice.not_todo}' if advice.not_todo else 'отсутсвует'}\n"
+                to_do += f'{advice.todo}\n' if advice.todo else ''
+                not_todo += f'{advice.not_todo}\n' if advice.not_todo else ''
             summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
             rating = self.args.get("rating")
             text = f"ФИО: {self.args.get('model').user.fullname}\n" \
