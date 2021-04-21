@@ -28,7 +28,7 @@ class CurrentReviewForm(Template):
             rows.append(
                 [BUTTONS_TEMPLATES['change_summary'].add(form_id=self.args.get('model').id),
                  BUTTONS_TEMPLATES['get_current_rapport'].add(
-                     form_id=self.args.get('model').id),
+                     pk=self.args.get('model').id),
                  BUTTONS_TEMPLATES['current_forms_list']])
             markup = self.markup_builder.build(*rows)
             return markup

@@ -18,8 +18,8 @@ class ArchiveForm(Template):
             return markup
         elif self.args.get('pk') and self.args.get('choose_rapport'):
             rows = list()
-            rows.append([BUTTONS_TEMPLATES['get_hr_rapport'].add(pk=self.args.get('pk')),
-                         BUTTONS_TEMPLATES['get_boss_rapport'].add(pk=self.args.get('pk'))])
+            rows.append([BUTTONS_TEMPLATES['get_hr_rapport'].add(form_id=self.args.get('pk')),
+                         BUTTONS_TEMPLATES['get_boss_rapport'].add(form_id=self.args.get('pk'))])
             markup = self.markup_builder.build(*rows)
             return markup
 

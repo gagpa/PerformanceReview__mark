@@ -15,12 +15,12 @@ from configs.bot_config import HR_REPORT_TEMPLATE, BOSS_REPORT_TEMPLATE
 
 
 def get_rapport(request):
-    pk = request.pk()
+    pk = request.args['pk'][0]
     return ArchiveForm(pk=pk, choose_rapport=True)
 
 
 def get_hr_rapport(request):
-    pk = request.args['pk'][0]
+    pk = request.args['form_id'][0]
     user = request.user
     template_vars = get_data_for_rapport(pk)
     final_rating = ProjectCommentService().final_rating(pk)
@@ -35,7 +35,7 @@ def get_hr_rapport(request):
 
 
 def get_boss_rapport(request):
-    pk = request.args['pk'][0]
+    pk = request.args['form_id'][0]
     user = request.user
     template_vars = get_data_for_rapport(pk)
     coworkers_comments = ProjectCommentService().coworkers_projects_comments(pk)
