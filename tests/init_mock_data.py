@@ -80,8 +80,9 @@ def add_all_users_in_db(users_mock_data):
     Добавить тестовых пользователей в БД.
     """
     role = db_session.query(Role).filter_by(name='Employee').one()
-    position = db_session.query(Position).filter_by(name='Главный специалист').one()
-    department = db_session.query(Department).filter_by(name='разработчики').one()
+    position = db_session.query(Position).filter_by(name='Разработчик').one()
+    department = db_session.query(Department)\
+        .filter_by(name='Разработка (Коммуникационная платформа, Афина, Цифровые сервисы)').one()
 
     for user_mock_data in users_mock_data:
         user = User(**user_mock_data)
