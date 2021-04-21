@@ -24,6 +24,7 @@ def employee_review(request):
     current_review = Session().query(Form).join(User, Form.user).join(Status, Form.status) \
         .filter(Form.id == pk).one_or_none()
     coworker_advices = Session().query(CoworkerAdvice).filter_by(form_id=pk).all()
+    # TODO: добавить проверку для кнопки Summary на то, что все коллеги оценили проекты
     summary = SummaryService().by_form_id(pk)
     rating = ProjectCommentService().final_rating(pk)
     return CurrentReviewForm(model=current_review, advices=coworker_advices, summary=summary,

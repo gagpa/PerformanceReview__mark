@@ -25,8 +25,6 @@ class ArchiveForm(Template):
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
-        description = ''
-
         if self.args.get('models') and self.args.get('archive_list'):
             title = 'Архив'
             description = 'Выберите номер анкеты, чтобы сформировать отчет:'

@@ -18,10 +18,7 @@ def old_forms_list(request):
     old_reviews = Session().query(Form).join(ReviewPeriod, Form.review_period) \
         .join(User, Form.user).join(Status, Form.status) \
         .filter(ReviewPeriod.is_active == False).all()
-    if old_reviews:
-        return ArchiveForm(models=old_reviews, archive_list=True)
-    else:
-        return ArchiveForm()
+    return ArchiveForm(models=old_reviews, archive_list=True)
 
 
 def get_rapport(request):
