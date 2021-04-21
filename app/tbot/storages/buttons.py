@@ -79,11 +79,15 @@ BUTTONS_TEMPLATES = \
         'request_delete_view': ButtonTemplate('request_delete_view', 'Удалить'),
         'request_accept_view': ButtonTemplate('request_accept_view', 'Принять'),
         'request_view_back': ButtonTemplate('request_view_back', 'Назад'),
+        'request_delete': ButtonTemplate('request_delete', 'Удалить'),
+        'cancel_deletion': ButtonTemplate('cancel_deletion', 'Отмена'),
 
         'user_view': ButtonTemplate('user_view'),
         'user_delete_view': ButtonTemplate('user_delete_view', 'Удалить'),
         'user_view_back': ButtonTemplate('user_view_back', 'Назад'),
         'user_edit_view': ButtonTemplate('user_edit_view', 'Редактировать'),
+        'user_delete': ButtonTemplate('user_delete', 'Удалить'),
+        'cancel_user_delete': ButtonTemplate('cancel_user_delete', 'Отмена'),
 
         'user_edit_fullname': ButtonTemplate('user_edit_fullname', 'ФИО'),
         'user_edit_role': ButtonTemplate('user_edit_role', 'Роль'),

@@ -1,5 +1,6 @@
 from app.db import Session
 from app.models import Role, Position, Department
+from app.services.form_review import FormService
 from app.services.user import UserService
 from app.tbot.resources.user_views.users_list_views import users_list_view
 from app.tbot.services.auth import UserServiceTBot
@@ -7,13 +8,22 @@ from app.tbot.services.forms.user_form import UserForm
 
 
 def delete_user_view(request):
+    """ Подтвердить удаление """
+    pk = request.args['user'][0]
+    service = UserService()
+    user = service.by_pk(pk=pk)
+    return UserForm(confirm=True, user=True, model=user)
+
+
+def delete_user(request):
     """ Удалить пользователя """
     pk = request.args['user'][0]
     service = UserService()
     user = service.by_pk(pk=pk)
-    # form_service = FormService()
-    # form = form_service.by(user_id=pk)
-    # form_service.delete(form)
+    form_service = FormService()
+    form = form_service.by(user_id=pk)
+    if form:
+        form_service.delete(form)
     service.delete(user)
     return users_list_view(request=request)
 

@@ -4,16 +4,26 @@ from app.services.form_review import FormService
 from app.services.user import UserService
 from app.tbot.resources.request_views import request_list_view
 from app.tbot.services.auth import UserServiceTBot
+from app.tbot.services.forms.user_form import UserForm
 
 
 def delete_request_view(request):
+    """ Подтвердить удаление """
+    pk = request.args['user'][0]
+    service = UserService()
+    user = service.by_pk(pk=pk)
+    return UserForm(confirm=True, request=True, model=user)
+
+
+def delete_request(request):
     """ Удалить запрос """
     pk = request.args['user'][0]
     service = UserService()
     user = service.by_pk(pk=pk)
     form_service = FormService()
     form = form_service.by(user_id=pk)
-    form_service.delete(form)
+    if form:
+        form_service.delete(form)
     service.delete(user)
     return request_list_view(request=request)
 

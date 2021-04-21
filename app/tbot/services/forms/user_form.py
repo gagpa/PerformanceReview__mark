@@ -14,15 +14,17 @@ class UserForm(Template):
         rows = []
 
         if self.args.get('can_edit'):
-            rows.append([BUTTONS_TEMPLATES['request_accept_view'].add(user=self.args.get('model').id),
-                         BUTTONS_TEMPLATES['request_delete_view'].add(user=self.args.get('model').id)])
+            rows.append(
+                [BUTTONS_TEMPLATES['request_accept_view'].add(user=self.args.get('model').id),
+                 BUTTONS_TEMPLATES['request_delete_view'].add(user=self.args.get('model').id)])
             rows.append([BUTTONS_TEMPLATES['request_view_back']])
             markup = self.markup_builder.build(*rows)
             return markup
 
         elif self.args.get('can_edit_user'):
             rows.append([BUTTONS_TEMPLATES['user_edit_view'].add(user=self.args.get('model').id),
-                         BUTTONS_TEMPLATES['user_delete_view'].add(user=self.args.get('model').id)])
+                         BUTTONS_TEMPLATES['user_delete_view'].add(
+                             user=self.args.get('model').id)])
             rows.append([BUTTONS_TEMPLATES['user_view_back']])
             markup = self.markup_builder.build(*rows)
             return markup
@@ -43,6 +45,16 @@ class UserForm(Template):
                          BUTTONS_TEMPLATES['user_edit_boss'],
                          BUTTONS_TEMPLATES['user_edit_department'],
                          BUTTONS_TEMPLATES['user_edit_role']])
+            markup = self.markup_builder.build(*rows, user=self.args.get('model').id)
+            return markup
+        elif self.args.get('confirm') and self.args.get('request'):
+            rows.append([BUTTONS_TEMPLATES['request_delete'],
+                         BUTTONS_TEMPLATES['cancel_deletion']])
+            markup = self.markup_builder.build(*rows, user=self.args.get('model').id)
+            return markup
+        elif self.args.get('confirm') and self.args.get('user'):
+            rows.append([BUTTONS_TEMPLATES['user_delete'],
+                         BUTTONS_TEMPLATES['cancel_user_delete']])
             markup = self.markup_builder.build(*rows, user=self.args.get('model').id)
             return markup
 
@@ -114,7 +126,13 @@ class UserForm(Template):
                                                               text=text,
                                                               )
         elif self.args.get('changed'):
-            text = 'Данные изменены:'
+            text = 'Данные изменены.'
+            message_text = self.message_builder.build_message(title=title,
+                                                              description=description,
+                                                              text=text,
+                                                              )
+        elif self.args.get('confirm'):
+            text = f'Удалить {self.args.get("model").username}?'
             message_text = self.message_builder.build_message(title=title,
                                                               description=description,
                                                               text=text,

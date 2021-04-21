@@ -37,7 +37,7 @@ from app.tbot.resources.request_views import \
 
 from app.tbot.resources.request_views.request_view import \
     delete_request_view, \
-    accept_request_view
+    accept_request_view, delete_request
 
 from app.tbot.resources.review_form_views import \
     review_form_view, \
@@ -85,7 +85,7 @@ from app.tbot.resources.user_views.user_views import \
     user_edit_role, \
     user_edit_position, \
     user_edit_boss, \
-    user_edit_department
+    user_edit_department, delete_user
 
 from app.tbot.resources.user_views.users_list_views import \
     user_view, \
@@ -149,11 +149,16 @@ ROUTES = \
         'request_delete_view': delete_request_view,
         'request_view_back': request_list_view,
         'request_accept_view': accept_request_view,
+        'request_delete': delete_request,
+        'cancel_deletion': request_list_view,
+
 
         'user_view': user_view,
         'user_delete_view': delete_user_view,
         'user_view_back': users_list_view,
         'user_edit_view': edit_user_view,
+        'user_delete': delete_user,
+        'cancel_user_delete': users_list_view,
 
         'user_edit_fullname': user_edit_fullname,
         'user_edit_role': user_edit_role,
