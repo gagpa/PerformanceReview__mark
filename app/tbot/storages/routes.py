@@ -67,12 +67,10 @@ from app.tbot.resources.review_form_views import \
     review_form_achievement_delete_view, \
     review_form_achievements_delete_choose_view
 
-from app.tbot.resources.review_period_views.archive_views import \
-    get_rapport, \
-    get_hr_rapport, \
-    get_boss_rapport
 from app.tbot.resources.review_period_views.current_review_views import employee_review, \
     current_forms_list, input_summary
+from app.tbot.resources.review_period_views.rapport_views import get_rapport, get_hr_rapport, \
+    get_boss_rapport
 
 from app.tbot.resources.review_period_views.review_period_views import \
     review_period_start, \
