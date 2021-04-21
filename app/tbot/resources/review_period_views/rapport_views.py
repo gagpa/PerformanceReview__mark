@@ -11,6 +11,7 @@ from app.services.dictinary.summary import SummaryService
 from app.services.form_review.project_comments import ProjectCommentService
 from app.tbot import bot
 from app.tbot.services.forms.archive_form import ArchiveForm
+from configs.bot_config import HR_REPORT_TEMPLATE, BOSS_REPORT_TEMPLATE
 
 
 def get_rapport(request):
@@ -29,7 +30,7 @@ def get_hr_rapport(request):
     #     .filter_by(form_id=pk, user_id=boss_comments.user_id).all()
     # reviews = []
     template_vars.update(reviews=[])
-    create_and_send_pdf(user.chat_id, "templates/hr_report_template.html", template_vars)
+    create_and_send_pdf(user.chat_id, HR_REPORT_TEMPLATE, template_vars)
     return
 
 
@@ -49,7 +50,7 @@ def get_boss_rapport(request):
                          coworkers_rating=mean(coworkers_rating) if coworkers_rating else None,
                          subordinate_rating=mean(
                              subordinate_rating) if subordinate_rating else None)
-    create_and_send_pdf(user.chat_id, "templates/boss_report_template.html", template_vars)
+    create_and_send_pdf(user.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
     return
 
 
