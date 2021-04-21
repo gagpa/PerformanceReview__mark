@@ -51,6 +51,7 @@ class ProjectsService(Entity):
 
     @contacts.setter
     def contacts(self, contacts):  # TODO Обдумать .merge()
+        contacts = [contact.replace('@', '') for contact in contacts]
         if not Session.object_session(self.model):
             self.model = Session().merge(self.model)
         users = Session().query(User).filter(User.username.in_(contacts)).all()

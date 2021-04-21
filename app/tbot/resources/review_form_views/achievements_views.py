@@ -7,8 +7,7 @@ def list_view(request):
     form = request.form
     achievement_service = AchievementServiceTBot(form=form)
     achievements = achievement_service.all
-    can_edit = bool(achievements)
-    template = AchievementsForm(models=achievements, can_add=True, can_edit=can_edit, can_del=can_edit)
+    template = AchievementsForm(achievements=achievements, view='list')
     return template
 
 
@@ -17,7 +16,7 @@ def add_view(request):
     form = request.form
     achievement_service = AchievementServiceTBot(form=form)
     achievements = achievement_service.all
-    template = AchievementsForm(models=achievements, can_add=False, can_del=False, can_edit=False)
+    template = AchievementsForm(achievements=achievements, view='add')
     next_view = achievement_service.create_before(list_view)
     return template, next_view
 
@@ -27,7 +26,7 @@ def edit_choose_view(request):
     form = request.form
     achievement_service = AchievementServiceTBot(form=form)
     achievements = achievement_service.all
-    template = AchievementsForm(models=achievements, can_add=False, can_edit=True, can_del=False)
+    template = AchievementsForm(achievements=achievements, view='edit_choose')
     return template
 
 
@@ -36,7 +35,7 @@ def delete_choose_view(request):
     form = request.form
     achievement_service = AchievementServiceTBot(form=form)
     achievements = achievement_service.all
-    template = AchievementsForm(models=achievements, can_add=False, can_edit=False, can_del=True)
+    template = AchievementsForm(achievements=achievements, view='delete_choose')
     return template
 
 

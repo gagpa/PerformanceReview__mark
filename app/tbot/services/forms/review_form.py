@@ -1,34 +1,11 @@
 from telebot.types import InlineKeyboardMarkup
 
 from app.tbot.extensions.template import Template
-from app.tbot.services.forms.achievements_form import AchievementsForm
-from app.tbot.services.forms.duty_form import DutyForm
-from app.tbot.services.forms.fails_form import FailsForm
-from app.tbot.services.forms.projects_form import ProjectsForm
 from app.tbot.storages import BUTTONS_TEMPLATES
 
 
 class ReviewForm(Template):
     """ Шаблон формы анкеты """
-    __ORDER = ['review_form_duty', 'review_form_projects_list', 'review_form_achievements_list', 'review_form_fails']
-    templates = {
-        'review_form_achievements_list': AchievementsForm(form=True),
-        'review_form_duty': DutyForm(form=True),
-        'review_form_fails': FailsForm(form=True),
-        'review_form_projects_list': ProjectsForm(review_type='write'),
-    }
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.add()
-
-    def add(self):
-        """ Добавить данные из словаря в форму """
-        form = self.args['form']
-        self.templates['review_form_achievements_list'].args['models'] = form.achievements
-        self.templates['review_form_duty'].args['model'] = form.duty
-        self.templates['review_form_fails'].args['models'] = form.fails
-        self.templates['review_form_projects_list'].args['models'] = form.projects
 
     def create_markup(self) -> InlineKeyboardMarkup:
         if self.args.get('have_markup'):
@@ -38,11 +15,13 @@ class ReviewForm(Template):
             review_type = self.args.get('review_type')
             review = self.args.get('review')
             if review_type == 'write':
-                rows.append([BUTTONS_TEMPLATES[self.__ORDER[0]], BUTTONS_TEMPLATES[self.__ORDER[1]]])
-                rows.append([BUTTONS_TEMPLATES[self.__ORDER[2]], BUTTONS_TEMPLATES[self.__ORDER[3]]])
-                rows.append([BUTTONS_TEMPLATES['review_form_send_to_boss']])
-                markup = self.markup_builder.build(*rows)
-                return markup
+                self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_duty'],
+                                     BUTTONS_TEMPLATES['review_form_projects_list'], )
+                self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_achievements_list'],
+                                     BUTTONS_TEMPLATES['review_form_fails'])
+                if form.achievements and form.fails and form.projects and form.duty:
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_send_to_boss'])
+                return self.build(form=form.id)
 
             elif review_type == 'boss':
                 self.extend_keyboard(False, BUTTONS_TEMPLATES['boss_review_accept'],
@@ -86,8 +65,28 @@ class ReviewForm(Template):
         review = self.args.get('review')
         ratings = self.args.get('ratings')
         view = self.args.get('view')
-        for name_template in self.__ORDER:
-            form_text += f'{self.templates[name_template].dump()[0]}\n'
+        fill_volume = 0
+        max_volume = 4
+        if review_type == 'write':
+            self.build_message(title='📝 Анкета')
+
+        if form.duty:
+            fill_volume += 1
+            self.build_message(title='▪️Обязанности', text=f' -  {form.duty.text}')
+        if form.achievements:
+            fill_volume += 1
+            list_text = [f'{achievement.text}' for achievement in form.achievements]
+            self.build_list_message(title='▪️Достижения', list_text=list_text)
+        if form.fails:
+            fill_volume += 1
+            list_text = [f'{fail.text}' for fail in form.fails]
+            self.build_list_message(title='▪️Провалы', list_text=list_text)
+        if form.projects:
+            fill_volume += 1
+            find_coworkers = lambda project: '\n -  '.join([f"@{review.coworker.username}" for review in project.reviews])
+            list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
+                         form.projects]
+            self.build_list_message(title='▪️Проекты', list_text=list_text)
 
         if review_type == 'boss':
             self.build_message(title='Анкета', text=form_text)
@@ -102,7 +101,8 @@ class ReviewForm(Template):
             if ratings:
                 list_data = []
                 for rating in ratings:
-                    list_data.append(f'{rating.project.name}\n- Оценка: {f"{rating.rating.name} {rating.text}" if rating.rating else "Не стоит"}')
+                    list_data.append(
+                        f'{rating.project.name}\n- Оценка: {f"{rating.rating.name} {rating.text}" if rating.rating else "Не стоит"}')
                     if rating.hr_comment:
                         list_data[-1] += f'\n- Исправить: {rating.hr_comment}'
                 self.build_list_message(title='Ваши оценки', description='', list_text=list_data)
@@ -123,7 +123,8 @@ class ReviewForm(Template):
             return self.MESSAGE
 
         elif review_type == 'hr':
-            self.build_message(description=f'Оценивающий @{advice.coworker_review.coworker.username}\nВладелец формы @{form.user.username}')
+            self.build_message(
+                description=f'Оценивающий @{advice.coworker_review.coworker.username}\nВладелец формы @{form.user.username}')
             self.build_message(title='Анкета', description='', text=form_text)
             if ratings:
                 list_data = []
@@ -145,15 +146,18 @@ class ReviewForm(Template):
 
             return self.MESSAGE
 
-        else:
-            title = '[АНКЕТА]'
-            description = f'Review период:{form.review_period}\n' \
-                          f'Статус формы: {form.status.name}'
+        elif review_type == 'write':
+            if fill_volume == max_volume:
+                filling = f' -  Статус: заполнена ✔'
+            else:
+                filling = f' -  Статус: заполнение ({int(fill_volume / max_volume * 100)}%)'
+            self.build_message(title='▫️Информация об анкете',
+                               text=f' -  Опрос закончится: {form.review_period.end_date}\n'
+                                    f'{filling}')
+            if form.boss_review:
+                self.build_message(title='▫ Необходимо исправить', text=f' -  {form.boss_review.text}')
 
-            message_text = self.message_builder.build_message(title=title,
-                                                              description=description,
-                                                              text=form_text)
-            return message_text
+            return self.MESSAGE
 
 
 __all__ = ['ReviewForm']

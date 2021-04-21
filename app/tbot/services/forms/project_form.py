@@ -89,11 +89,11 @@ class ProjectForm(Template):
             if not project.name:
                 self.build_message(title='Заполнение проекта', description='Напишите название проекта')
             elif not project.description:
-                self.build_message(title='Заполнение проекта', description='Опишите цель проекта и свои обязанности',
+                self.build_message(title='Заполнение проекта', description='\nОпишите цель проекта и свои обязанности',
                                    text=f'Название проекта: {project.name}')
             elif not project.reviews:
                 self.build_message(title='Заполнение проекта',
-                                   description='Введите username коллеги, который может оценить ваш вклад в проект',
+                                   description='\nВведите username коллеги, который может оценить ваш вклад в проект',
                                    text=f'Название проекта: {project.name}\n'
                                         f'Цели и обязаннсоти: {project.description}')
             else:

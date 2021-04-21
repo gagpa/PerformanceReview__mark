@@ -7,7 +7,7 @@ def list_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     projects = service.all
-    return ProjectsForm(projects=projects, review_type='write', have_markup=True)
+    return ProjectsForm(projects=projects, review_type='write', view='list', have_markup=True)
 
 
 def edit_choose_view(request):
@@ -15,7 +15,7 @@ def edit_choose_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     projects = service.all
-    template = ProjectsForm(projects=projects, review_type='write', view='choose_edit', have_markup=True)
+    template = ProjectsForm(projects=projects, review_type='write', view='edit_choose', have_markup=True)
     return template
 
 
@@ -24,7 +24,7 @@ def delete_choose_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     projects = service.all
-    template = ProjectsForm(projects=projects, review_type='write', view='choose_delete', have_markup=True)
+    template = ProjectsForm(projects=projects, review_type='write', view='delete_choose', have_markup=True)
     return template
 
 

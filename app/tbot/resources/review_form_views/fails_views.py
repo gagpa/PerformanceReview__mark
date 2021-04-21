@@ -8,7 +8,7 @@ def list_view(request):
     service = FailServiceTBot(form=form)
     fails = service.all
     can_edit = bool(fails)
-    template = FailsForm(models=fails, can_add=True, can_edit=can_edit, can_del=can_edit)
+    template = FailsForm(fails=fails, view='list')
     return template
 
 
@@ -17,7 +17,7 @@ def add_view(request):
     form = request.form
     service = FailServiceTBot(form=form)
     fails = service.all
-    template = FailsForm(models=fails, can_add=False, can_del=False, can_edit=False)
+    template = FailsForm(fails=fails, view='add')
 
     next_controller = service.create_before(list_view)
     return template, next_controller
@@ -28,7 +28,7 @@ def edit_choose_view(request):
     form = request.form
     service = FailServiceTBot(form=form)
     fails = service.all
-    template = FailsForm(models=fails, can_add=False, can_edit=True, can_del=False)
+    template = FailsForm(fails=fails, view='edit_choose')
     return template
 
 
@@ -37,7 +37,7 @@ def delete_choose_view(request):
     form = request.form
     service = FailServiceTBot(form=form)
     fails = service.all
-    template = FailsForm(models=fails, can_add=False, can_edit=False, can_del=True)
+    template = FailsForm(fails=fails, view='delete_choose')
     return template
 
 

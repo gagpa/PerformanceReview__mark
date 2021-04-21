@@ -10,88 +10,67 @@ class FailsForm(Template):
 
     def create_markup(self) -> InlineKeyboardMarkup:
         """ Создать клавиатуру """
-        rows = []
+        view = self.args.get('view')
+        fails = self.args.get('fails')
 
-        if self.args.get('can_edit') and self.args.get('can_del'):
-            rows.append([BUTTONS_TEMPLATES['review_form_fails_add']])
-            rows.append([BUTTONS_TEMPLATES['review_form_fails_edit_choose'],
-                         BUTTONS_TEMPLATES['review_form_fails_delete_choose']])
-            rows.append([BUTTONS_TEMPLATES['review_form']])
-            markup = InlineKeyboardBuilder.build(*rows)
-            return markup
+        if view == 'list':
+            self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_fails_add'])
+            if fails:
+                self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_fails_edit_choose'],
+                                     BUTTONS_TEMPLATES['review_form_fails_delete_choose'])
+            self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form'])
+            return self.build()
 
-        elif self.args.get('can_add'):
-            rows.append([BUTTONS_TEMPLATES['review_form_fails_add']])
-            rows.append([BUTTONS_TEMPLATES['review_form']])
-            markup = InlineKeyboardBuilder.build(*rows)
-            return markup
+        elif view == 'delete_choose':
+            unique_args = [{'fail': fail.id} for fail in fails]
+            main = BUTTONS_TEMPLATES['review_form_fail_delete']
+            return self.build_list(main, unique_args)
 
-        elif self.args.get('can_del'):
-            btn = BUTTONS_TEMPLATES['review_form_fail_delete']
-            markup = InlineKeyboardBuilder.build_list(self.args['models'], btn)
-            return markup
+        elif view == 'edit_choose':
+            unique_args = [{'fail': fail.id} for fail in fails]
+            main = BUTTONS_TEMPLATES['review_form_fail_edit']
+            return self.build_list(main, unique_args)
 
-        elif self.args.get('can_edit'):
-            btn = BUTTONS_TEMPLATES['review_form_fail_edit']
-            markup = InlineKeyboardBuilder.build_list(self.args['models'], btn)
-            return markup
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
-        title = '[ПРОВАЛЫ]'
+        view = self.args.get('view')
+        fails = self.args.get('fails')
+        title = '▪️Провалы'
 
-        if self.args.get('can_edit') and self.args.get('can_del'):
+        if view == 'list':
             description = 'Факты, которые ты считаешь своими основными провалами, ' \
                           'то, чем вы сами недовольны и что хотели бы исправить и' \
                           ' улучшить в будущем'
-            list_data = [f'{self.model.text}' for self.model in self.args['models']]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
+            if fails:
+                self.build_list_message(title=title,
+                                        description=f'\n{description}',
+                                        list_text=[f'{fail.text}' for fail in fails])
+            else:
+                self.build_message(title=title, description=description)
+            return self.MESSAGE
 
-        elif self.args.get('can_add'):
-            description = 'Факты, которые ты считаешь своими основными провалами, ' \
-                          'то, чем вы сами недовольны и что хотели бы исправить и' \
-                          ' улучшить в будущем'
-            text = 'Раздел не заполнен'
-            message_text = self.message_builder.build_message(title=title,
-                                                              description=description,
-                                                              text=text,
-                                                              )
+        elif view == 'delete_choose':
+            self.build_list_message(title=title,
+                                    description='\nВыберите провал, которое вы хотите удалить',
+                                    list_text=[f'{fail.text}' for fail in fails])
+            return self.MESSAGE
 
-        elif self.args.get('can_del'):
-            description = 'Выберите провал, которое вы хотите удалить'
-            list_data = [f'{self.model.text}' for self.model in self.args['models']]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
+        elif view == 'edit_choose':
+            self.build_list_message(title=title,
+                                    description='\nВыберите провал, которое вы хотите изменить',
+                                    list_text=[f'{fail.text}' for fail in fails])
+            return self.MESSAGE
 
-        elif self.args.get('can_edit'):
-            description = 'Выберите провал, которое вы хотите изменить'
-            list_data = [f'{self.model.text}' for self.model in self.args['models']]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
-        elif self.args.get('form'):
-            description = ''
-            list_data = [f'{self.model.text}' for self.model in self.args['models']]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
-            return message_text
-
-        else:
+        elif view == 'add':
             description = 'Отправьте в сообщении свои основные провалы'
-            list_data = [f'{self.model.text}' for self.model in self.args['models']]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
-        return message_text
+            if fails:
+                self.build_list_message(title=title,
+                                        description=f'\n{description}',
+                                        list_text=[f'{fail.text}' for fail in fails])
+            else:
+                self.build_message(title=title, description=description)
+            return self.MESSAGE
 
 
 __all__ = ['FailsForm']

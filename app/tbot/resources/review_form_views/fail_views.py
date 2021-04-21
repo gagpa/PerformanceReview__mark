@@ -5,7 +5,7 @@ from app.tbot.services.forms import FailForm
 
 def delete_view(request):
     """ Удлаить провал """
-    pk = request.pk()
+    pk = request.args['fail'][0]
     form = request.form
     service = FailServiceTBot(form=form)
     fail = service.by_pk(pk=pk)
@@ -15,11 +15,11 @@ def delete_view(request):
 
 def edit_view(request):
     """ Изменить провал """
-    pk = request.pk()
+    pk = request.args['fail'][0]
     form = request.form
     service = FailServiceTBot(form=form)
     fail = service.by_pk(pk=pk)
-    template = FailForm(model=fail)
+    template = FailForm(fail=fail, view='edit')
     return template, service.update_before(list_view)
 
 
