@@ -10,6 +10,7 @@ class HrReviewService(Entity):
 
     @property
     def is_on_review(self):
+        # TODO: поменять код
         if self.model.hr_status == HrReviewStatusService().hr:
             return True
         return False

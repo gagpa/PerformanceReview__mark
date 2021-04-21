@@ -24,6 +24,7 @@ def delete_user(request):
     form = form_service.by(user_id=pk)
     if form:
         form_service.delete(form)
+    # TODO: добавить отправку сообщения удаленному пользователю
     service.delete(user)
     return users_list_view(request=request)
 

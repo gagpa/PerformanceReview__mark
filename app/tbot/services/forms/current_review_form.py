@@ -2,6 +2,7 @@ from typing import Optional
 
 from telebot.types import InlineKeyboardMarkup
 
+from app.services.form_review.project_comments import ProjectCommentService
 from app.tbot.extensions.template import Template
 from app.tbot.storages import BUTTONS_TEMPLATES
 
@@ -36,11 +37,13 @@ class CurrentReviewForm(Template):
 
         if self.args.get('models') and self.args.get('forms_list'):
             title = 'Текущий Review'
-            rating = self.args.get("rating")
-            list_data = [f'{model.user.fullname},\n' \
-                         f'{model.status.name},\n' \
-                         f'{f"Оценка: {rating}" if rating and model.status.id == 4 else ""}\n'
-                         for model in self.args["models"]]
+            list_data = list()
+            for model in self.args["models"]:
+                string = f'{model.user.fullname},\n{model.status.name}'
+                rating = ProjectCommentService().final_rating(model.id)
+                string += f",\nОценка: {rating}\n" if rating else "\n"
+                list_data.append(string)
+
             message_text = self.message_builder.build_list_message(title=title,
                                                                    description=description,
                                                                    list_data=list_data,

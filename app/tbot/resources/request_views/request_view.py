@@ -24,6 +24,7 @@ def delete_request(request):
     form = form_service.by(user_id=pk)
     if form:
         form_service.delete(form)
+    # TODO: добавить отправку сообщения удаленному пользователю
     service.delete(user)
     return request_list_view(request=request)
 
@@ -36,4 +37,5 @@ def accept_request_view(request):
     user.role = Session().query(Role).filter_by(name='Employee').one_or_none()
     sess = Session().object_session(user)
     sess.commit()
+    # TODO: добавить отправку сообщения пользователю
     return request_list_view(request=request)

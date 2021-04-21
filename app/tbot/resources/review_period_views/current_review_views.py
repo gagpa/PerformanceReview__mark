@@ -1,7 +1,7 @@
 from app.db import Session
 from app.models import Form, ReviewPeriod, User, Status, CoworkerAdvice, Project, \
-    CoworkerProjectRating
-from app.services.dictinary import StatusService
+    CoworkerProjectRating, CoworkerReview
+from app.services.dictinary import StatusService, HrReviewStatusService
 from app.services.dictinary.summary import SummaryService
 from app.services.form_review import FormService
 from app.services.form_review.project_comments import ProjectCommentService
@@ -37,6 +37,7 @@ def input_summary(request):
 
 
 def change_summary(request):
+    """Записсываем summary и меняем статус формы и оценок"""
     pk = request.args['pk'][0]
     summary = SummaryService().by_form_id(pk)
     if not summary:
@@ -44,19 +45,19 @@ def change_summary(request):
                                           text=request.text)
         form = FormService().by_pk(pk)
         StatusService().change_to_done(form)
+        # TODO: изменять статус у оценок
         # advices = CoworkerReviewService().all_by(form_id=pk)
         # ratings = Session.query(CoworkerProjectRating). \
-        #     join(Project, CoworkerProjectRating.project) \
+        #     join(Project, CoworkerProjectRating.project).\
+        #     join(CoworkerReview)\
         #     .filter(Project.form_id == pk).all()
+        # print(ratings)
         # for rating in ratings:
-        #     rating.hr_review_status_id = 4
+        #     rating.hr_review_status = HrReviewStatusService().accept
+        #     print(rating.hr_review_status)
         #     Session.add(rating)
         #     Session.commit()
-        #
-        # for advice in advices:
-        #     advice.hr_review_status_id = 5
-        #     Session.add(advice)
-        #     Session.commit()
+
     else:
         summary.text = request.text
     Session.add(summary)
