@@ -25,15 +25,15 @@ class DutyForm(Template):
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
-        title = 'Обязанности'
+        title = '▪️Обязанности'
         model = self.args.get('model')
         if self.args.get('can_add'):
             description = 'Функционал, который ты выполняешь в ходе своей работы'
             text = self.args['model'].text if self.args['model'] else ''
 
         elif self.args.get('can_edit'):
-            description = 'Внесите изменения или вернитесь к анкете'
-            text = self.args['model'].text
+            description = '\nВнесите изменения или вернитесь к анкете'
+            text = f' -  {self.args["model"].text}'
 
         elif self.args.get('form'):
             if model:

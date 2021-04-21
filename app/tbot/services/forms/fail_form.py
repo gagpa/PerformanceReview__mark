@@ -10,29 +10,19 @@ class FailForm(Template):
 
     def create_markup(self) -> InlineKeyboardMarkup:
         """ Создать клавиатуру """
-        if self.args.get('can_edit'):
-            row = [BUTTONS_TEMPLATES['form']]
-            markup = InlineKeyboardBuilder.build(row)
-            return markup
+        pass
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
-        title = '[ПРОВАЛ]'
 
-        if not self.args.get('can_edit'):
-            description = 'Отправьте в сообщении свой провал или перечислите их через ;'
-            text = f'{self.args["model"].text}'
+        view = self.args.get('view')
+        fail = self.args.get('fail')
 
-        else:
-            description = ''
-            text = ''
-
-        message_text = self.message_builder.build_message(title=title,
-                                                          description=description,
-                                                          text=text,
-                                                          )
-
-        return message_text
+        if view == 'edit':
+            self.build_message(title='▪ Провал',
+                               description='\nОтправьте в сообщении свой провал или перечислите их через ;',
+                               text=f' -  {fail.text}')
+            return self.MESSAGE
 
 
 __all__ = ['FailForm']

@@ -6,7 +6,7 @@ from app.tbot.services.forms import AchievementForm
 
 def delete_view(request):
     """ Удалить достижение """
-    pk = request.pk()
+    pk = request.args['achievement'][0]
     form = request.form
     service = AchievementService(form=form)
     achievement = service.by_pk(pk=pk)
@@ -16,11 +16,11 @@ def delete_view(request):
 
 def edit_view(request):
     """ Изменить достижение """
-    pk = request.pk()
+    pk = request.args['achievement'][0]
     form = request.form
     service = AchievementServiceTBot(form=form)
     achievement = service.by_pk(pk=pk)
-    template = AchievementForm(model=achievement)
+    template = AchievementForm(achievement=achievement, view='edit')
     return template, service.update_before(list_view)
 
 

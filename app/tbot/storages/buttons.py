@@ -6,8 +6,9 @@ from app.tbot.extensions import ButtonTemplate
 
 BUTTONS_TEMPLATES = \
     {
-        'review_form_send_to_boss': ButtonTemplate('review_form_send_to_boss', 'Отправить руководителю'),
+        'review_form_send_to_boss': ButtonTemplate('review_form_send_to_boss', 'Отправить руководителю 📨'),
         'review_form_achievements_list': ButtonTemplate('review_form_achievements_list', 'Достижения'),
+        'review_form_back_achievements': ButtonTemplate('review_form_fails', '« К достижениям'),
         'review_form_achievements_add': ButtonTemplate('review_form_achievements_add', 'Добавить'),
         'review_form_achievement_delete': ButtonTemplate('review_form_achievement_delete'),
         'review_form_achievement_edit': ButtonTemplate('review_form_achievement_edit'),
@@ -38,6 +39,7 @@ BUTTONS_TEMPLATES = \
         'coworker_review_update_list': ButtonTemplate('coworker_review_list', '↻'),
 
         'review_form_fails': ButtonTemplate('review_form_fails', 'Провалы'),
+        'review_form_back_fails': ButtonTemplate('review_form_fails', '« К провалам'),
         'review_form_fails_add': ButtonTemplate('review_form_fails_add', 'Добавить'),
         'review_form_fail_delete': ButtonTemplate('review_form_fail_delete'),
         'review_form_fail_edit': ButtonTemplate('review_form_fail_edit'),
@@ -51,6 +53,7 @@ BUTTONS_TEMPLATES = \
         'review_form_duty_edit': ButtonTemplate('review_form_duty_edit', '✍️'),
 
         'review_form_projects_list': ButtonTemplate('review_form_projects_list', 'Проекты'),
+        'review_form_back_projects': ButtonTemplate('review_form_projects_list', '« К проектам'),
         'review_form_project_add': ButtonTemplate('review_form_project_add', 'Добавить'),
         'review_form_project_delete': ButtonTemplate('review_form_project_delete'),
         'review_form_project_edit': ButtonTemplate('review_form_project_edit'),

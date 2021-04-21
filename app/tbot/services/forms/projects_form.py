@@ -1,6 +1,5 @@
 from telebot.types import InlineKeyboardMarkup
 
-from app.tbot.extensions import InlineKeyboardBuilder
 from app.tbot.extensions.template import Template
 from app.tbot.storages import BUTTONS_TEMPLATES
 
@@ -20,40 +19,23 @@ class ProjectsForm(Template):
             page = self.args.get('page')
             view = self.args.get('view')
             if review_type == 'write':
-                if view == 'choose_delete':
+                if view == 'delete_choose':
                     unique_args = [{'project': project.id} for project in projects]
                     main_template = BUTTONS_TEMPLATES['review_form_project_delete']
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'])
                     return self.build_list(main_template, unique_args)
-                elif view == 'choose_edit':
+                elif view == 'edit_choose':
                     unique_args = [{'project': project.id} for project in projects]
                     main_template = BUTTONS_TEMPLATES['review_form_project_edit']
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'])
                     return self.build_list(main_template, unique_args)
-                else:
-                    self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_project_add'],
-                                         BUTTONS_TEMPLATES['review_form_project_edit_choose'],
-                                         BUTTONS_TEMPLATES['review_form_project_delete_choose']
-                                         )
+                elif view == 'list':
+                    self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_project_add'])
                     if projects:
-                        self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form'])
+                        self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_project_edit_choose'],
+                                             BUTTONS_TEMPLATES['review_form_project_delete_choose'])
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form'])
                     return self.build()
-
-            elif self.args.get('can_add'):
-                rows.append([BUTTONS_TEMPLATES['review_form_project_add']])
-                rows.append([BUTTONS_TEMPLATES['review_form']])
-                markup = InlineKeyboardBuilder.build(*rows)
-                return markup
-
-            elif self.args.get('can_del'):
-                btn = BUTTONS_TEMPLATES['review_form_project_delete']
-                markup = self.markup_builder.build_list(self.args['models'], btn)
-                return markup
-
-            elif self.args.get('can_edit'):
-                btn = BUTTONS_TEMPLATES['review_form_project_edit']
-                markup = self.markup_builder.build_list(self.args['models'], btn)
-                return markup
 
             elif review_type == 'coworker':
                 ratings = self.cut_per_page(ratings, page)
@@ -83,8 +65,8 @@ class ProjectsForm(Template):
         page = self.args.get('page')
         ratings = self.args.get('ratings')
         form = self.args.get('form')
+        view = self.args.get('view')
         title = 'Проекты'
-
         if review_type == 'hr':
             list_data = [f'{project.name}\n{project.description}' for project in projects]
             self.build_list_message(title='Проверка оценок проектов',
@@ -115,29 +97,31 @@ class ProjectsForm(Template):
                 self.build_list_message(title='Ваши оценки', description='', list_text=list_data)
             return self.MESSAGE
 
-        elif self.args.get('form'):
-            description = '***'
-            list_data = [f'{model.name}\n{model.description} {[review.coworker for review in model.reviews]}' for model
-                         in self.args['models']]
-            message_text = self.build_list_message(title=title, description=description, list_text=list_data)
-            return message_text
         elif review_type == 'write':
-            if projects:
-                description = 'Перечислите проекты, которые ты выполнял или измените данные'
-                list_data = []
-                for project in projects:
-                    coworkers = ' '.join([f"@{review.coworker.username}" for review in project.reviews])
-                    list_data.append(f'{project.name}\n'
-                                     f'- {project.description}\n'
-                                     f'- {coworkers}')
-            else:
-                description = 'Перечислите проекты, которые ты выполнял'
-                list_data = None
+            title = '▪️Проекты'
+            find_coworkers = lambda project: '\n -  '.join(
+                [f"@{review.coworker.username}" for review in project.reviews])
+            if view == 'list':
+                if projects:
+                    list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in projects]
+                    self.build_list_message(title=title,
+                                            description='\nДобавьте проекты, которые ты выполнял, или измените их',
+                                            list_text=list_text)
+                else:
+                    self.build_message(title=title, description='Добавьте проекты, которые ты выполнял')
+                return self.MESSAGE
 
-            self.build_list_message(title=title,
-                                    description=description,
-                                    list_text=list_data,
-                                    )
+            elif view == 'edit_choose':
+                list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in projects]
+                self.build_list_message(title=title,
+                                        description='\nВыберите проект, который хотите изменить',
+                                        list_text=list_text)
+
+            elif view == 'delete_choose':
+                list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in projects]
+                self.build_list_message(title=title,
+                                        description='\nВыберите проект, который хотите удалить',
+                                        list_text=list_text)
             return self.MESSAGE
 
 

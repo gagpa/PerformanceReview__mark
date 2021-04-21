@@ -9,90 +9,64 @@ class AchievementsForm(Template):
 
     def create_markup(self) -> InlineKeyboardMarkup:
         """ Создать клавиатуру """
-        rows = []
+        view = self.args.get('view')
+        achievements = self.args.get('achievements')
 
-        if self.args.get('can_edit') and self.args.get('can_del'):
-            rows.append([BUTTONS_TEMPLATES['review_form_achievements_add']])
-            rows.append([BUTTONS_TEMPLATES['review_form_achievements_edit_choose'],
-                         BUTTONS_TEMPLATES['review_form_achievements_delete_choose']])
-            rows.append([BUTTONS_TEMPLATES['review_form']])
-            markup = self.markup_builder.build(*rows)
-            return markup
+        if view == 'list':
+            self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_achievements_add'])
+            if achievements:
+                self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_achievements_edit_choose'],
+                                     BUTTONS_TEMPLATES['review_form_achievements_delete_choose'])
+            self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form'])
+            return self.build()
 
-        elif self.args.get('can_add'):
-            rows.append([BUTTONS_TEMPLATES['review_form_achievements_add']])
-            rows.append([BUTTONS_TEMPLATES['review_form']])
-            markup = self.markup_builder.build(*rows)
-            return markup
+        elif view == 'delete_choose':
+            unique_args = [{'achievement': achievement.id} for achievement in achievements]
+            main = BUTTONS_TEMPLATES['review_form_achievement_delete']
+            return self.build_list(main, unique_args)
 
-        elif self.args.get('can_del'):
-            btn = BUTTONS_TEMPLATES['review_form_achievement_delete']
-            markup = self.markup_builder.build_list(self.args['models'], btn)
-            return markup
-
-        elif self.args.get('can_edit'):
-            btn = BUTTONS_TEMPLATES['review_form_achievement_edit']
-            markup = self.markup_builder.build_list(self.args['models'], btn)
-            return markup
+        elif view == 'edit_choose':
+            unique_args = [{'achievement': achievement.id} for achievement in achievements]
+            main = BUTTONS_TEMPLATES['review_form_achievement_edit']
+            return self.build_list(main, unique_args)
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
-        title = '[ДОСТИЖЕНИЯ]'
+        view = self.args.get('view')
+        achievements = self.args.get('achievements')
+        title = '▪️Достижения'
 
-        if self.args.get('can_edit') and self.args.get('can_del'):
+        if view == 'list':
             description = 'Факты, которые ты считаешь своими основными достижениями и успехами'
-            list_data = [f'{self.model.text}' for self.model in self.args['models']]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
-            return message_text
+            if achievements:
+                self.build_list_message(title=title,
+                                        description=f'\n{description}',
+                                        list_text=[f'{achievement.text}' for achievement in achievements])
+            else:
+                self.build_message(title=title, description=description)
+            return self.MESSAGE
 
-        elif self.args.get('can_add'):
-            description = 'Факты, которые ты считаешь своими основными достижениями и успехами'
-            text = 'Раздел не заполнен'
-            message_text = self.message_builder.build_message(title=title,
-                                                              description=description,
-                                                              text=text)
+        elif view == 'delete_choose':
+            self.build_list_message(title=title,
+                                    description='\nВыберите достижение, которое вы хотите удалить',
+                                    list_text=[f'{achievement.text}' for achievement in achievements])
+            return self.MESSAGE
 
-            return message_text
+        elif view == 'edit_choose':
+            self.build_list_message(title=title,
+                                    description='\nВыберите достижение, которое вы хотите изменить',
+                                    list_text=[f'{achievement.text}' for achievement in achievements])
+            return self.MESSAGE
 
-        elif self.args.get('can_del'):
-            description = 'Выберите достижение, которое вы хотите удалить'
-            list_data = [f'{self.model.text}' for self.model in self.args['models']]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
-            return message_text
-
-        elif self.args.get('can_edit'):
-            description = 'Выберите достижение, которое вы хотите изменить'
-            list_data = [f'{self.model.text}' for self.model in self.args['models']]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
-            return message_text
-
-        elif self.args.get('form'):
-            description = ''
-            list_data = [f'{self.model.text}' for self.model in self.args['models']]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
-            return message_text
-
-        else:
+        elif view == 'add':
             description = 'Отправьте в сообщении свои основные достижения и успехи'
-            list_data = [f'{self.model.text}' for self.model in self.args['models']]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
-
-            return message_text
+            if achievements:
+                self.build_list_message(title=title,
+                                        description=f'\n{description}',
+                                        list_text=[f'{achievement.text}' for achievement in achievements])
+            else:
+                self.build_message(title=title, description=description)
+            return self.MESSAGE
 
 
 __all__ = ['AchievementsForm']
