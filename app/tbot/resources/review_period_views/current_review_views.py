@@ -34,7 +34,6 @@ def employee_review(request):
 def input_summary(request):
     """Предлагаем HR ввести summary"""
     form_id = request.args['form_id'][0]
-    print(form_id)
     return CurrentReviewForm(change_summary=True), request.send_args(change_summary, form_id=form_id)
 
 

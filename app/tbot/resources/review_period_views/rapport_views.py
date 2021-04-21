@@ -24,7 +24,7 @@ def get_hr_rapport(request):
     user = request.user
     template_vars = get_data_for_rapport(pk)
     final_rating = ProjectCommentService().final_rating(pk)
-    template_vars.update(rating=final_rating)
+    template_vars.update(rating=final_rating if final_rating else 'Нет')
     # boss_comments = ProjectCommentService().boss_projects_comments(pk)
     # boss_advices = Session().query(CoworkerAdvice)\
     #     .filter_by(form_id=pk, user_id=boss_comments.user_id).all()
@@ -45,11 +45,11 @@ def get_boss_rapport(request):
     subordinate_comments = ProjectCommentService().subordinate_projects_comments(pk)
     subordinate_rating = [comment.rating.value for comment in subordinate_comments]
     final_rating = ProjectCommentService().final_rating(pk)
-    template_vars.update(rating=final_rating,
-                         boss_rating=mean(boss_rating) if boss_rating else None,
-                         coworkers_rating=mean(coworkers_rating) if coworkers_rating else None,
+    template_vars.update(rating=final_rating if final_rating else 'Нет',
+                         boss_rating=mean(boss_rating) if boss_rating else 'Нет',
+                         coworkers_rating=mean(coworkers_rating) if coworkers_rating else 'Нет',
                          subordinate_rating=mean(
-                             subordinate_rating) if subordinate_rating else None)
+                             subordinate_rating) if subordinate_rating else 'Нет')
     create_and_send_pdf(user.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
     return
 

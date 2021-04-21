@@ -47,19 +47,16 @@ class ProjectCommentService(Entity):
 
     def final_rating(self, pk):
         """ Средняя оценка по проектам формы"""
+        all_comments = [self.boss_projects_comments(pk),
+                        self.subordinate_projects_comments(pk),
+                        self.coworkers_projects_comments(pk)]
         all_ratings = []
-        if self.boss_projects_comments(pk):
-            boss_rating = [comment.rating.value for comment in self.boss_projects_comments(pk)]
-            all_ratings.append(mean(boss_rating))
-
-        if self.coworkers_projects_comments(pk):
-            coworkers_rating = [comment.rating.value for comment in
-                                self.coworkers_projects_comments(pk)]
-            all_ratings.append(mean(coworkers_rating))
-
-        if self.subordinate_projects_comments(pk):
-            subordinate_rating = [comment.rating.value for comment in
-                                  self.subordinate_projects_comments(pk)]
-            all_ratings.append(mean(subordinate_rating))
+        for comments in all_comments:
+            if comments:
+                rating = []
+                for comment in comments:
+                    if comment.rating:
+                        rating.append(comment.rating.value)
+                all_ratings.append(mean(rating)) if rating else None
 
         return mean(all_ratings) if all_ratings else None
