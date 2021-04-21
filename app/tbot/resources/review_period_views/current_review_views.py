@@ -34,12 +34,13 @@ def employee_review(request):
 def input_summary(request):
     """Предлагаем HR ввести summary"""
     form_id = request.args['form_id'][0]
+    print(form_id)
     return CurrentReviewForm(change_summary=True), request.send_args(change_summary, form_id=form_id)
 
 
 def change_summary(request):
     """Записсываем summary и меняем статус формы и оценок"""
-    form_id = request.args['form_id'][0]
+    form_id = request.args['form_id']
     summary = SummaryService().by_form_id(form_id)
     if not summary:
         summary = SummaryService().create(form_id=form_id, from_hr_id=request.user.id,
@@ -61,6 +62,6 @@ def change_summary(request):
 
     else:
         summary.text = request.text
-    Session.add(summary)
+        Session.add(summary)
     Session.commit()
     return CurrentReviewForm(changed=True)
