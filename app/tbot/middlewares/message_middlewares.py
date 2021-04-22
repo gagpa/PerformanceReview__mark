@@ -1,4 +1,5 @@
 from app.tbot.middlewares.generals_middlewares import \
+    check_permission as general_check_permission,\
     add_user as general_add_user, \
     add_review_period as general_add_review_period, \
     add_form as general_add_form, \
@@ -38,11 +39,17 @@ def log_unknown(bot_instance, message):
     general_log_unknown(message=message)
 
 
+def check_permissions(bot_instance, message):
+    """"""
+    general_check_permission(bot_instance, message)
+
+
 ORDER_MESSAGE_MIDDLEWARES = \
     [
         log_unknown,
         add_user,
         parse_command,
+        check_permissions,
         add_review_period,
         add_form,
         add_keyboard,

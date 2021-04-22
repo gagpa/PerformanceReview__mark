@@ -5,6 +5,10 @@ from app.tbot.services.auth import UserServiceTBot
 from app.tbot.services.forms.auth_form import AuthForm
 
 
+def wrong_way(request):
+    return AuthForm(wrong=True)
+
+
 def add_new_username(request):
     """ Начать регистрацию нового пользователя """
     chat_id = request.message.chat.id

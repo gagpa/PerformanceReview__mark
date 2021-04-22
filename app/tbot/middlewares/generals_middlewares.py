@@ -33,6 +33,27 @@ def add_user(message):
         }
 
 
+def check_permission(bot, message):
+    if message.user['is_exist']:
+        if message.user['role'] == 'Undefined':
+            message.command = 'start'
+            bot.send_message(message.chat.id, 'Дождитесь окончания регистрации')
+        elif message.user['role'] == 'Employee':
+            if message.command not in ['form', 'coworker']:
+                message.command = 'wrong'
+        elif message.user['role'] == 'Lead':
+            if message.command not in ['form', 'boss', 'coworker']:
+                message.command = 'wrong'
+        elif message.user['role'] == 'HR':
+            if message.command == 'boss':
+                message.command = 'wrong'
+    elif message.text.replace('/', '') in COMMANDS.keys():
+        message.is_exist = True
+        message.command = 'start'
+    else:
+        message.command = 'start'
+
+
 def add_review_period(message):
     """ Добавить review преиод """
     service = ReviewPeriodService()
@@ -102,7 +123,8 @@ def log_unknown(message):
 def log_bot(message):
     """ Логировать действия бота """
     user = message.user
-    logger.debug(f'\nUSER {user} CHAT_ID: {message.chat.id}\nBOT_CALLBACK_MESSAGE:\n{message.text}')
+    logger.debug(
+        f'\nUSER {user} CHAT_ID: {message.chat.id}\nBOT_CALLBACK_MESSAGE:\n{message.text}')
 
 
 def parse_command(bot_instance, message):
@@ -153,5 +175,6 @@ __all__ = \
         'log_unknown',
         'log_bot',
         'parse_url',
-        'parse_command'
+        'parse_command',
+        'check_permission'
     ]

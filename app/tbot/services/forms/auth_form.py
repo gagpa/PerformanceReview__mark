@@ -52,6 +52,9 @@ class AuthForm(Template):
         elif self.args.get('exist'):
             description = 'Добро пожаловать!'
 
+        elif self.args.get('wrong'):
+            description = 'У вас недостаточно прав.'
+
         else:
             description = ''
 
