@@ -2,6 +2,7 @@ from app.db import Session
 from app.models import Role, Position, Department
 from app.services.form_review import FormService
 from app.services.user import UserService
+from app.tbot import bot
 from app.tbot.resources.user_views.users_list_views import users_list_view
 from app.tbot.services.auth import UserServiceTBot
 from app.tbot.services.forms.user_form import UserForm
@@ -24,7 +25,7 @@ def delete_user(request):
     form = form_service.by(user_id=pk)
     if form:
         form_service.delete(form)
-    # TODO: добавить отправку сообщения удаленному пользователю
+    bot.send_message(user.chat_id, 'Вы были удалены из системы.')
     service.delete(user)
     return users_list_view(request=request)
 
