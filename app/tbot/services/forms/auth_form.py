@@ -15,7 +15,14 @@ class AuthForm(Template):
             return markup
         elif self.args.get('is_department'):
             row = BUTTONS_TEMPLATES['get_department']
-            markup = self.markup_builder.build_list(self.args['models'], row, position=self.args.get('position'))
+            markup = self.markup_builder.build_list(self.args['models'], row,
+                                                    position=self.args.get('position'))
+            return markup
+        elif self.args.get('wrong'):
+            commands_keyboard = ['Заполнение анкеты', 'Оценка подчиненных', 'Оценка коллег',
+                                 'Проверка HR', 'Запросы',
+                                 'Список сотрудников', 'Запуск Review', 'Архив', 'Текущий Review']
+            markup = self.markup_builder.build_reply_keyboard(commands_keyboard)
             return markup
 
     def create_message(self) -> str:

@@ -3,10 +3,9 @@ from copy import deepcopy
 from math import ceil
 from typing import List, Optional
 
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-
 import telebot_calendar
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton
+from telebot.types import ReplyKeyboardMarkup
 
 from configs.bot_config import OBJECT_PER_PAGE
 
@@ -34,7 +33,8 @@ class InlineKeyboardBuilder:
         return markup
 
     @staticmethod
-    def build_list_up(button_template, unique_args: List[dict], general_args: Optional[dict] = None, *rows):
+    def build_list_up(button_template, unique_args: List[dict],
+                      general_args: Optional[dict] = None, *rows):
         """ Построить клавиатуру списка """
         row_width = 5
         btns = []
@@ -50,7 +50,8 @@ class InlineKeyboardBuilder:
 
         for row in rows:
             temp_row = [btn if isinstance(btn, InlineKeyboardButton)
-                        else InlineKeyboardButton(text=btn.add(**general_args).text, callback_data=btn.callback)
+                        else InlineKeyboardButton(text=btn.add(**general_args).text,
+                                                  callback_data=btn.callback)
                         for btn in row]
             markup.add(*temp_row)
 
@@ -77,10 +78,13 @@ class InlineKeyboardBuilder:
         right_arw = None
         max_page = ceil(count_obj / OBJECT_PER_PAGE)
         if page != 1:
-            left_arw = InlineKeyboardButton(text='⬅', callback_data=button_template.add(pg=page - 1, **kwargs).callback)
+            left_arw = InlineKeyboardButton(text='⬅',
+                                            callback_data=button_template.add(pg=page - 1,
+                                                                              **kwargs).callback)
         if page != max_page:
             right_arw = InlineKeyboardButton(text='➡',
-                                             callback_data=button_template.add(pg=page + 1, **kwargs).callback)
+                                             callback_data=button_template.add(pg=page + 1,
+                                                                               **kwargs).callback)
         btns = []
         if left_arw:
             btns.append(left_arw)
@@ -120,6 +124,15 @@ class InlineKeyboardBuilder:
                                                   year=now.year,
                                                   month=now.month)
         return markup
+
+    @staticmethod
+    def build_reply_keyboard(btns):
+        keyboard = ReplyKeyboardMarkup(True, row_width=3)
+        buttons = []
+        for btn in btns:
+            buttons.append(KeyboardButton(text=btn))
+        keyboard.add(*buttons)
+        return keyboard
 
 
 __all__ = ['InlineKeyboardBuilder']

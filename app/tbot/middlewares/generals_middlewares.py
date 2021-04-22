@@ -39,13 +39,13 @@ def check_permission(bot, message):
             message.command = 'start'
             bot.send_message(message.chat.id, 'Дождитесь окончания регистрации')
         elif message.user['role'] == 'Employee':
-            if message.command not in ['form', 'coworker']:
+            if message.command not in ['Заполнение анкеты', 'Оценка коллег']:
                 message.command = 'wrong'
         elif message.user['role'] == 'Lead':
-            if message.command not in ['form', 'boss', 'coworker']:
+            if message.command not in ['Заполнение анкеты', 'Оценка подчиненных', 'Оценка коллег']:
                 message.command = 'wrong'
         elif message.user['role'] == 'HR':
-            if message.command == 'boss':
+            if message.command == 'Оценка подчиненных':
                 message.command = 'wrong'
     elif message.text.replace('/', '') in COMMANDS.keys():
         message.is_exist = True
