@@ -37,8 +37,9 @@ class Template(ABC):
 
     def add_paginator(self, paginator, page: int, count_obj: int, is_next: bool = True):
         """ Добавить пагинатор """
-        btns = self.markup_builder.build_paginator_arrows(paginator, page=page, count_obj=count_obj)
-        self.extend_keyboard(is_next, *btns)
+        if count_obj > 0:
+            btns = self.markup_builder.build_paginator_arrows(paginator, page=page, count_obj=count_obj)
+            self.extend_keyboard(is_next, *btns)
 
     def add_update(self, update: ButtonTemplate, is_next: bool = True):
         """ """

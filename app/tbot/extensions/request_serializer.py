@@ -85,6 +85,17 @@ class RequestSerializer:
         split_text = self.__message.text.split(';')
         return split_text
 
+    @property
+    def is_asc(self) -> bool:
+        if self.args.get('asc'):
+            return not self.args['asc'][0] == 'True'
+        else:
+            return True
+
+    @property
+    def page(self) -> int:
+        return int(self.args['pg'][0]) if self.args.get('pg') else 1
+
     def add(self, key, value):
         try:
             self.__message.args[key] = value

@@ -41,7 +41,8 @@ class BossService(UserService):
         forms = Session.query(Form).\
             join(User).\
             filter(User.boss == self.model,
-                   Form.status == status
+                   Form.status == status,
+                   Form.review_period == review_period
                    ).all()
         reviews = []
         for form in forms:

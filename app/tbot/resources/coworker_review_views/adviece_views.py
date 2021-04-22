@@ -11,8 +11,8 @@ def todo_view(request):
     """ Cовет что делать """
     pk_review = request.args['review'][0]
     review = CoworkerReviewService().by_pk(pk_review)
-    advice = review.advice
-    template = ReviewForm(form=advice.form, review='coworker', view='todo', advice=advice)
+    template = ReviewForm(form=review.advice.form, advice=review.advice, review_type='coworker',
+                          ratings=review.projects_ratings, view='todo')
     return template, request.send_args(save_todo_view, review=[review.id])
 
 
@@ -31,8 +31,8 @@ def not_todo_view(request):
     """ Cовет что не делать """
     pk_review = request.args['review'][0]
     review = CoworkerReviewService().by_pk(pk_review)
-    advice = review.advice
-    template = ReviewForm(form=advice.form, review='coworker', view='not todo', advice=advice)
+    template = ReviewForm(form=review.advice.form, advice=review.advice, review_type='coworker',
+                          ratings=review.projects_ratings, view='not todo')
     return template, request.send_args(save_not_todo_view, review=[review.id])
 
 

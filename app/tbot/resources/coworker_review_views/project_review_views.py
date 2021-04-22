@@ -24,7 +24,8 @@ def comment_view(request):
     proj_rate_pk = request.args['proj_rate'][0]
     rating = CoworkerReviewService().rating_by_pk(proj_rate_pk)
     review = rating.review
-    return ProjectForm(have_markup=False, rating=rating, review=review, project=rating.project, review_type='coworker'), \
+    return ProjectForm(have_markup=False, rating=rating, review=review, project=rating.project, review_type='coworker',
+                       view='comment'), \
            request.send_args(save_comment_view, proj_rate=[proj_rate_pk], review=[review.id])
 
 

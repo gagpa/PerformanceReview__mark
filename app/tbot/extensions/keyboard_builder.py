@@ -57,36 +57,23 @@ class InlineKeyboardBuilder:
         return markup
 
     @staticmethod
-    def build_btns_paginator_arrows(button_template, left_model=None, right_model=None, **kwargs):
-        """ Постоить клавиатуру пагинатор стрелок """
-        btns = []
-        button_template.add(**kwargs)
-        if left_model:
-            button_template.add(pk=left_model.id)
-            btns.append(InlineKeyboardButton(text='⬅', callback_data=button_template.callback))
-        if right_model:
-            right_btn = deepcopy(button_template)
-            right_btn.add(pk=right_model.id)
-            btns.append(InlineKeyboardButton(text='➡', callback_data=right_btn.callback))
-        return btns
-
-    @staticmethod
     def build_paginator_arrows(button_template, page, count_obj, **kwargs):
         """ Постоить клавиатуру пагинатор стрелок """
         left_arw = None
         right_arw = None
         max_page = ceil(count_obj / OBJECT_PER_PAGE)
-        if page != 1:
-            left_arw = InlineKeyboardButton(text='⬅', callback_data=button_template.add(pg=page - 1, **kwargs).callback)
-        if page != max_page:
-            right_arw = InlineKeyboardButton(text='➡',
-                                             callback_data=button_template.add(pg=page + 1, **kwargs).callback)
-        btns = []
-        if left_arw:
-            btns.append(left_arw)
-        if right_arw:
-            btns.append(right_arw)
-        return btns
+        if count_obj > 0:
+            if page != 1:
+                left_arw = InlineKeyboardButton(text='⬅', callback_data=button_template.add(pg=page - 1, **kwargs).callback)
+            if page != max_page:
+                right_arw = InlineKeyboardButton(text='➡',
+                                                 callback_data=button_template.add(pg=page + 1, **kwargs).callback)
+            btns = []
+            if left_arw:
+                btns.append(left_arw)
+            if right_arw:
+                btns.append(right_arw)
+            return btns
 
     @staticmethod
     def build_btns(*template_btns, **kwargs):
