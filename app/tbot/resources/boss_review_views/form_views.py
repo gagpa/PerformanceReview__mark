@@ -24,7 +24,7 @@ def decline_form_view(request):
     """ Отклонить """
     pk = request.args['review'][0]
     review = BossReviewService().by_pk(pk)
-    return ReviewForm(form=review.form, have_markup=False, review_type='boss', review=review), \
+    return ReviewForm(form=review.form, have_markup=False, review_type='boss', view='decline', review=review), \
            request.send_args(send_form_view, review=[pk])
 
 

@@ -1,4 +1,5 @@
 from app.services.user.user import UserService
+from app.services.user.boss import BossService
 from app.services.dictinary import StatusService
 from app.services.review import BossReviewService
 from app.db import Session
@@ -12,7 +13,11 @@ class EmployeeService(UserService):
         service.change_to_boss_review(form)
         boss_service = BossReviewService()
         if not boss_service.is_exist(form=form):
-            Session().add(boss_service.create(form=form, boss=form.user.boss))  # TODO не обрабатывается если нет босса у пользователя
+            if form.user.boss:
+                Session().add(boss_service.create(form=form, boss=form.user.boss))
+            else:
+                BossService().accept(form=form)
+                Session().add(form)
             Session.commit()
 
 

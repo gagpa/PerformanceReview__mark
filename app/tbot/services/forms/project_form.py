@@ -36,22 +36,6 @@ class ProjectForm(Template):
                 return self.build_list(rate, unique_args=unique_args, proj_rate=coworker_comment_rating.id,
                                        review=review.id)
 
-            elif self.args.get('on_rate'):
-                arrow_btns = InlineKeyboardBuilder.build_btns_paginator_arrows(
-                    BUTTONS_TEMPLATES['coworker_review_projects_choose'],
-                    left_model=self.args.get('left_project'),
-                    right_model=self.args.get('right_project'),
-                )
-                form_btn = InlineKeyboardBuilder.build_btns(BUTTONS_TEMPLATES['coworker_review_form'],
-                                                            pk=self.args['model'].form_id)
-                markup = InlineKeyboardBuilder.build_list(RatingService().all,
-                                                          BUTTONS_TEMPLATES['coworker_review_project_choose_rate'],
-                                                          arrow_btns,
-                                                          form_btn,
-                                                          project_pk=self.args['model'].id
-                                                          )
-                return markup
-
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
         title = 'Проект'
@@ -62,6 +46,7 @@ class ProjectForm(Template):
         project = self.args.get('project')
         coworker_comment_rating = self.args.get('rating')
         page = self.args.get('page')
+        view = self.args.get('view')
         if review_type == 'coworker':
             self.build_message(title=project.name, text=f'{project.description}')
             description = 'Оцените проект от 1 🌟 до 5 🌟\n'
@@ -72,6 +57,8 @@ class ProjectForm(Template):
                 self.build_message(title='Текущая оценка', text='🌟' * coworker_comment_rating.rating.value)
             if coworker_comment_rating.text:
                 self.build_message(title='Комментарий', text=coworker_comment_rating.text)
+            if view == 'comment':
+                self.build_message(description='❕  Напишите свой комментарий к проекту')
             return self.MESSAGE
 
         elif review_type == 'hr':
@@ -85,6 +72,7 @@ class ProjectForm(Template):
             if coworker_comment_rating.hr_comment:
                 self.build_message(title='Комментарий HR', text=coworker_comment_rating.hr_comment)
             return self.MESSAGE
+
         elif review_type == 'write':
             if not project.name:
                 self.build_message(title='Заполнение проекта', description='Напишите название проекта')
