@@ -122,24 +122,24 @@ def parse_command(bot_instance, message):
 
 def parse_url(bot_instance, call):
     """ Запарсить URL callback с аргумантами и поместить их в обзъект сообщения"""
-    if call.message.user['is_exist']:
-        if ':' in call.data:  # TODO: решить проблему с сепаратором
-            args = dict()
-            args['calendar'] = call.data
-            if '|' in call.data:
-                args['cb'], args['first_date'] = call.data.split(':')[0].split('|')
-            else:
-                args['cb'] = call.data.split(':')[0]
-            args['call'] = call
-            call.url = args['cb']
+    # if call.message.user['is_exist']:
+    if ':' in call.data:  # TODO: решить проблему с сепаратором
+        args = dict()
+        args['calendar'] = call.data
+        if '|' in call.data:
+            args['cb'], args['first_date'] = call.data.split(':')[0].split('|')
         else:
-            args = parse_qs(call.data)
-            call.url = args['cb'][0]
-
-        call.message.args = args
-        call.is_exist = call.url in ROUTES.keys()
+            args['cb'] = call.data.split(':')[0]
+        args['call'] = call
+        call.url = args['cb']
     else:
-        call.url = 'auth'
+        args = parse_qs(call.data)
+        call.url = args['cb'][0]
+
+    call.message.args = args
+    call.is_exist = call.url in ROUTES.keys()
+    # else:
+    #     call.url = 'auth'
 
 
 __all__ = \

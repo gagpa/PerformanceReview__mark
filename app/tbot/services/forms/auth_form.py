@@ -1,6 +1,7 @@
 from telebot.types import InlineKeyboardMarkup
 
 from app.tbot.extensions.template import Template
+from app.tbot.storages import BUTTONS_TEMPLATES
 
 
 class AuthForm(Template):
@@ -8,7 +9,14 @@ class AuthForm(Template):
 
     def create_markup(self) -> InlineKeyboardMarkup:
         """ Создать клавиатуру """
-        pass
+        if self.args.get('is_position'):
+            row = BUTTONS_TEMPLATES['get_position']
+            markup = self.markup_builder.build_list(self.args['models'], row)
+            return markup
+        elif self.args.get('is_department'):
+            row = BUTTONS_TEMPLATES['get_department']
+            markup = self.markup_builder.build_list(self.args['models'], row, position=self.args.get('position'))
+            return markup
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
@@ -19,10 +27,12 @@ class AuthForm(Template):
             description = 'Введите свое ФИО'
 
         elif self.args.get('is_position'):
-            description = 'Введите свою должность'
+            description = 'Введите свою должность:'
+            list_data = [model.name for model in self.args.get('models')]
 
         elif self.args.get('is_department'):
-            description = 'Введите свой отдел'
+            description = 'Введите свой отдел:'
+            list_data = [model.name for model in self.args.get('models')]
 
         elif self.args.get('is_boss'):
             description = 'Введите логин руководителя в телеграмм @login или введите "Нет"'
@@ -45,10 +55,16 @@ class AuthForm(Template):
         else:
             description = ''
 
-        message_text = self.message_builder.build_message(title=title,
-                                                          description=description,
-                                                          text=text,
-                                                          )
+        if self.args.get('is_position') or self.args.get('is_department'):
+            message_text = self.message_builder.build_list_message(title=title,
+                                                                   description=description,
+                                                                   list_data=list_data,
+                                                                   )
+        else:
+            message_text = self.message_builder.build_message(title=title,
+                                                              description=description,
+                                                              text=text,
+                                                              )
         return message_text
 
 

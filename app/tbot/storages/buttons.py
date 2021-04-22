@@ -78,6 +78,9 @@ BUTTONS_TEMPLATES = \
         'hr_review_sort_asc': ButtonTemplate('hr_review_list', '🔺').add(asc=True),
         'hr_review_sort_desc': ButtonTemplate('hr_review_list', '🔻').add(asc=False),
 
+        'get_position': ButtonTemplate('get_position'),
+        'get_department': ButtonTemplate('get_department'),
+
         'request_view': ButtonTemplate('request_view'),
         'request_delete_view': ButtonTemplate('request_delete_view', 'Удалить'),
         'request_accept_view': ButtonTemplate('request_accept_view', 'Принять'),

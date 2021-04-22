@@ -30,6 +30,8 @@ from app.tbot.resources.hr_review_views import \
     hr_review_ratings_view, \
     hr_review_comment_rating_view, \
     hr_review_send_back_view
+from app.tbot.resources.registrations_views.auth_views import add_position_user, \
+    add_department_user
 
 from app.tbot.resources.request_views import \
     request_view, \
@@ -142,6 +144,9 @@ ROUTES = \
         'hr_review_ratings': hr_review_ratings_view,
         'hr_review_comment_rating': hr_review_comment_rating_view,
         'hr_review_send_back': hr_review_send_back_view,
+
+        'get_position': add_position_user,
+        'get_department': add_department_user,
 
         'request_view': request_view,
         'request_delete_view': delete_request_view,
