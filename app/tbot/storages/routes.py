@@ -85,7 +85,8 @@ from app.tbot.resources.user_views.user_views import \
     user_edit_role, \
     user_edit_position, \
     user_edit_boss, \
-    user_edit_department, delete_user
+    user_edit_department, delete_user, change_user_position, change_user_department, \
+    change_user_role
 
 from app.tbot.resources.user_views.users_list_views import \
     user_view, \
@@ -162,6 +163,9 @@ ROUTES = \
         'user_edit_view': edit_user_view,
         'user_delete': delete_user,
         'cancel_user_delete': users_list_view,
+        'edit_position': change_user_position,
+        'edit_department': change_user_department,
+        'edit_role': change_user_role,
 
         'user_edit_fullname': user_edit_fullname,
         'user_edit_role': user_edit_role,

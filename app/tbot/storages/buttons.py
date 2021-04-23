@@ -100,6 +100,9 @@ BUTTONS_TEMPLATES = \
         'user_edit_position': ButtonTemplate('user_edit_position', 'Должность'),
         'user_edit_boss': ButtonTemplate('user_edit_boss', 'Руководитель'),
         'user_edit_department': ButtonTemplate('user_edit_department', 'Отдел'),
+        'edit_position': ButtonTemplate('edit_position'),
+        'edit_department': ButtonTemplate('edit_department'),
+        'edit_role': ButtonTemplate('edit_role'),
 
         'review_period_start': ButtonTemplate('review_period_start', 'Запуск'),
         'review_period_stop': ButtonTemplate('review_period_stop', 'Остановка'),

@@ -62,46 +62,35 @@ def change_user_fullname(request):
 
 def user_edit_role(request):
     pk = request.args['user'][0]
-    service = UserServiceTBot()
-    user = service.by_pk(pk=pk)
-    template = UserForm(models=user, edit_role_step=True)
-    return template, service.add_model(change_user_role)
+    roles = Session().query(Role).all()
+    template = UserForm(user_id=pk, roles=roles, edit_role_step=True)
+    return template
 
 
 def change_user_role(request):
-    text = request.text
-    service = UserServiceTBot(model=request.model)
-    if isinstance(text, str):
-        service.role = Session().query(Role).filter_by(name=text).one_or_none()
-        Session.add(service.model)
-        Session.commit()
-        template = UserForm(changed=True)
-        return template
-    else:
-        template = UserForm(edit_step=True)
-        return template, service.add_model(change_user_role)
+    pk = request.pk()
+    user_id = request.args['user_id'][0]
+    user = UserServiceTBot().by_pk(user_id)
+    user.role = Session().query(Role).get(pk)
+    Session.add(user)
+    Session.commit()
+    return UserForm(changed=True)
 
 
 def user_edit_position(request):
     pk = request.args['user'][0]
-    service = UserServiceTBot()
-    user = service.by_pk(pk=pk)
-    template = UserForm(models=user, edit_position_step=True)
-    return template, service.add_model(change_user_position)
+    positions = Session().query(Position).all()
+    return UserForm(user_id=pk, positions=positions, edit_position_step=True)
 
 
 def change_user_position(request):
-    text = request.text
-    service = UserServiceTBot(model=request.model)
-    if isinstance(text, str):
-        service.position = Session().query(Position).filter_by(name=text).one_or_none()
-        Session.add(service.model)
-        Session.commit()
-        template = UserForm(changed=True)
-        return template
-    else:
-        template = UserForm(edit_step=True)
-        return template, service.add_model(change_user_role)
+    pk = request.pk()
+    user_id = request.args['user_id'][0]
+    user = UserServiceTBot().by_pk(user_id)
+    user.position = Session().query(Position).get(pk)
+    Session.add(user)
+    Session.commit()
+    return UserForm(changed=True)
 
 
 def user_edit_boss(request):
@@ -128,21 +117,17 @@ def change_user_boss(request):
 
 def user_edit_department(request):
     pk = request.args['user'][0]
-    service = UserServiceTBot()
-    user = service.by_pk(pk=pk)
-    template = UserForm(models=user, edit_department_step=True)
-    return template, service.add_model(change_user_department)
+    departments = Session().query(Department).all()
+    template = UserForm(user_id=pk, departments=departments, edit_department_step=True)
+    return template
 
 
 def change_user_department(request):
-    text = request.text
-    service = UserServiceTBot(model=request.model)
-    if isinstance(text, str):
-        service.department = Session().query(Department).filter_by(name=text).one_or_none()
-        Session.add(service.model)
-        Session.commit()
-        template = UserForm(changed=True)
-        return template
-    else:
-        template = UserForm(edit_step=True)
-        return template, service.add_model(change_user_role)
+    pk = request.pk()
+    user_id = request.args['user_id'][0]
+    user = UserServiceTBot().by_pk(user_id)
+    user.department = Session().query(Department).get(pk)
+    Session.add(user)
+    Session.commit()
+    template = UserForm(changed=True)
+    return template

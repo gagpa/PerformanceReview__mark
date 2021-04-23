@@ -57,6 +57,21 @@ class UserForm(Template):
                          BUTTONS_TEMPLATES['cancel_user_delete']])
             markup = self.markup_builder.build(*rows, user=self.args.get('model').id)
             return markup
+        elif self.args.get('edit_position_step'):
+            row = BUTTONS_TEMPLATES['edit_position']
+            markup = self.markup_builder.build_list(self.args['positions'], row,
+                                                    user_id=self.args.get('user_id'))
+            return markup
+        elif self.args.get('edit_department_step'):
+            row = BUTTONS_TEMPLATES['edit_department']
+            markup = self.markup_builder.build_list(self.args['departments'], row,
+                                                    user_id=self.args.get('user_id'))
+            return markup
+        elif self.args.get('edit_role_step'):
+            row = BUTTONS_TEMPLATES['edit_role']
+            markup = self.markup_builder.build_list(self.args['roles'], row,
+                                                    user_id=self.args.get('user_id'))
+            return markup
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
@@ -102,17 +117,19 @@ class UserForm(Template):
                                                               text=text,
                                                               )
         elif self.args.get('edit_role_step'):
-            text = 'Введите новую роль:'
-            message_text = self.message_builder.build_message(title=title,
-                                                              description=description,
-                                                              text=text,
-                                                              )
+            title = 'Введите новую роль:'
+            list_data = [model.name for model in self.args.get('roles')]
+            message_text = self.message_builder.build_list_message(title=title,
+                                                                   description=description,
+                                                                   list_data=list_data,
+                                                                   )
         elif self.args.get('edit_position_step'):
-            text = 'Введите новую должность:'
-            message_text = self.message_builder.build_message(title=title,
-                                                              description=description,
-                                                              text=text,
-                                                              )
+            title = 'Введите новую должность:'
+            list_data = [model.name for model in self.args.get('positions')]
+            message_text = self.message_builder.build_list_message(title=title,
+                                                                   description=description,
+                                                                   list_data=list_data,
+                                                                   )
         elif self.args.get('edit_boss_step'):
             text = 'Введите логин нового руководителя:'
             message_text = self.message_builder.build_message(title=title,
@@ -120,11 +137,12 @@ class UserForm(Template):
                                                               text=text,
                                                               )
         elif self.args.get('edit_department_step'):
-            text = 'Введите новый отдел:'
-            message_text = self.message_builder.build_message(title=title,
-                                                              description=description,
-                                                              text=text,
-                                                              )
+            title = 'Введите новый отдел:'
+            list_data = [model.name for model in self.args.get('departments')]
+            message_text = self.message_builder.build_list_message(title=title,
+                                                                   description=description,
+                                                                   list_data=list_data,
+                                                                   )
         elif self.args.get('changed'):
             text = 'Данные изменены.'
             message_text = self.message_builder.build_message(title=title,
