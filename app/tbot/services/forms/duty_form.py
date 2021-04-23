@@ -28,11 +28,11 @@ class DutyForm(Template):
         title = '▪️Обязанности'
         model = self.args.get('model')
         if self.args.get('can_add'):
-            description = 'Функционал, который ты выполняешь в ходе своей работы'
+            description = '❕ Функционал, который ты выполняешь в ходе своей работы'
             text = self.args['model'].text if self.args['model'] else ''
 
         elif self.args.get('can_edit'):
-            description = '\nВнесите изменения или вернитесь к анкете'
+            description = '\n❕ Внесите изменения или вернитесь к анкете'
             text = f' -  {self.args["model"].text}'
 
         elif self.args.get('form'):
@@ -46,7 +46,7 @@ class DutyForm(Template):
             return message_text
 
         else:
-            description = 'Отправьте в сообщении свои обязанности'
+            description = '❕ Отправьте в сообщении свои обязанности'
             text = ''
 
         message_text = self.message_builder.build_message(title=title,

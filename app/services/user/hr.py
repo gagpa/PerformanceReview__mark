@@ -1,6 +1,6 @@
 from app.db import Session
 from app.models import CoworkerAdvice, CoworkerProjectRating, CoworkerReview, Form
-from app.services.dictinary import HrReviewStatusService, StatusService
+from app.services.dictinary import HrReviewStatusService, StatusService, RoleService
 from app.services.review import HrReviewService, CoworkerReviewService
 from app.services.user.user import UserService
 
@@ -47,6 +47,9 @@ class HRService(UserService):
                              )
         reviews = query.all()
         return reviews
+
+    def all(self):
+        return self.all_by(role=RoleService().hr)
 
 
 __all__ = ['HRService']

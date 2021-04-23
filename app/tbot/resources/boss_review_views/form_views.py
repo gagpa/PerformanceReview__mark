@@ -1,7 +1,8 @@
 from app.services.review import BossReviewService
 from app.services.user import BossService
 from app.tbot.resources.boss_review_views.list_forms_views import list_forms_view
-from app.tbot.services.forms import ReviewForm
+from app.tbot.services.forms import ReviewForm, Notification
+from app.tbot import notificator
 
 
 def form_view(request):
@@ -17,6 +18,8 @@ def accept_form_view(request):
     boss = request.user
     review = BossReviewService().by_pk(pk)
     BossService(boss).accept(review.form)
+    for advice in review.form.advices:
+        notificator.notificate(Notification(view='to_coworkers', form=review.form, review=advice.coworker_review), advice.coworker_review.coworker.chat_id)
     return list_forms_view(request)
 
 

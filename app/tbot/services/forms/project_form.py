@@ -75,17 +75,17 @@ class ProjectForm(Template):
 
         elif review_type == 'write':
             if not project.name:
-                self.build_message(title='Заполнение проекта', description='Напишите название проекта')
+                self.build_message(title='Заполнение проекта', description='❕  Напишите название проекта')
             elif not project.description:
-                self.build_message(title='Заполнение проекта', description='\nОпишите цель проекта и свои обязанности',
+                self.build_message(title='Заполнение проекта', description='\n❕  Опишите цель проекта и свои обязанности',
                                    text=f'Название проекта: {project.name}')
             elif not project.reviews:
                 self.build_message(title='Заполнение проекта',
-                                   description='\nВведите username коллеги, который может оценить ваш вклад в проект',
+                                   description='\n❕  Введите username коллеги, который может оценить ваш вклад в проект',
                                    text=f'Название проекта: {project.name}\n'
                                         f'Цели и обязаннсоти: {project.description}')
             else:
-                coworkers = ' '.join([f"@{review.coworker.username}" for review in project.reviews])
+                coworkers = ' '.join([f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
                 self.build_message(title=f'Проект - {project.name}', text=f'Цели и обязаннсоти: {project.description}\n'
                                                                           f'Коллеги: {coworkers}')
             return self.MESSAGE

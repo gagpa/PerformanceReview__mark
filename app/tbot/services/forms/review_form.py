@@ -20,7 +20,10 @@ class ReviewForm(Template):
                 self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_achievements_list'],
                                      BUTTONS_TEMPLATES['review_form_fails'])
                 if form.achievements and form.fails and form.projects and form.duty:
-                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_send_to_boss'])
+                    if form.user.boss:
+                        self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_send_to_boss'])
+                    else:
+                        self.extend_keyboard(True, BUTTONS_TEMPLATES['review_send_coworkers'])
                 return self.build(form=form.id)
 
             elif review_type == 'boss':
@@ -85,7 +88,7 @@ class ReviewForm(Template):
             if form.projects:
                 fill_volume += 1
                 find_coworkers = lambda project: '\n -  '.join(
-                    [f"@{review.coworker.username}" for review in project.reviews])
+                    [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
                 list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
                              form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
@@ -97,7 +100,7 @@ class ReviewForm(Template):
             self.build_message(title='▫️Информация об анкете',
                                text=f' -  Опрос закончится: {form.review_period.end_date}\n'
                                     f'{filling}')
-            if form.boss_review:
+            if form.boss_review and form.boss_review.text:
                 self.build_message(title='▫ Необходимо исправить', text=f' -  {form.boss_review.text}')
             return self.MESSAGE
 
@@ -204,6 +207,10 @@ class ReviewForm(Template):
                 if advice.hr_comment:
                     self.build_message(title='', description='', text=f'- Комментарий HR: {advice.hr_comment}')
 
+            return self.MESSAGE
+        elif review_type == 'not_active':
+            self.build_message(description='❕  В данный момент анкетирование не проходит так, '
+                                           'что можете спокойно вернуться к работе')
             return self.MESSAGE
 
 

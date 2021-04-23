@@ -21,12 +21,12 @@ class ProjectsForm(Template):
                 if view == 'delete_choose':
                     unique_args = [{'project': project.id} for project in projects]
                     main_template = BUTTONS_TEMPLATES['review_form_project_delete']
-                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'])
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'], BUTTONS_TEMPLATES['review_form'])
                     return self.build_list(main_template, unique_args)
                 elif view == 'edit_choose':
                     unique_args = [{'project': project.id} for project in projects]
                     main_template = BUTTONS_TEMPLATES['review_form_project_edit']
-                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'])
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'], BUTTONS_TEMPLATES['review_form'])
                     return self.build_list(main_template, unique_args)
                 elif view == 'list':
                     self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_project_add'])
@@ -70,7 +70,7 @@ class ProjectsForm(Template):
         if page:
             ratings = self.cut_per_page(ratings, page)
             projects = self.cut_per_page(projects, page)
-        find_coworkers = lambda project: '\n -  '.join([f"@{review.coworker.username}" for review in project.reviews])
+        find_coworkers = lambda project: '\n -  '.join([f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
 
         if review_type == 'hr':
             list_data = [f'{project.name}\n{project.description}' for project in projects]
@@ -114,24 +114,24 @@ class ProjectsForm(Template):
                     list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project
                                  in projects]
                     self.build_list_message(title=title,
-                                            description='\nДобавьте проекты, которые ты выполнял, или измените их',
+                                            description='\n❕  Добавьте проекты, которые ты выполнял, или измените их',
                                             list_text=list_text)
                 else:
-                    self.build_message(title=title, description='Добавьте проекты, которые ты выполнял')
+                    self.build_message(title=title, description='❕  Добавьте проекты, которые ты выполнял')
                 return self.MESSAGE
 
             elif view == 'edit_choose':
                 list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
                              projects]
                 self.build_list_message(title=title,
-                                        description='\nВыберите проект, который хотите изменить',
+                                        description='\n❕  Выберите проект, который хотите изменить',
                                         list_text=list_text)
 
             elif view == 'delete_choose':
                 list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
                              projects]
                 self.build_list_message(title=title,
-                                        description='\nВыберите проект, который хотите удалить',
+                                        description='\n❕  Выберите проект, который хотите удалить',
                                         list_text=list_text)
             return self.MESSAGE
 
