@@ -23,6 +23,7 @@ def delete_user(request):
     user = service.by_pk(pk=pk)
     form_service = FormService()
     form = form_service.by(user_id=pk)
+    # TODO: обдумать как будет удаляться пользователь и его другие данные в таблицах
     if form:
         form_service.delete(form)
     bot.send_message(user.chat_id, 'Вы были удалены из системы.')

@@ -42,10 +42,11 @@ class MessageManager:
     def route(self, func):
         def wrapper(message):
             request = RequestSerializer(message=message)
-            # if message.text in self.commands.keys():
-            #     response = self.commands[message.text](request)
-            # else:
-            response = func(request)
+            # TODO: обдумать момент с отменой ввода
+            if message.text in self.commands.keys():
+                response = self.commands[message.text](request)
+            else:
+                response = func(request)
             self.handle_response(message, response)
 
         return wrapper
