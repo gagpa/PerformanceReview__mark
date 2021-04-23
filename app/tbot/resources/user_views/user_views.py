@@ -3,7 +3,7 @@ from app.models import Role, Position, Department
 from app.services.form_review import FormService
 from app.services.user import UserService
 from app.tbot import bot
-from app.tbot.resources.user_views.users_list_views import users_list_view
+from app.tbot.resources.user_views.users_list_views import users_list_view, user_view
 from app.tbot.services.auth import UserServiceTBot
 from app.tbot.services.forms.user_form import UserForm
 
@@ -53,8 +53,7 @@ def change_user_fullname(request):
         service.fullname = text
         Session.add(service.model)
         Session.commit()
-        template = UserForm(changed=True)
-        return template
+        return UserForm(model=service.model, can_edit_user=True)
     else:
         template = UserForm(edit_step=True)
         return template, service.add_model(change_user_fullname)
@@ -74,7 +73,7 @@ def change_user_role(request):
     user.role = Session().query(Role).get(pk)
     Session.add(user)
     Session.commit()
-    return UserForm(changed=True)
+    return UserForm(model=user, can_edit_user=True)
 
 
 def user_edit_position(request):
@@ -90,7 +89,7 @@ def change_user_position(request):
     user.position = Session().query(Position).get(pk)
     Session.add(user)
     Session.commit()
-    return UserForm(changed=True)
+    return UserForm(model=user, can_edit_user=True)
 
 
 def user_edit_boss(request):
@@ -108,7 +107,7 @@ def change_user_boss(request):
         service.boss = text
         Session.add(service.model)
         Session.commit()
-        return UserForm(changed=True)
+        return UserForm(model=service.model, can_edit_user=True)
     else:
         template = UserForm(edit_step=True)
         return template, service.add_model(change_user_role)
@@ -127,4 +126,4 @@ def change_user_department(request):
     user.department = Session().query(Department).get(pk)
     Session.add(user)
     Session.commit()
-    return UserForm(changed=True)
+    return UserForm(model=user, can_edit_user=True)
