@@ -59,15 +59,15 @@ class ListFormReview(Template):
         if review == 'boss':
             list_data = [f'@{review.form.user.username} - {review.form.user.fullname}' for review in reviews]
             self.build_list_message(title='📑 Список подчинённых на проверку',
-                                    description='\n Можете выбрать форму подчинённого на проверку',
+                                    description='\n❕ Можете выбрать форму подчинённого на проверку',
                                     list_text=list_data)
             return self.MESSAGE
 
         elif review == 'coworker':
             reviews = self.cut_per_page(reviews, page)
-            list_data = [f'{review.advice.form.user.fullname}' for review in reviews]
+            list_data = [f'{review.advice.form.user.fullname} (@{review.advice.form.user.username})' for review in reviews]
             self.build_list_message(title='📑 Список коллег на оценку',
-                                    description='\nМожете выбрать форму коллеги на оценку',
+                                    description='\n❕ Можете выбрать форму коллеги на оценку',
                                     list_text=list_data)
             return self.MESSAGE
 
@@ -75,7 +75,7 @@ class ListFormReview(Template):
             reviews = self.cut_per_page(reviews, page)
             list_data = [f'@{review.advice.form.user.username} - @{review.coworker.username}' for review in reviews]
             self.build_list_message(title='📑 Список оценок и советов на проверку',
-                                    description='Можете выбрать форму на проверку',
+                                    description='\n❕ Можете выбрать форму на проверку',
                                     list_text=list_data)
             return self.MESSAGE
 

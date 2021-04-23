@@ -21,12 +21,14 @@ class ProjectsForm(Template):
                 if view == 'delete_choose':
                     unique_args = [{'project': project.id} for project in projects]
                     main_template = BUTTONS_TEMPLATES['review_form_project_delete']
-                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'], BUTTONS_TEMPLATES['review_form'])
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'],
+                                         BUTTONS_TEMPLATES['review_form'])
                     return self.build_list(main_template, unique_args)
                 elif view == 'edit_choose':
                     unique_args = [{'project': project.id} for project in projects]
                     main_template = BUTTONS_TEMPLATES['review_form_project_edit']
-                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'], BUTTONS_TEMPLATES['review_form'])
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'],
+                                         BUTTONS_TEMPLATES['review_form'])
                     return self.build_list(main_template, unique_args)
                 elif view == 'list':
                     self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_project_add'])
@@ -70,22 +72,27 @@ class ProjectsForm(Template):
         if page:
             ratings = self.cut_per_page(ratings, page)
             projects = self.cut_per_page(projects, page)
-        find_coworkers = lambda project: '\n -  '.join([f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
+        find_coworkers = lambda project: '\n -  '.join(
+            [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
 
         if review_type == 'hr':
-            list_data = [f'{project.name}\n{project.description}' for project in projects]
-            self.build_list_message(title='Проверка оценок проектов',
-                                    description=f'Автор: @{form.user.username}\n'
-                                                f'Проверяющий: @{review.coworker.username}',
-                                    list_text=list_data)
-            if ratings:
-                list_data = []
-                for rating in ratings:
-                    list_data.append(
-                        f'{rating.project.name}\n- Оценка: {f"{rating.rating.name} {rating.text}" if rating.rating else "Не стоит"}')
-                    if rating.hr_comment:
-                        list_data[-1] += f'\n- Крайний комментарий HR: {rating.hr_comment}'
-                self.build_list_message(title='Оценки', description='', list_text=list_data)
+            self.build_list_message(title='▪️Проверка оценок проектов',
+                                    list_text=[f'{project.name}\n -  {project.description}' for project in projects])
+            list_data = []
+            for rating in ratings:
+                if rating.text or rating.rating:
+                    list_data.append(f'{rating.project.name}')
+                if rating.rating:
+                    list_data[-1] += f'\n -  Оценка: {rating.rating.name} {"🌟" * rating.rating.value}'
+                if rating.text:
+                    list_data[-1] += f'\n -  Комментарий: {rating.text}'
+                if rating.hr_comment:
+                    list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
+            if list_data:
+                self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
+            self.build_message(description=f'Автор: @{form.user.username}\n'
+                                           f'Юценивающий: @{review.coworker.username}')
+            self.build_message(description='❕  Выберите проект, у которго необходимо исправить оценку или комментарий')
             return self.MESSAGE
 
         elif review_type == 'coworker':
@@ -100,7 +107,7 @@ class ProjectsForm(Template):
                 if rating.text:
                     list_data[-1] += f'\n -  Комментарий: {rating.text}'
                 if rating.hr_comment:
-                    list_data[-1] += f'<i>\n❕ Исправить: {rating.hr_comment}</i>'
+                    list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
             if list_data:
                 self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
             self.build_message(description='❕  Выберите проект ,который вы хотите оценить и прокомментировать')

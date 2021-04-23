@@ -1,9 +1,10 @@
 from app.db import Session
-from app.models import BossReview, Form, User, ReviewPeriod
+from app.models import BossReview, Form, User
 from app.services.dictinary.status import StatusService
+from app.services.form_review.project import ProjectsService
+from app.services.review import BossReviewService
 from app.services.review import ReviewPeriodService
 from app.services.user.user import UserService
-from app.services.review import BossReviewService
 
 
 class BossService(UserService):
@@ -11,7 +12,15 @@ class BossService(UserService):
 
     def accept(self, form: Form):
         """ Принять """
+        self.add_in_review(form)
         StatusService().change_to_coworker_review(form)
+
+    def add_in_review(self, form):
+        for project in form.projects:
+            service = ProjectsService(project)
+            contacts = [contact.username for contact in service.contacts]
+            contacts.append(self.model.username)
+            service.contacts = contacts
 
     def decline(self, form: Form, text: str) -> BossReview:
         """ Отклонить """
@@ -38,8 +47,8 @@ class BossService(UserService):
         """ Вернуть все формы на boss review """
         review_period = ReviewPeriodService().current
         status = StatusService().boss_review
-        forms = Session.query(Form).\
-            join(User).\
+        forms = Session.query(Form). \
+            join(User). \
             filter(User.boss == self.model,
                    Form.status == status,
                    Form.review_period == review_period

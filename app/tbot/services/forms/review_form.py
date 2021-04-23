@@ -94,7 +94,7 @@ class ReviewForm(Template):
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
 
             if fill_volume == max_volume:
-                filling = f' -  Статус: заполнена ✔'
+                filling = f' -  Статус: {form.status.name} ✔'
             else:
                 filling = f' -  Статус: заполнение ({int(fill_volume / max_volume * 100)}%)'
             self.build_message(title='▫️Информация об анкете',
@@ -152,7 +152,7 @@ class ReviewForm(Template):
                 if rating.text:
                     list_data[-1] += f'\n -  Комментарий: {rating.text}'
                 if rating.hr_comment:
-                    list_data[-1] += f'<i>\n❕ Исправить: {rating.hr_comment}</i>'
+                    list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
             if list_data:
                 self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
 
@@ -163,7 +163,7 @@ class ReviewForm(Template):
                 if advice.not_todo:
                     text += f'- Что перестать делать:{advice.not_todo}'
                 if advice.hr_comment:
-                    text += f'\n<i>❕ Исправить: {advice.hr_comment}</i>'
+                    text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
                 self.build_message(title='▫ Ваши советы', text=text)
             if view == 'todo':
                 self.build_message(description='❕  Введите "Что стоит изменить вашему коллеги"')
@@ -186,28 +186,48 @@ class ReviewForm(Template):
             return self.MESSAGE
 
         elif review_type == 'hr':
-            self.build_message(
-                description=f'Оценивающий @{advice.coworker_review.coworker.username}\nВладелец формы @{form.user.username}')
-            self.build_message(title='Анкета', text=form_text)
-            if ratings:
-                list_data = []
-                for rating in ratings:
-                    list_data.append(
-                        f'{rating.project.name}\n- Оценка: {f"{rating.rating.name} {rating.text}" if rating.rating else "Не стоит"}')
-                    if rating.hr_comment:
-                        list_data[-1] += f'\n- Комментарий HR: {rating.hr_comment}'
-                self.build_list_message(title='Ваши оценки', list_text=list_data)
+            self.build_message(title='📝 Анкета коллеги',
+                               text=f'Сотрудник: @{form.user.username} - {form.user.fullname}')
+            if form.duty:
+                self.build_message(title='▪️Обязанности', text=f' -  {form.duty.text}')
+            if form.achievements:
+                list_text = [f'{achievement.text}' for achievement in form.achievements]
+                self.build_list_message(title='▪️Достижения', list_text=list_text)
+            if form.fails:
+                list_text = [f'{fail.text}' for fail in form.fails]
+                self.build_list_message(title='▪️Провалы', list_text=list_text)
+            if form.projects:
+                find_coworkers = lambda project: '\n -  '.join(
+                    [f"@{review.coworker.username}" for review in project.reviews])
+                list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
+                             form.projects]
+                self.build_list_message(title='▪️Проекты', list_text=list_text)
+            list_data = []
+            for rating in ratings:
+                if rating.text or rating.rating:
+                    list_data.append(f'{rating.project.name}')
+                if rating.rating:
+                    list_data[-1] += f'\n -  Оценка: {rating.rating.name} {"🌟" * rating.rating.value}'
+                if rating.text:
+                    list_data[-1] += f'\n -  Комментарий: {rating.text}'
+                if rating.hr_comment:
+                    list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
+            if list_data:
+                self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
 
-            if advice:
-                self.build_message(title='Что делать/Что не делать?', description='', text='')
+            if advice.todo or advice.not_todo:
+                text = ''
                 if advice.todo:
-                    self.build_message(title='', description='', text=f'- Что делать: {advice.todo}')
+                    text += f'- Что делать: {advice.todo}\n'
                 if advice.not_todo:
-                    self.build_message(title='', description='', text=f'- Что перестать делать:{advice.not_todo}')
+                    text += f'- Что перестать делать:{advice.not_todo}'
                 if advice.hr_comment:
-                    self.build_message(title='', description='', text=f'- Комментарий HR: {advice.hr_comment}')
-
+                    text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
+                self.build_message(title='▫ Ваши советы', text=text)
+            if view == 'todo':
+                self.build_message(description='❕  Введите ,что исправить в разделе "Ваши советы"')
             return self.MESSAGE
+
         elif review_type == 'not_active':
             self.build_message(description='❕  В данный момент анкетирование не проходит так, '
                                            'что можете спокойно вернуться к работе')
