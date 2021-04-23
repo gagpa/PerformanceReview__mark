@@ -18,6 +18,7 @@ def accept_form_view(request):
     boss = request.user
     review = BossReviewService().by_pk(pk)
     BossService(boss).accept(review.form)
+    BossReviewService()
     for advice in review.form.advices:
         notificator.notificate(Notification(view='to_coworkers', form=review.form, review=advice.coworker_review), advice.coworker_review.coworker.chat_id)
     return list_forms_view(request)
@@ -36,6 +37,8 @@ def send_form_view(request):
     boss = request.user
     text = request.text
     review = BossReviewService().by_pk(pk)
+    notificator.notificate(Notification(view='to_employee', form=review.form, review=review),
+                           review.form.user.chat_id)
     BossService(boss).decline(review.form, text)
     return list_forms_view(request)
 

@@ -31,10 +31,10 @@ class MessageDecorator:
         """ Оформить список """
         if items:
             # Функция для выявления последнего элемента списка
-            last_item = items[-1]
+            last_item = len(items) - 1
 
             def is_not_last(item):
-                return item != last_item
+                return item < last_item
 
             # Сборка списка
             list_text = ''
@@ -42,7 +42,7 @@ class MessageDecorator:
                 list_text += f'{i + 1}. {data}'
                 # Если это не последний элемент, то вставляет перенос строки
 
-                if is_not_last(item=data):
+                if is_not_last(item=i):
                     list_text += '\n'
         else:
             list_text = 'Список пустой'

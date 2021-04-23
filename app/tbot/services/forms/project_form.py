@@ -1,7 +1,6 @@
 from telebot.types import InlineKeyboardMarkup
 
 from app.services.dictinary.rating import RatingService
-from app.tbot.extensions import InlineKeyboardBuilder
 from app.tbot.extensions.template import Template
 from app.tbot.storages import BUTTONS_TEMPLATES
 
@@ -48,36 +47,38 @@ class ProjectForm(Template):
         page = self.args.get('page')
         view = self.args.get('view')
         if review_type == 'coworker':
-            self.build_message(title=project.name, text=f'{project.description}')
-            description = 'Оцените проект от 1 🌟 до 5 🌟\n'
+            description = ''
             for i, rating in enumerate(RatingService().all):
-                description += f'{"🌟" * rating.value} - {rating.name}\n'
-            self.build_message(description=description)
+                description += f'\n{"🌟" * rating.value} - {rating.name}'
+            text = f' -  Цели и обязаннсоти: {project.description}'
             if coworker_comment_rating.rating:
-                self.build_message(title='Текущая оценка', text='🌟' * coworker_comment_rating.rating.value)
+                text += f'\n -  Текущая оценка: {"🌟" * coworker_comment_rating.rating.value}'
             if coworker_comment_rating.text:
-                self.build_message(title='Комментарий', text=coworker_comment_rating.text)
+                text += f'\n -  Комментарий к проекту: {coworker_comment_rating.text}'
+            self.build_message(title=f'Проект: {project.name}', description=description, text=text)
+            if coworker_comment_rating.hr_comment:
+                self.build_message(description=f'❗ Исправить: {coworker_comment_rating.hr_comment}')
             if view == 'comment':
                 self.build_message(description='❕  Напишите свой комментарий к проекту')
+            else:
+                self.build_message(description='❕  Поставьте оценку проекту и не забудьте оставить комментарий')
             return self.MESSAGE
 
         elif review_type == 'hr':
-            self.build_message(title='Комментарий для оценивающего',
-                               text=f'Название - {self.args["project"].name}\n' \
-                                    f'Описание - {self.args["project"].description}\n')
-            if coworker_comment_rating.rating:
-                self.build_message(title='Текущая оценка', text='🌟' * coworker_comment_rating.rating.value)
-            if coworker_comment_rating.text:
-                self.build_message(title='Комментарий к проекту', text=coworker_comment_rating.text)
+            self.build_message(title=f'Проект: {project.name}',
+                               text=f' -  Цели и обязаннсоти: {project.description}\n'
+                                    f' -  Текущая оценка: {"🌟" * coworker_comment_rating.rating.value}\n'
+                                    f' -  Комментарий к проекту: {coworker_comment_rating.text}')
             if coworker_comment_rating.hr_comment:
-                self.build_message(title='Комментарий HR', text=coworker_comment_rating.hr_comment)
+                self.build_message(description='❕  Введите, что исправить оценивающему в своей оценке и комментарие')
             return self.MESSAGE
 
         elif review_type == 'write':
             if not project.name:
                 self.build_message(title='Заполнение проекта', description='❕  Напишите название проекта')
             elif not project.description:
-                self.build_message(title='Заполнение проекта', description='\n❕  Опишите цель проекта и свои обязанности',
+                self.build_message(title='Заполнение проекта',
+                                   description='\n❕  Опишите цель проекта и свои обязанности',
                                    text=f'Название проекта: {project.name}')
             elif not project.reviews:
                 self.build_message(title='Заполнение проекта',
@@ -85,7 +86,8 @@ class ProjectForm(Template):
                                    text=f'Название проекта: {project.name}\n'
                                         f'Цели и обязаннсоти: {project.description}')
             else:
-                coworkers = ' '.join([f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
+                coworkers = ' '.join(
+                    [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
                 self.build_message(title=f'Проект - {project.name}', text=f'Цели и обязаннсоти: {project.description}\n'
                                                                           f'Коллеги: {coworkers}')
             return self.MESSAGE

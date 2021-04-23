@@ -31,6 +31,10 @@ class Notification(Template):
             self.extend_keyboard(False, to_form)
             self.extend_keyboard(True, to_list)
             return self.build()
+        elif view == 'to_employee':
+            to_form = BUTTONS_TEMPLATES['review_to_form'].add(review=review.id)
+            self.extend_keyboard(False, to_form)
+            return self.build()
 
     def create_message(self) -> str:
         view = self.args.get('view')
@@ -45,6 +49,9 @@ class Notification(Template):
         elif view == 'to_hr':
             self.build_message(title='🔔 Оповещение', description=f'Сотрудник {review.coworker.fullname} (@{review.coworker.username}) - Оценил анкету '
                                                                   f'{review.advice.form.user.fullname} (@{review.advice.form.user.username})')
+            return self.MESSAGE
+        elif view == 'to_employee':
+            self.build_message(title='🔔 Оповещение', description=f'Ваш руководитель {review.boss.fullname} (@{review.boss.username}) вернул вам анкету для исправления ошибок')
             return self.MESSAGE
         elif view == 'start_review':
             description = 'Необходимо заполнить анкету в разделе "Заполнение анкеты"'

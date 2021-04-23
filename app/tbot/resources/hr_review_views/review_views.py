@@ -11,7 +11,8 @@ def todo_view(request):
     review = CoworkerReviewService().by_pk(pk_review)
     advice = review.advice
     next_view = request.send_args(comment_todo_view, review=[review.id])
-    return ReviewForm(review_type='hr', advice=advice, form=advice.form), next_view
+    return ReviewForm(review_type='hr', view='todo', advice=advice, form=advice.form, ratings=review.projects_ratings),\
+           next_view
 
 
 def comment_todo_view(request):
