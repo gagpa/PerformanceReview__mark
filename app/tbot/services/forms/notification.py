@@ -46,3 +46,7 @@ class Notification(Template):
             self.build_message(title='🔔 Оповещение', description=f'Сотрудник {review.coworker.fullname} (@{review.coworker.username}) - Оценил анкету '
                                                                   f'{review.advice.form.user.fullname} (@{review.advice.form.user.username})')
             return self.MESSAGE
+        elif view == 'start_review':
+            description = 'Необходимо заполнить анкету в разделе "Заполнение анкеты"'
+            self.build_message(title='🔔 Оповещение', description=description)
+            return self.MESSAGE
