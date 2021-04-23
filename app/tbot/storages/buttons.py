@@ -14,6 +14,7 @@ BUTTONS_TEMPLATES = \
         'review_form_achievement_edit': ButtonTemplate('review_form_achievement_edit'),
         'review_form_achievements_delete_choose': ButtonTemplate('review_form_achievements_delete_choose', 'Удалить'),
         'review_form_achievements_edit_choose': ButtonTemplate('review_form_achievements_edit_choose', 'Изменить'),
+        'review_send_coworkers': ButtonTemplate('boss_review_accept', 'Отправить коллегам 📨'),
 
         'boss_review_accept': ButtonTemplate('boss_review_accept', 'Принять'),
         'boss_review_decline': ButtonTemplate('boss_review_decline', 'На доработку'),
@@ -22,6 +23,8 @@ BUTTONS_TEMPLATES = \
         'boss_review_update_list': ButtonTemplate('boss_review_list', '↻'),
         'boss_review_sort_asc': ButtonTemplate('boss_review_list', '🔺').add(asc=True),
         'boss_review_sort_desc': ButtonTemplate('boss_review_list', '🔻').add(asc=False),
+        'boss_review_to_form': ButtonTemplate('boss_review_form', 'Посмотреть анкету'),
+        'boss_review_to_list': ButtonTemplate('boss_review_list', 'Список анкет'),
 
         'coworker_review_form': ButtonTemplate('coworker_review_form', 'Анкета'),
         'coworker_review_list': ButtonTemplate('coworker_review_list', '« К списку'),
@@ -37,6 +40,8 @@ BUTTONS_TEMPLATES = \
         'coworker_review_sort_asc': ButtonTemplate('coworker_review_list', '🔺').add(asc=True),
         'coworker_review_sort_desc': ButtonTemplate('coworker_review_list', '🔻').add(asc=False),
         'coworker_review_update_list': ButtonTemplate('coworker_review_list', '↻'),
+        'coworkers_review_to_form': ButtonTemplate('coworker_review_form', 'Анкета коллеги'),
+        'coworkers_review_to_list': ButtonTemplate('coworker_review_list', 'Список'),
 
         'review_form_fails': ButtonTemplate('review_form_fails', 'Провалы'),
         'review_form_back_fails': ButtonTemplate('review_form_fails', '« К провалам'),
@@ -77,7 +82,8 @@ BUTTONS_TEMPLATES = \
         'hr_review_update_list': ButtonTemplate('hr_review_list', 'Обновить список'),
         'hr_review_sort_asc': ButtonTemplate('hr_review_list', '🔺').add(asc=True),
         'hr_review_sort_desc': ButtonTemplate('hr_review_list', '🔻').add(asc=False),
-
+        'hr_review_to_form': ButtonTemplate('hr_review_form', 'Анкета с оценками'),
+        'hr_review_to_list': ButtonTemplate('hr_review_list', 'Список'),
         'get_position': ButtonTemplate('get_position'),
         'get_department': ButtonTemplate('get_department'),
 

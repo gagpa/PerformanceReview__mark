@@ -24,13 +24,14 @@ class FailsForm(Template):
         elif view == 'delete_choose':
             unique_args = [{'fail': fail.id} for fail in fails]
             main = BUTTONS_TEMPLATES['review_form_fail_delete']
+            self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_fails'], BUTTONS_TEMPLATES['review_form'])
             return self.build_list(main, unique_args)
 
         elif view == 'edit_choose':
             unique_args = [{'fail': fail.id} for fail in fails]
             main = BUTTONS_TEMPLATES['review_form_fail_edit']
+            self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_fails'], BUTTONS_TEMPLATES['review_form'])
             return self.build_list(main, unique_args)
-
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
@@ -39,7 +40,7 @@ class FailsForm(Template):
         title = '▪️Провалы'
 
         if view == 'list':
-            description = 'Факты, которые ты считаешь своими основными провалами, ' \
+            description = '❕  Факты, которые ты считаешь своими основными провалами, ' \
                           'то, чем вы сами недовольны и что хотели бы исправить и' \
                           ' улучшить в будущем'
             if fails:
@@ -52,18 +53,18 @@ class FailsForm(Template):
 
         elif view == 'delete_choose':
             self.build_list_message(title=title,
-                                    description='\nВыберите провал, которое вы хотите удалить',
+                                    description='\n❕  Выберите провал, которое вы хотите удалить',
                                     list_text=[f'{fail.text}' for fail in fails])
             return self.MESSAGE
 
         elif view == 'edit_choose':
             self.build_list_message(title=title,
-                                    description='\nВыберите провал, которое вы хотите изменить',
+                                    description='\n❕  Выберите провал, которое вы хотите изменить',
                                     list_text=[f'{fail.text}' for fail in fails])
             return self.MESSAGE
 
         elif view == 'add':
-            description = 'Отправьте в сообщении свои основные провалы'
+            description = '❕  Отправьте в сообщении свои основные провалы'
             if fails:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',

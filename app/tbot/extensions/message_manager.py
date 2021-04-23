@@ -8,7 +8,7 @@ from app.tbot.extensions.request_serializer import RequestSerializer
 class MessageManager:
     """ Класс для управления сообщениями """
 
-    def __init__(self, bot, commands: dict):
+    def __init__(self, bot, commands: dict = None):
         self.bot = bot
         self.commands = commands
 

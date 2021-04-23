@@ -23,11 +23,13 @@ class AchievementsForm(Template):
         elif view == 'delete_choose':
             unique_args = [{'achievement': achievement.id} for achievement in achievements]
             main = BUTTONS_TEMPLATES['review_form_achievement_delete']
+            self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_achievements'], BUTTONS_TEMPLATES['review_form'])
             return self.build_list(main, unique_args)
 
         elif view == 'edit_choose':
             unique_args = [{'achievement': achievement.id} for achievement in achievements]
             main = BUTTONS_TEMPLATES['review_form_achievement_edit']
+            self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_achievements'], BUTTONS_TEMPLATES['review_form'])
             return self.build_list(main, unique_args)
 
     def create_message(self) -> str:
@@ -37,7 +39,7 @@ class AchievementsForm(Template):
         title = '▪️Достижения'
 
         if view == 'list':
-            description = 'Факты, которые ты считаешь своими основными достижениями и успехами'
+            description = '❕  Факты, которые ты считаешь своими основными достижениями и успехами'
             if achievements:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',
@@ -48,18 +50,18 @@ class AchievementsForm(Template):
 
         elif view == 'delete_choose':
             self.build_list_message(title=title,
-                                    description='\nВыберите достижение, которое вы хотите удалить',
+                                    description='\n❕  Выберите достижение, которое вы хотите удалить',
                                     list_text=[f'{achievement.text}' for achievement in achievements])
             return self.MESSAGE
 
         elif view == 'edit_choose':
             self.build_list_message(title=title,
-                                    description='\nВыберите достижение, которое вы хотите изменить',
+                                    description='\n❕  Выберите достижение, которое вы хотите изменить',
                                     list_text=[f'{achievement.text}' for achievement in achievements])
             return self.MESSAGE
 
         elif view == 'add':
-            description = 'Отправьте в сообщении свои основные достижения и успехи'
+            description = '❕  Отправьте в сообщении свои основные достижения и успехи'
             if achievements:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',

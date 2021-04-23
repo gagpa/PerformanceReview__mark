@@ -25,7 +25,6 @@ def add_user(message):
                 'role': user.role.name,
                 'have_boss': True if user.boss else False,
                 'boss': user.boss.username if user.boss else None,
-
             }
     else:
         message.user = {

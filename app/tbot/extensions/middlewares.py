@@ -1,11 +1,5 @@
 from typing import List, Callable
 
-from app.tbot import bot
-from app.tbot.middlewares import ORDER_CALLBACK_QUERY_MIDDLEWARES
-from app.tbot.middlewares import ORDER_MESSAGE_MIDDLEWARES
-from app.db import Session
-import random
-
 
 class OrderMiddlewares:
     """ Класс для упорядочивания middlewares """
@@ -16,15 +10,20 @@ class OrderMiddlewares:
             'callback_query',
         ]
 
+    def __init__(self, bot, messages, callbacks):
+        self.bot = bot
+        self.messages = messages
+        self.callbacks = callbacks
+
     def activate(self):
         """ Активировать """
-        self.add_message(ORDER_MESSAGE_MIDDLEWARES)
-        self.add_callbacks_query(ORDER_CALLBACK_QUERY_MIDDLEWARES)
+        self.add_message(self.messages)
+        self.add_callbacks_query(self.callbacks)
 
     def __add(self, handler_type: str, middlewares: List[Callable]):
         """ Добавить middleware """
         for middleware in middlewares:
-            bot.middleware_handler(update_types=[handler_type])(session_log(middleware))
+            self.bot.middleware_handler(update_types=[handler_type])(session_log(middleware))
 
     def add_message(self, middlewares: List[Callable]):
         """ Добавить middleware сообщений """
@@ -43,6 +42,7 @@ def session_log(func):
         # print(Session())
         # print('-'*20)
         return a
+
     return wrapper
 
 

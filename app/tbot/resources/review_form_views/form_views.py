@@ -1,16 +1,20 @@
-from app.tbot.services.forms import ReviewForm
+from app.tbot.services.forms import ReviewForm, Notification
 from app.services.dictinary import StatusService
 from app.services.user import EmployeeService
 from app.services.form_review import FormService
+from app.tbot import notificator
 
 
 def form_view(request):
     """ Покзать анкету """
-    form = request.form
-    form_service = FormService(form)
-    status_service = StatusService()
-    write_in = form_service.is_current_status(status_service.write_in)
-    template = ReviewForm(form=form, review_type='write', have_markup=write_in)
+    if request.review_period['is_active']:
+        form = request.form
+        form_service = FormService(form)
+        status_service = StatusService()
+        write_in = form_service.is_current_status(status_service.write_in)
+        template = ReviewForm(form=form, review_type='write', have_markup=write_in)
+    else:
+        template = ReviewForm(review_type='not_active')
     return template
 
 
@@ -21,6 +25,8 @@ def send_to_boss_view(request):
     employee_service = EmployeeService(employee)
     status_service = StatusService()
     employee_service.send_boss(form)
+    if form.user.boss:
+        notificator.notificate(Notification(view='to_boss', form=form), form.user.boss.chat_id)
     form_service = FormService(form)
     write_in = form_service.is_current_status(status_service.write_in)  # TODO не обновляется form в сессии
     template = ReviewForm(form=form, review_type='write', write_in=write_in)
