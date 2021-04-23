@@ -7,9 +7,9 @@ class Notification(Template):
     """ Оповещение """
 
     def create_markup(self) -> InlineKeyboardMarkup:
-        view = self.args['view']
-        form = self.args['form']
-        review = self.args['review']
+        view = self.args.get('view')
+        form = self.args.get('form')
+        review = self.args.get('review')
 
         if view == 'to_boss':
             to_form = BUTTONS_TEMPLATES['boss_review_to_form'].add(review=form.boss_review.id)
@@ -33,9 +33,9 @@ class Notification(Template):
             return self.build()
 
     def create_message(self) -> str:
-        view = self.args['view']
-        form = self.args['form']
-        review = self.args['review']
+        view = self.args.get('view')
+        form = self.args.get('form')
+        review = self.args.get('review')
         if view == 'to_boss':
             self.build_message(title='🔔 Оповещение', description=f'Пользователь {form.user.fullname} (@{form.user.username}) - Заполнил анкету')
             return self.MESSAGE

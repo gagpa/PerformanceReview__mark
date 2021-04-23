@@ -33,24 +33,25 @@ def add_user(message):
 
 
 def check_permission(bot, message):
-    if message.user['is_exist']:
-        if message.user['role'] == 'Undefined':
+    if message.text:
+        if message.user['is_exist']:
+            if message.user['role'] == 'Undefined':
+                message.command = 'start'
+                bot.send_message(message.chat.id, 'Дождитесь окончания регистрации')
+            elif message.user['role'] == 'Employee':
+                if message.command not in ['start', 'Заполнение анкеты', 'Оценка коллег']:
+                    message.command = 'wrong'
+            elif message.user['role'] == 'Lead':
+                if message.command not in ['start', 'Заполнение анкеты', 'Оценка подчиненных', 'Оценка коллег']:
+                    message.command = 'wrong'
+            elif message.user['role'] == 'HR':
+                if message.command == 'Оценка подчиненных':
+                    message.command = 'wrong'
+        elif message.text.replace('/', '') in COMMANDS.keys():
+            message.is_exist = True
             message.command = 'start'
-            bot.send_message(message.chat.id, 'Дождитесь окончания регистрации')
-        elif message.user['role'] == 'Employee':
-            if message.command not in ['start', 'Заполнение анкеты', 'Оценка коллег']:
-                message.command = 'wrong'
-        elif message.user['role'] == 'Lead':
-            if message.command not in ['start', 'Заполнение анкеты', 'Оценка подчиненных', 'Оценка коллег']:
-                message.command = 'wrong'
-        elif message.user['role'] == 'HR':
-            if message.command == 'Оценка подчиненных':
-                message.command = 'wrong'
-    elif message.text.replace('/', '') in COMMANDS.keys():
-        message.is_exist = True
-        message.command = 'start'
-    else:
-        message.command = 'start'
+        else:
+            message.command = 'start'
 
 
 def add_review_period(message):
@@ -101,7 +102,7 @@ def add_keyboard(message):
 def log_command(message):
     """ Логировать действия пользователей """
     user = message.user
-    if message.user['is_exist']:
+    if message.user['is_exist'] and message.text:
         logger.debug(f'\nUSER {user} COMMAND: {message.command}')
 
 
