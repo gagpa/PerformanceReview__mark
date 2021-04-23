@@ -45,6 +45,7 @@ class UserForm(Template):
             rows.append([BUTTONS_TEMPLATES['user_edit_position'],
                          BUTTONS_TEMPLATES['user_edit_department'],
                          BUTTONS_TEMPLATES['user_edit_role']])
+            rows.append([BUTTONS_TEMPLATES['back_to_user'].add(pk=self.args.get('model').id)])
             markup = self.markup_builder.build(*rows, user=self.args.get('model').id)
             return markup
         elif self.args.get('confirm') and self.args.get('request'):

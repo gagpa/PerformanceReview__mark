@@ -166,6 +166,7 @@ ROUTES = \
         'edit_position': change_user_position,
         'edit_department': change_user_department,
         'edit_role': change_user_role,
+        'back_to_user': user_view,
 
         'user_edit_fullname': user_edit_fullname,
         'user_edit_role': user_edit_role,
