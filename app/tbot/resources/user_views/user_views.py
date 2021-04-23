@@ -108,8 +108,7 @@ def change_user_boss(request):
         service.boss = text
         Session.add(service.model)
         Session.commit()
-        template = UserForm(changed=True)
-        return template
+        return UserForm(changed=True)
     else:
         template = UserForm(edit_step=True)
         return template, service.add_model(change_user_role)
@@ -118,8 +117,7 @@ def change_user_boss(request):
 def user_edit_department(request):
     pk = request.args['user'][0]
     departments = Session().query(Department).all()
-    template = UserForm(user_id=pk, departments=departments, edit_department_step=True)
-    return template
+    return UserForm(user_id=pk, departments=departments, edit_department_step=True)
 
 
 def change_user_department(request):
@@ -129,5 +127,4 @@ def change_user_department(request):
     user.department = Session().query(Department).get(pk)
     Session.add(user)
     Session.commit()
-    template = UserForm(changed=True)
-    return template
+    return UserForm(changed=True)
