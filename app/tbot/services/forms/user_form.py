@@ -41,8 +41,8 @@ class UserForm(Template):
 
         elif self.args.get('edit_step'):
             rows.append([BUTTONS_TEMPLATES['user_edit_fullname'],
-                         BUTTONS_TEMPLATES['user_edit_position'],
-                         BUTTONS_TEMPLATES['user_edit_boss'],
+                         BUTTONS_TEMPLATES['user_edit_boss']])
+            rows.append([BUTTONS_TEMPLATES['user_edit_position'],
                          BUTTONS_TEMPLATES['user_edit_department'],
                          BUTTONS_TEMPLATES['user_edit_role']])
             markup = self.markup_builder.build(*rows, user=self.args.get('model').id)
