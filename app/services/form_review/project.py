@@ -66,8 +66,8 @@ class ProjectsService(Entity):
                 self.save_all(review, advice, proj_rating)
             else:
                 is_exist = Session().query(Session().query(CoworkerProjectRating).
-                                           join(CoworkerReview, Project).
-                                           filter(CoworkerReview.coworker == user, CoworkerProjectRating == self.model).
+                                           join(CoworkerReview).
+                                           filter(CoworkerReview.coworker == user, CoworkerProjectRating.project == self.model).
                                            exists()).scalar()
                 if not is_exist:
                     review = Session().query(CoworkerReview).join(CoworkerAdvice). \

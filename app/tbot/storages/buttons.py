@@ -54,8 +54,8 @@ BUTTONS_TEMPLATES = \
         'review_form': ButtonTemplate('review_form', '« К анкете'),
         'review_to_form': ButtonTemplate('review_form', 'Анкета'),
         'review_form_duty': ButtonTemplate('review_form_duty', 'Обязанности'),
-        'review_form_duty_add': ButtonTemplate('review_form_duty_add', '✍️'),
-        'review_form_duty_edit': ButtonTemplate('review_form_duty_edit', '✍️'),
+        'review_form_duty_add': ButtonTemplate('review_form_duty_add', 'Добавить'),
+        'review_form_duty_edit': ButtonTemplate('review_form_duty_edit', 'Изменить'),
 
         'review_form_projects_list': ButtonTemplate('review_form_projects_list', 'Проекты'),
         'review_form_back_projects': ButtonTemplate('review_form_projects_list', '« К проектам'),

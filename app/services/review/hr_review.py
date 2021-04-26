@@ -1,5 +1,5 @@
 from app.db import Session
-from app.models import CoworkerReview
+from app.models import CoworkerReview, CoworkerAdvice, Form
 from app.services.abc_entity import Entity
 from app.services.dictinary import HrReviewStatusService, StatusService
 
@@ -26,9 +26,10 @@ class HrReviewService(Entity):
     def is_last_review(self, review):
         """ Посмотреть все закончили комментирвоать форму """
         form_status = StatusService().review_done
-        reviews = Session().query(CoworkerReview).filter(CoworkerReview.hr_status != form_status,
-                                                         CoworkerReview.id != review.id,
-                                                         ).all()
+        reviews = Session().query(CoworkerReview).join(CoworkerAdvice, Form). \
+            filter(CoworkerReview.hr_status != form_status,
+                   CoworkerAdvice.form == review.advice.form
+                   ).all()
         if reviews:
             return False
         return True
