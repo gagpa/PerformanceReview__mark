@@ -12,7 +12,11 @@ class ArchiveForm(Template):
 
     def create_markup(self) -> Optional[InlineKeyboardMarkup]:
         """ Создать клавиатуру """
-        if self.args.get('models') and self.args.get('archive_list'):
+        if self.args.get('models') and self.args.get('review_list'):
+            row = BUTTONS_TEMPLATES['get_old_review']
+            markup = self.markup_builder.build_list(self.args['models'], row)
+            return markup
+        elif self.args.get('models') and self.args.get('archive_list'):
             row = BUTTONS_TEMPLATES['get_rapport']
             markup = self.markup_builder.build_list(self.args['models'], row)
             return markup
@@ -25,7 +29,19 @@ class ArchiveForm(Template):
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
-        if self.args.get('models') and self.args.get('archive_list'):
+        if self.args.get('models') and self.args.get('review_list'):
+            title = 'Архив'
+            description = 'Выберите номер Review, чтобы посмотреть анкеты:'
+            list_data = list()
+            for model in self.args["models"]:
+                string = f'\nРевью с {model.start_date.date()} по {model.end_date.date()}'
+                list_data.append(string)
+
+            message_text = self.message_builder.build_list_message(title=title,
+                                                                   description=description,
+                                                                   list_data=list_data,
+                                                                   )
+        elif self.args.get('models') and self.args.get('archive_list'):
             title = 'Архив'
             description = 'Выберите номер анкеты, чтобы сформировать отчет:'
             list_data = list()
