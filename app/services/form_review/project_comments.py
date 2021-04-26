@@ -1,7 +1,7 @@
 from statistics import mean
 
 from app.db import Session
-from app.models import Form, User, Project, CoworkerProjectRating
+from app.models import Form, User, Project, CoworkerProjectRating, CoworkerReview
 from app.services.abc_entity import Entity
 from app.services.form_review import FormService
 
@@ -60,3 +60,12 @@ class ProjectCommentService(Entity):
                 all_ratings.append(mean(rating)) if rating else None
 
         return round(mean(all_ratings), 2) if all_ratings else None
+
+    @staticmethod
+    def project_comments(pk):
+        comments = Session().query(CoworkerReview) \
+            .join(CoworkerProjectRating, CoworkerReview.projects_ratings) \
+            .join(User, CoworkerReview.coworker) \
+            .join(Project, CoworkerProjectRating.project) \
+            .join(Form, Project.form).filter(Form.id == pk).all()
+        return comments

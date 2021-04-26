@@ -6,8 +6,7 @@ from jinja2 import FileSystemLoader, Environment
 from weasyprint import HTML
 
 from app.db import Session
-from app.models import Form, ReviewPeriod, User, Status, Duty, Project, Achievement, Fail, \
-    CoworkerReview, CoworkerProjectRating
+from app.models import Form, ReviewPeriod, User, Status, Duty, Project, Achievement, Fail
 from app.services.dictinary.summary import SummaryService
 from app.services.form_review import FormService
 from app.services.form_review.project_comments import ProjectCommentService
@@ -23,19 +22,11 @@ def get_rapport(request):
 
 def get_hr_rapport(request):
     pk = request.args['form_id'][0]
-    user = request.user
     template_vars = get_data_for_rapport(pk)
     final_rating = ProjectCommentService().final_rating(pk)
     template_vars.update(rating=final_rating if final_rating else 'Нет')
-    # boss_comments = ProjectCommentService().boss_projects_comments(pk)
-    # boss_advices = Session().query(CoworkerAdvice)\
-    #     .filter_by(form_id=pk, user_id=boss_comments.user_id).all()
 
-    projects_comments = Session().query(CoworkerReview) \
-        .join(CoworkerProjectRating, CoworkerReview.projects_ratings) \
-        .join(User, CoworkerReview.coworker) \
-        .join(Project, CoworkerProjectRating.project) \
-        .join(Form, Project.form).filter(Form.id == pk).all()
+    projects_comments = ProjectCommentService.project_comments(pk)
     template_vars.update(reviews=[])
 
     form = FormService().by_pk(pk)
@@ -52,16 +43,15 @@ def get_hr_rapport(request):
             role = 'Коллега'
         ratings = [project_rating.rating.value for project_rating in comment.projects_ratings if
                    project_rating.rating]
-        mark = ' + '.join(map(str, ratings)) + f' = {round(mean(ratings), 2)}'
-        comments = '\n'.join(
-            [str(project_rating.text) for project_rating in comment.projects_ratings if
-             project_rating.rating])
+        mark = ' + '.join(map(str, ratings))
+        mark += f' = {round(mean(ratings), 2)}' if len(ratings) > 1 else ''
+        comments = '\n'.join([project_rating.text for project_rating in comment.projects_ratings if
+                              project_rating.rating])
         todo = comment.advice.todo
         not_todo = comment.advice.not_todo
-        review = [fullname, role, mark, comments, todo, not_todo]
-        template_vars['reviews'].append(review)
+        template_vars['reviews'].append([fullname, role, mark, comments, todo, not_todo])
 
-    create_and_send_pdf(user.chat_id, HR_REPORT_TEMPLATE, template_vars)
+    create_and_send_pdf(request.user.chat_id, HR_REPORT_TEMPLATE, template_vars)
 
 
 def get_boss_rapport(request):
