@@ -118,14 +118,14 @@ class UserForm(Template):
                                                               text=text,
                                                               )
         elif self.args.get('edit_role_step'):
-            title = 'Введите новую роль:'
+            description = '\n❕ Выберите новую роль:'
             list_data = [model.name for model in self.args.get('roles')]
             message_text = self.message_builder.build_list_message(title=title,
                                                                    description=description,
                                                                    list_data=list_data,
                                                                    )
         elif self.args.get('edit_position_step'):
-            title = 'Введите новую должность:'
+            description = '\n❕ Выберите новую должность:'
             list_data = [model.name for model in self.args.get('positions')]
             message_text = self.message_builder.build_list_message(title=title,
                                                                    description=description,

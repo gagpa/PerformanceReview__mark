@@ -32,11 +32,11 @@ class AuthForm(Template):
             description = 'Введите свое ФИО'
 
         elif self.args.get('is_position'):
-            description = 'Введите свою должность:'
+            description = '\n❕ Выберите свою должность:'
             list_data = [model.name for model in self.args.get('models')]
 
         elif self.args.get('is_department'):
-            description = 'Введите свой отдел:'
+            description = '\n❕ Выберите свой отдел:'
             list_data = [model.name for model in self.args.get('models')]
 
         elif self.args.get('is_boss'):
