@@ -6,7 +6,8 @@ from jinja2 import FileSystemLoader, Environment
 from weasyprint import HTML
 
 from app.db import Session
-from app.models import Form, ReviewPeriod, User, Status, Duty, Project, Achievement, Fail
+from app.models import Form, ReviewPeriod, User, Status, Duty, Project, Achievement, Fail, \
+    CoworkerReview, CoworkerProjectRating
 from app.services.dictinary.summary import SummaryService
 from app.services.form_review.project_comments import ProjectCommentService
 from app.tbot import bot
@@ -29,7 +30,32 @@ def get_hr_rapport(request):
     # boss_advices = Session().query(CoworkerAdvice)\
     #     .filter_by(form_id=pk, user_id=boss_comments.user_id).all()
     # reviews = []
+    # query = Session().query(CoworkerReview).join(User, CoworkerReview.coworker) \
+    #     .join(CoworkerProjectRating, CoworkerReview.projects_ratings) \
+    #     .join(Rating, CoworkerProjectRating.rating) \
+    #     .join(Project, CoworkerReview.projects).all()
+    projects_comments = Session().query(CoworkerReview) \
+        .join(CoworkerProjectRating, CoworkerReview.projects_ratings) \
+        .join(User, CoworkerReview.coworker) \
+        .join(Project, CoworkerProjectRating.project) \
+        .join(Form, Project.form).filter(Form.id == pk)
+    print([q.__mapper__.attrs.keys() for q in projects_comments])
+    print([(o.coworker.fullname, o.coworker.role.name, o.projects_ratings, o.advice.todo,
+            o.advice.not_todo) for o in projects_comments])
     template_vars.update(reviews=[])
+    # for comment in projects_comments:
+    #     fullname = comment.coworker.fullname
+    #     role = comment.coworker.role.name
+    #     mark = ' + '.join(
+    #         [str(project_rating.rating.value) for project_rating in comment.projects_ratings if project_rating.rating]) + f' = {final_rating}'
+    #     print(mark)
+    #     comments = '\n'.join([str(project_rating.rating.text) for project_rating in comment.projects_ratings if project_rating.rating])
+    #     todo = comment.advice.todo
+    #     not_todo = comment.advice.not_todo
+    #     review = [fullname, role, mark, comments, todo, not_todo]
+    #     print(review)
+    #     template_vars['reviews'] = template_vars['reviews'].append(review)
+    # print(template_vars['reviews'])
     create_and_send_pdf(user.chat_id, HR_REPORT_TEMPLATE, template_vars)
     return
 
