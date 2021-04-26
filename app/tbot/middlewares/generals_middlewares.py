@@ -45,7 +45,7 @@ def check_permission(bot, message):
                 if message.command not in ['start', 'Заполнение анкеты', 'Оценка подчиненных', 'Оценка коллег']:
                     message.command = 'wrong'
             elif message.user['role'] == 'HR':
-                if message.command == 'Оценка подчиненных':
+                if message.command == 'Оценка подчиненных' and message.user['boss']:
                     message.command = 'wrong'
         elif message.text.replace('/', '') in COMMANDS.keys():
             message.is_exist = True
