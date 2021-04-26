@@ -35,7 +35,8 @@ def second_date_period(request, date):
     Session.commit()
     users = Session().query(User).join(Role, User.role) \
         .filter(Role.name != 'Undefined').all()
-    notificator.notificate(Notification(view='start_review'), *[user.chat_id for user in users])
+    notificator.notificate(Notification(view='start_review', date=second_date.strftime('%d-%m-%Y')),
+                           *[user.chat_id for user in users])
     return ReviewPeriodForm(started=True)
 
 
