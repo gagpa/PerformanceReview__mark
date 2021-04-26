@@ -23,7 +23,7 @@ class ReviewForm(Template):
                     if form.user.boss:
                         self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_send_to_boss'])
                     else:
-                        self.extend_keyboard(True, BUTTONS_TEMPLATES['review_send_coworkers'])
+                        self.extend_keyboard(True, BUTTONS_TEMPLATES['review_send_coworkers'].add(form=form.id))
                 return self.build(form=form.id)
 
             elif review_type == 'boss':
@@ -166,9 +166,9 @@ class ReviewForm(Template):
                     text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
                 self.build_message(title='▫ Ваши советы', text=text)
             if view == 'todo':
-                self.build_message(description='❕  Введите "Что стоит изменить вашему коллеги"')
+                self.build_message(description='❕  Введите "Что стоит изменить вашему коллеге"')
             elif view == 'not todo':
-                self.build_message(description='❕  Введите "Что стоит перестать делать вашему коллеги"')
+                self.build_message(description='❕  Введите "Что стоит перестать делать вашему коллеге"')
             elif not review.advice.hr_comment and not any(rating.hr_comment for rating in ratings):
                 count_comment = 0
                 count_rate = 0

@@ -11,12 +11,10 @@ class ProjectForm(Template):
     def create_markup(self) -> InlineKeyboardMarkup:
         """ Создать клавиатуру """
         if self.args.get('have_markup'):
-            form = self.args.get('form')
             review_type = self.args.get('review_type')
             review = self.args.get('review')
             project = self.args.get('project')
             coworker_comment_rating = self.args.get('rating')
-            page = self.args.get('page')
 
             if review_type == 'write':
                 self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_project_edit_name'],
@@ -37,14 +35,9 @@ class ProjectForm(Template):
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
-        title = 'Проект'
-        text = ''
-        form = self.args.get('form')
         review_type = self.args.get('review_type')
-        review = self.args.get('review')
         project = self.args.get('project')
         coworker_comment_rating = self.args.get('rating')
-        page = self.args.get('page')
         view = self.args.get('view')
         if review_type == 'coworker':
             description = ''
