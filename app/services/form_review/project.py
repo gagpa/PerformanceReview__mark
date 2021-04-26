@@ -54,21 +54,23 @@ class ProjectsService(Entity):
         contacts = [contact.replace('@', '') for contact in contacts]
         if not Session.object_session(self.model):
             self.model = Session().merge(self.model)
+        self.save_all(self.model)
         users = Session().query(User).filter(User.username.in_(contacts)).all()
         form = self.model.form
         hr_status = HrReviewStatusService().coworker
         for user in users:
             reviews = user.coworker_reviews
+            print([review.id for review in reviews if review.advice is None])
             if form not in [review.advice.form for review in reviews]:
                 review = CoworkerReview(coworker=user, hr_status=hr_status)
                 advice = CoworkerAdvice(coworker_review=review, form=form)
                 proj_rating = CoworkerProjectRating(review=review, project=self.model)
                 self.save_all(review, advice, proj_rating)
             else:
-                is_exist = Session().query(Session().query(CoworkerProjectRating).
-                                           join(CoworkerReview).
-                                           filter(CoworkerReview.coworker == user, CoworkerProjectRating.project == self.model).
-                                           exists()).scalar()
+                is_exist = Session().query(CoworkerProjectRating).\
+                                           join(CoworkerReview).\
+                                           filter(CoworkerReview.coworker == user,
+                                                  CoworkerProjectRating.project == self.model).all()
                 if not is_exist:
                     review = Session().query(CoworkerReview).join(CoworkerAdvice). \
                         filter(CoworkerReview.coworker == user, CoworkerAdvice.form == form).first()

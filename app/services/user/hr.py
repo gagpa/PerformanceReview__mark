@@ -24,7 +24,8 @@ class HRService(UserService):
         service = HrReviewService()
         review = service.by_pk(review_pk)
         review.hr_status = HrReviewStatusService().accept
-        form_status = StatusService().review_done
+        form_status = StatusService().accepted
+        self.save_all(review)
         if service.is_last_review(review):
             review.advice.form.status = form_status
         self.save_all(review)
