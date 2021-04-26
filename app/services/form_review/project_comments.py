@@ -59,4 +59,4 @@ class ProjectCommentService(Entity):
                         rating.append(comment.rating.value)
                 all_ratings.append(mean(rating)) if rating else None
 
-        return mean(all_ratings) if all_ratings else None
+        return round(mean(all_ratings), 2) if all_ratings else None
