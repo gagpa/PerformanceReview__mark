@@ -20,8 +20,10 @@ class CoworkerAdvice(Base):
     coworker_review_id = Column(Integer, ForeignKey('coworker_reviews.id', ondelete='CASCADE'), nullable=False)
     form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
 
-    coworker_review = relationship('CoworkerReview', uselist=False, backref=backref('advice', uselist=False))
-    form = relationship('Form', backref='advices')
+    coworker_review = relationship('CoworkerReview', uselist=False,
+                                   backref=backref('advice', uselist=False,
+                                                   cascade='all, delete-orphan'))
+    form = relationship('Form', backref=backref('advices', cascade='all, delete-orphan'))
 
     def __repr__(self):
         return f'CoworkerAdvice'

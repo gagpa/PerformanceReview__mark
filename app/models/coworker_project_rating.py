@@ -21,7 +21,7 @@ class CoworkerProjectRating(Base):
     rating_id = Column(Integer, ForeignKey('ratings.id'), nullable=True)
     coworker_review_id = Column(Integer, ForeignKey('coworker_reviews.id'), nullable=False)
 
-    project = relationship('Project', uselist=False, backref='ratings')
+    project = relationship('Project', uselist=False, backref=backref('ratings', cascade='all, delete-orphan'))
     rating = relationship('Rating', backref='projects_comments')
 
     def __repr__(self):

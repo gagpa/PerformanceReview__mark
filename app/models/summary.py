@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column, VARCHAR, Integer, ForeignKey, TIMESTAMP
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from app.db import Base
 
@@ -19,8 +19,8 @@ class Summary(Base):
     form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
     from_hr_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
-    form = relationship('Form', backref='summaries')
-    users = relationship('User', backref='summaries')
+    form = relationship('Form', backref=backref('summaries', cascade='all, delete-orphan'))
+    users = relationship('User', backref=backref('summaries', cascade='all, delete-orphan'))
 
     def __repr__(self):
         return f'Summary :{self.text}'

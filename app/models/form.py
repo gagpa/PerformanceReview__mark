@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, ForeignKey, SmallInteger, TIMESTAMP
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from app.db import Base
 
@@ -18,7 +18,7 @@ class Form(Base):
     review_period_id = Column(Integer, ForeignKey('review_periods.id'), nullable=False)
     status_id = Column(SmallInteger, ForeignKey('statuses.id'), nullable=False)
 
-    user = relationship('User', backref='forms')
+    user = relationship('User', backref=backref('forms', cascade='all, delete-orphan'))
     review_period = relationship('ReviewPeriod', backref='forms')
     status = relationship('Status', backref='forms')
 

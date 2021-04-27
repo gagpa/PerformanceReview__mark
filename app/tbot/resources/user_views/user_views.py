@@ -1,13 +1,14 @@
 from app.db import Session
-from app.models import Role, Position, Department
+from app.models import Role, Position, Department, CoworkerAdvice, CoworkerProjectRating, \
+    CoworkerReview
 from app.services.form_review import FormService
 from app.services.user import UserService
 from app.tbot import bot
-from app.tbot.resources.user_views.users_list_views import users_list_view, user_view
-from app.tbot.services.auth import UserServiceTBot
-from app.tbot.services.forms.user_form import UserForm
-from app.tbot.services.forms.notification import Notification
 from app.tbot import notificator
+from app.tbot.resources.user_views.users_list_views import users_list_view
+from app.tbot.services.auth import UserServiceTBot
+from app.tbot.services.forms.notification import Notification
+from app.tbot.services.forms.user_form import UserForm
 
 
 def delete_user_view(request):
@@ -21,15 +22,12 @@ def delete_user_view(request):
 def delete_user(request):
     """ Удалить пользователя """
     pk = request.args['user'][0]
-    service = UserService()
+    service = UserServiceTBot()
     user = service.by_pk(pk=pk)
-    form_service = FormService()
-    form = form_service.by(user_id=pk)
-    # TODO: обдумать как будет удаляться пользователь и его другие данные в таблицах
-    if form:
-        form_service.delete(form)
-    bot.send_message(user.chat_id, 'Вы были удалены из системы.')
+    chat_id = user.chat_id
+    user.boss = None
     service.delete(user)
+    bot.send_message(chat_id, 'Вы были удалены из системы.')
     return users_list_view(request=request)
 
 
