@@ -62,7 +62,7 @@ def change_user_fullname(request):
 
 def user_edit_role(request):
     pk = request.args['user'][0]
-    roles = Session().query(Role).all()
+    roles = Session().query(Role).filter(Role.name != 'Undefined').all()
     template = UserForm(user_id=pk, roles=roles, edit_role_step=True)
     return template
 
