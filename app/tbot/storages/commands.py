@@ -17,16 +17,16 @@ from app.tbot.resources.user_views.users_list_views import users_list_view
 COMMANDS = \
     {
         'start': start_auth,
-        'Заполнение анкеты': review_form_view,
-        'Оценка подчиненных': boss_review_list_forms_view,
-        'Оценка коллег': coworker_review_list_forms_view,
-        'Проверка HR': hr_review_list_forms_view,
+        'Моя анкета': review_form_view,
+        'Проверить подчинённых': boss_review_list_forms_view,
+        'Оценить коллег': coworker_review_list_forms_view,
+        'Проверить оценки': hr_review_list_forms_view,
 
-        'Запросы': request_list_view,
+        'Список запросов': request_list_view,
         'Список сотрудников': users_list_view,
-        'Запуск Review': review_period,
-        'Архив': old_review_list,
-        'Текущий Review': current_forms_list,
+        'Запустить анкетирование': review_period,
+        'Архив анкет': old_review_list,
+        'Список анкет': current_forms_list,
         'wrong': wrong_way,
     }
 
