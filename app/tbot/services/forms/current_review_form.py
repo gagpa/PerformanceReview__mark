@@ -13,10 +13,16 @@ class CurrentReviewForm(Template):
 
     def create_markup(self) -> Optional[InlineKeyboardMarkup]:
         """ Создать клавиатуру """
-        if self.args.get('models') and self.args.get('forms_list'):
-            row = BUTTONS_TEMPLATES['employee_review']
-            markup = self.markup_builder.build_list(self.args['models'], row)
-            return markup
+        forms = self.args.get('models')
+        page = self.args.get('page')
+        if forms and self.args.get('forms_list'):
+            count_obj = len(forms)
+            forms = self.cut_per_page(forms, page)
+            unique_args = [{'pk': form.id} for form in forms]
+            main_template = BUTTONS_TEMPLATES['employee_review']
+            pagination_template = BUTTONS_TEMPLATES['current_forms_list']
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
+            return self.build_list(main_template, unique_args)
         elif self.args.get('model') and not self.args.get('summary'):
             rows = list()
             if self.args.get('model').status.name == 'Анкета заполена':

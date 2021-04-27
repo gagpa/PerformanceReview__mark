@@ -18,7 +18,6 @@ from app.tbot.resources.coworker_review_views import \
     coworker_review_project_comment_view, \
     coworker_review_project_rate_view, \
     coworker_review_advice_todo_view, \
-    coworker_review_project_save_comment_view, \
     coworker_review_advice_not_todo_view
 
 from app.tbot.resources.hr_review_views import \
@@ -68,6 +67,7 @@ from app.tbot.resources.review_form_views import \
     review_form_achievements_edit_choose_view, \
     review_form_achievement_delete_view, \
     review_form_achievements_delete_choose_view
+from app.tbot.resources.review_period_views.archive_views import old_forms_list, old_review_list
 
 from app.tbot.resources.review_period_views.current_review_views import employee_review, \
     current_forms_list, input_summary
@@ -156,7 +156,6 @@ ROUTES = \
         'request_delete': delete_request,
         'cancel_deletion': request_list_view,
 
-
         'user_view': user_view,
         'user_delete_view': delete_user_view,
         'user_view_back': users_list_view,
@@ -179,6 +178,9 @@ ROUTES = \
         'first_date_period': calendar_handler,
         'date_period_2': calendar_handler,
 
+        'forms_list': current_forms_list,
+        'get_old_review': old_forms_list,
+        'old_review_list': old_review_list,
         'get_rapport': get_rapport,
         'get_hr_rapport': get_hr_rapport,
         'get_boss_rapport': get_boss_rapport,

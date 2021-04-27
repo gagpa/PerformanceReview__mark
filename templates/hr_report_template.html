@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Review по сотруднику за период {{start}} - {{end}}</title>
     <style>
+        * {
+            font-family: Arial;
+        }
         h4 {
             text-align: center;
         }
@@ -15,11 +18,15 @@
         td {
             vertical-align: top;
             text-align: left;
+            font-size: 12px;
+            padding:5px 15px;
         }
 
         th {
+            text-align: left;
             font-size: 14px;
             font-style: italic;
+            padding:10px 15px;
         }
     </style>
 </head>
@@ -29,11 +36,10 @@
 <table>
     <tr>
         <td><b>Сотрудник: </b>{{fullname}}</td>
-        <td><b>Оценка:</b></td>
+        <td><b>Оценка:</b> {{rating}}</td>
     </tr>
     <tr>
         <td><b>Ник в Telegram: </b>@{{username}}</td>
-        <td>{{rating}}</td>
     </tr>
     <tr>
         <td><b>Руководитель: </b>{{boss}}</td>
@@ -82,10 +88,10 @@
     </tr>
     {% for review in reviews %}
     <tr>
-        <td>Оценивающий</td>
-        <td>Роль</td>
-        <td>Оценка</td>
-        <td>Комментарии</td>
+        <td>{{review[0]}}</td>
+        <td>{{review[1]}}</td>
+        <td>{{review[2]}}</td>
+        <td>{{review[3]}}<br>{{review[4]}}<br>{{review[5]}}</td>
     </tr>
     {% endfor %}
 </table>

@@ -8,7 +8,7 @@ from app.tbot.resources.registrations_views import start_auth
 from app.tbot.resources.registrations_views.auth_views import wrong_way
 from app.tbot.resources.request_views import request_list_view
 from app.tbot.resources.review_form_views import review_form_view
-from app.tbot.resources.review_period_views.archive_views import old_forms_list
+from app.tbot.resources.review_period_views.archive_views import old_review_list
 from app.tbot.resources.review_period_views.current_review_views import current_forms_list
 from app.tbot.resources.review_period_views.review_period_views import review_period
 from app.tbot.resources.user_views.users_list_views import users_list_view
@@ -25,7 +25,7 @@ COMMANDS = \
         'Запросы': request_list_view,
         'Список сотрудников': users_list_view,
         'Запуск Review': review_period,
-        'Архив': old_forms_list,
+        'Архив': old_review_list,
         'Текущий Review': current_forms_list,
         'wrong': wrong_way,
     }

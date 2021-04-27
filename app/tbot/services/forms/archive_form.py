@@ -12,10 +12,26 @@ class ArchiveForm(Template):
 
     def create_markup(self) -> Optional[InlineKeyboardMarkup]:
         """ Создать клавиатуру """
-        if self.args.get('models') and self.args.get('archive_list'):
-            row = BUTTONS_TEMPLATES['get_rapport']
-            markup = self.markup_builder.build_list(self.args['models'], row)
-            return markup
+        page = self.args.get('page')
+        old_forms = self.args.get('old_forms')
+        old_reviews = self.args.get('old_reviews')
+
+        if old_reviews and self.args.get('review_list'):
+            count_obj = len(old_reviews)
+            reviews = self.cut_per_page(old_reviews, page)
+            unique_args = [{'pk': review.id} for review in reviews]
+            main_template = BUTTONS_TEMPLATES['get_old_review']
+            pagination_template = BUTTONS_TEMPLATES['old_review_list']
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
+            return self.build_list(main_template, unique_args)
+        elif old_forms and self.args.get('archive_list'):
+            count_obj = len(old_forms)
+            old_forms = self.cut_per_page(old_forms, page)
+            unique_args = [{'pk': form.id} for form in old_forms]
+            main_template = BUTTONS_TEMPLATES['get_rapport']
+            pagination_template = BUTTONS_TEMPLATES['get_old_review']
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
+            return self.build_list(main_template, unique_args)
         elif self.args.get('pk') and self.args.get('choose_rapport'):
             rows = list()
             rows.append([BUTTONS_TEMPLATES['get_hr_rapport'].add(form_id=self.args.get('pk')),
@@ -25,13 +41,32 @@ class ArchiveForm(Template):
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
-        if self.args.get('models') and self.args.get('archive_list'):
+        old_forms = self.args.get('old_forms')
+        old_reviews = self.args.get('old_reviews')
+        page = self.args.get('page')
+        if page:
+            old_reviews = self.cut_per_page(old_reviews, page) if old_reviews else None
+            old_forms = self.cut_per_page(old_forms, page) if old_forms else None
+
+        if old_reviews and self.args.get('review_list'):
             title = 'Архив'
+            description = 'Выберите номер Review, чтобы посмотреть анкеты:'
+            list_data = list()
+            for model in old_reviews:
+                string = f'Ревью с {model.start_date.date()} по {model.end_date.date()}\n'
+                list_data.append(string)
+
+            message_text = self.message_builder.build_list_message(title=title,
+                                                                   description=description,
+                                                                   list_data=list_data,
+                                                                   )
+        elif old_forms and self.args.get('archive_list'):
+            title = f'Период Review{old_forms[0].review_period.start_date.date()}' \
+                    f' - {old_forms[0].review_period.end_date.date()}'
             description = 'Выберите номер анкеты, чтобы сформировать отчет:'
             list_data = list()
-            for model in self.args["models"]:
-                string = f'{model.user.fullname},\n{model.status.name},\n' \
-                         f'{model.review_period.start_date.date()} - {model.review_period.end_date.date()}'
+            for model in old_forms:
+                string = f'{model.user.fullname},\n{model.status.name}'
                 rating = ProjectCommentService().final_rating(model.id)
                 string += f",\nОценка: {rating}\n" if rating else "\n"
                 list_data.append(string)

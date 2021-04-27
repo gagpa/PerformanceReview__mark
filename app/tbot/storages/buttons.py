@@ -114,6 +114,9 @@ BUTTONS_TEMPLATES = \
         'review_period_start': ButtonTemplate('review_period_start', 'Запуск'),
         'review_period_stop': ButtonTemplate('review_period_stop', 'Остановка'),
 
+        'forms_list': ButtonTemplate('forms_list'),
+        'get_old_review': ButtonTemplate('get_old_review'),
+        'old_review_list': ButtonTemplate('old_review_list'),
         'get_rapport': ButtonTemplate('get_rapport'),
         'get_hr_rapport': ButtonTemplate('get_hr_rapport', 'Для HR'),
         'get_boss_rapport': ButtonTemplate('get_boss_rapport', 'Для руководителя'),
