@@ -178,6 +178,7 @@ ROUTES = \
         'first_date_period': calendar_handler,
         'date_period_2': calendar_handler,
 
+        'forms_list': current_forms_list,
         'get_old_review': old_forms_list,
         'old_review_list': old_review_list,
         'get_rapport': get_rapport,
