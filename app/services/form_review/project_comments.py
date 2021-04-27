@@ -19,7 +19,7 @@ class ProjectCommentService(Entity):
             .join(Form, Project.form).join(User, Form.user)
         boss_comments = projects_comments \
             .filter(Form.id == form.id) \
-            .filter(CoworkerProjectRating.coworker_review_id == form.user.boss_id).all()
+            .filter(User.id == form.user.boss_id).all()
         return boss_comments
 
     @staticmethod
