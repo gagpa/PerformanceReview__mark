@@ -28,14 +28,18 @@ class ArchiveForm(Template):
             count_obj = len(old_forms)
             old_forms = self.cut_per_page(old_forms, page)
             unique_args = [{'pk': form.id} for form in old_forms]
-            main_template = BUTTONS_TEMPLATES['get_rapport']
+            main_template = BUTTONS_TEMPLATES['get_rapport'].add(period_id=self.args.get('period_id'))
             pagination_template = BUTTONS_TEMPLATES['get_old_review']
+            back = BUTTONS_TEMPLATES['back_to_old_review_list']
+            self.extend_keyboard(False, back)
             self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
             return self.build_list(main_template, unique_args)
         elif self.args.get('pk') and self.args.get('choose_rapport'):
             rows = list()
             rows.append([BUTTONS_TEMPLATES['get_hr_rapport'].add(form_id=self.args.get('pk')),
                          BUTTONS_TEMPLATES['get_boss_rapport'].add(form_id=self.args.get('pk'))])
+            rows.append([BUTTONS_TEMPLATES['back_to_rapport']
+                        .add(pk=self.args.get('period_id'))])
             markup = self.markup_builder.build(*rows)
             return markup
 

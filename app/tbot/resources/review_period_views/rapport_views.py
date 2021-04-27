@@ -17,7 +17,8 @@ from configs.bot_config import HR_REPORT_TEMPLATE, BOSS_REPORT_TEMPLATE
 
 def get_rapport(request):
     pk = request.args['pk'][0]
-    return ArchiveForm(pk=pk, choose_rapport=True)
+    period_id = request.args.get('period_id')[0] if request.args.get('period_id') else None
+    return ArchiveForm(pk=pk, period_id=period_id, choose_rapport=True)
 
 
 def get_hr_rapport(request):

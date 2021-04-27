@@ -44,11 +44,15 @@ class CurrentReviewForm(Template):
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
         description = ''
+        forms = self.args.get('models')
+        page = self.args.get('page')
+        if page:
+            forms = self.cut_per_page(forms, page) if forms else None
 
-        if self.args.get('models') and self.args.get('forms_list'):
+        if forms and self.args.get('forms_list'):
             title = 'Текущий Review'
             list_data = list()
-            for model in self.args["models"]:
+            for model in forms:
                 string = f'{model.user.fullname},\n{model.status.name}'
                 rating = ProjectCommentService().final_rating(model.id)
                 if model.status in [StatusService().accepted, StatusService().review_done]:

@@ -15,4 +15,4 @@ def old_forms_list(request):
     old_forms = Session().query(Form).join(ReviewPeriod, Form.review_period) \
         .join(User, Form.user).join(Status, Form.status) \
         .filter(ReviewPeriod.id == pk).all()
-    return ArchiveForm(old_forms=old_forms, page=request.page, archive_list=True)
+    return ArchiveForm(old_forms=old_forms, period_id=pk, page=request.page, archive_list=True)
