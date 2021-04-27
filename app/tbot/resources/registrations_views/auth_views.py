@@ -1,7 +1,9 @@
 from app.db import Session
 from app.models import Position, Department, Role
-from app.services.user import UserService
+from app.services.user import UserService, HRService
+from app.tbot import notificator
 from app.tbot.services.auth import UserServiceTBot
+from app.tbot.services.forms import Notification
 from app.tbot.services.forms.auth_form import AuthForm
 
 
@@ -62,5 +64,7 @@ def add_boss_user(request):
     role = Session().query(Role).filter_by(name='Undefined').first()
     service.role = role
     service.boss = request.text
-    template = AuthForm(is_end=True)
-    return template
+    if HRService().all():
+        notificator.notificate(Notification(view='request_for_hr', user=user),
+                               *[hr.chat_id for hr in HRService().all()])
+    return AuthForm(is_end=True)

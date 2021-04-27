@@ -155,6 +155,7 @@ ROUTES = \
         'request_accept_view': accept_request_view,
         'request_delete': delete_request,
         'cancel_deletion': request_list_view,
+        'to_request': request_view,
 
         'user_view': user_view,
         'user_delete_view': delete_user_view,

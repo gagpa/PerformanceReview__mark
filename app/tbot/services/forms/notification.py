@@ -13,6 +13,7 @@ class Notification(Template):
         form = self.args.get('form')
         review = self.args.get('review')
         role = self.args.get('role')
+        user = self.args.get('user')
 
         if view == 'to_boss':
             to_form = BUTTONS_TEMPLATES['boss_review_to_form'].add(review=form.boss_review.id)
@@ -49,6 +50,11 @@ class Notification(Template):
 
         elif view == 'change_role':
             return self.markup_builder.build_reply_keyboard(PERMISSIONS[role])
+
+        elif view == 'request_for_hr':
+            to_request = BUTTONS_TEMPLATES['to_request'].add(pk=user.id)
+            self.extend_keyboard(False, to_request)
+            return self.build()
 
     def create_message(self) -> str:
         view = self.args.get('view')
@@ -96,4 +102,8 @@ class Notification(Template):
 
         elif view == 'change_role':
             self.build_message(title='🔔 Оповещение', description='Вам поменяли роль')
+            return self.MESSAGE
+
+        elif view == 'request_for_hr':
+            self.build_message(title='🔔 Оповещение', description='Новый запрос на доступ к системе')
             return self.MESSAGE

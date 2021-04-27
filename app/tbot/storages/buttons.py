@@ -93,6 +93,7 @@ BUTTONS_TEMPLATES = \
         'request_view_back': ButtonTemplate('request_view_back', 'Назад'),
         'request_delete': ButtonTemplate('request_delete', 'Удалить'),
         'cancel_deletion': ButtonTemplate('cancel_deletion', 'Отмена'),
+        'to_request': ButtonTemplate('to_request', 'К заявке'),
 
         'user_view': ButtonTemplate('user_view'),
         'user_delete_view': ButtonTemplate('user_delete_view', 'Удалить'),
