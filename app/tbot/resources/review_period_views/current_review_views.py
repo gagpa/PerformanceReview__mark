@@ -40,11 +40,12 @@ def change_summary(request):
     summary = SummaryService().by_form_id(form_id)
     if not summary:
         SummaryService().create(form_id=form_id, from_hr_id=request.user.id,
-                                          text=request.text)
+                                text=request.text)
         form = FormService().by_pk(form_id)
         StatusService().change_to_done(form)
     else:
         summary.text = request.text
         Session.add(summary)
     Session.commit()
-    return CurrentReviewForm(changed=True)
+    request.add('pk', [form_id])
+    return employee_review(request)

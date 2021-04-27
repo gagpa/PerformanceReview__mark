@@ -26,8 +26,9 @@ class CurrentReviewForm(Template):
         elif self.args.get('model') and not self.args.get('summary'):
             rows = list()
             if self.args.get('model').status.name == 'Анкета заполена':
-                rows.append([BUTTONS_TEMPLATES['input_summary'].add(form_id=self.args.get('model').id),
-                             BUTTONS_TEMPLATES['current_forms_list']])
+                rows.append(
+                    [BUTTONS_TEMPLATES['input_summary'].add(form_id=self.args.get('model').id),
+                     BUTTONS_TEMPLATES['current_forms_list']])
             else:
                 rows.append([BUTTONS_TEMPLATES['current_forms_list']])
             markup = self.markup_builder.build(*rows)
@@ -85,6 +86,8 @@ class CurrentReviewForm(Template):
                    f"{not_todo}" \
                    f"\n\nSummary:" \
                    f"\n{summary}"
+
+            text += '\n\n❕ Доступна опция выгрузки анкеты' if self.args.get('summary') else ''
 
             message_text = self.message_builder.build_message(title, '', text)
         elif self.args.get('change_summary'):
