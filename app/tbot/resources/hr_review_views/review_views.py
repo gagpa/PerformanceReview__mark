@@ -2,7 +2,8 @@ from app.services.review import CoworkerReviewService
 from app.services.user import HRService
 from app.tbot.resources.hr_review_views.form_views import decline_view
 from app.tbot.resources.hr_review_views.list_forms_views import list_forms_view
-from app.tbot.services.forms import ReviewForm, ProjectsForm, ProjectForm
+from app.tbot.services.forms import ReviewForm, ProjectsForm, ProjectForm, Notification
+from app.tbot import notificator
 
 
 def todo_view(request):
@@ -55,5 +56,8 @@ def save_comment_rating_view(request):
 def send_back_view(request):
     """ Отправить форму обратно """
     pk_review = request.args['review'][0]
+    review = CoworkerReviewService().by_pk(pk_review)
     HRService(model=request.user).decline_coworker_review(pk_review)
+    notificator.notificate(Notification(view='from_hr_to_coworker', form=review.advice.form, review=review),
+                           review.coworker.chat_id)
     return list_forms_view(request)

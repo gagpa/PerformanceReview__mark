@@ -67,12 +67,46 @@ class ProjectForm(Template):
             return self.MESSAGE
 
         elif review_type == 'write':
-            if not project.name:
+            if view == 'edit':
+                coworkers = ' '.join(
+                    [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
+                self.build_message(title=f'Проект - {project.name}',
+                                   description='\n❕  Выберите, что вы хотите изменить в своём проекте',
+                                   text=f'Цели и обязаннсоти: {project.description}\n'
+                                        f'Коллеги: {coworkers}')
+
+            elif view == 'edit_name':
+                coworkers = ' '.join(
+                    [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
+                self.build_message(title=f'Проект - {project.name}',
+                                   description='\n❕  Напишите название проекта',
+                                   text=f'Цели и обязаннсоти: {project.description}\n'
+                                        f'Коллеги: {coworkers}')
+
+            elif view == 'edit_description':
+                coworkers = ' '.join(
+                    [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
+                self.build_message(title=f'Проект - {project.name}',
+                                   description='\n❕  Опишите цель проекта и свои обязанности',
+                                   text=f'Цели и обязаннсоти: {project.description}\n'
+                                        f'Коллеги: {coworkers}')
+
+            elif view == 'edit_coworkers':
+                coworkers = ' '.join(
+                    [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
+                self.build_message(title=f'Проект - {project.name}',
+                                   description='\n❕  Введите username коллеги, который может оценить ваш вклад в проект',
+                                   text=f'Цели и обязаннсоти: {project.description}\n'
+                                        f'Коллеги: {coworkers}')
+
+            elif not project.name:
                 self.build_message(title='Заполнение проекта', description='❕  Напишите название проекта')
+
             elif not project.description:
                 self.build_message(title='Заполнение проекта',
                                    description='\n❕  Опишите цель проекта и свои обязанности',
                                    text=f'Название проекта: {project.name}')
+
             elif not project.reviews:
                 self.build_message(title='Заполнение проекта',
                                    description='\n❕  Введите username коллеги, который может оценить ваш вклад в проект',

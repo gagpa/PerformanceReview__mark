@@ -7,7 +7,7 @@ from app.services.dictinary import StatusService
 from app.services.form_review import FormService
 from app.services.review import ReviewPeriodService
 from app.services.user import UserService
-from app.tbot.storages import ROUTES, COMMANDS
+from app.tbot.storages import ROUTES, COMMANDS, PERMISSIONS
 
 
 def add_user(message):
@@ -38,15 +38,8 @@ def check_permission(bot, message):
             if message.user['role'] == 'Undefined':
                 message.command = 'start'
                 bot.send_message(message.chat.id, 'Дождитесь окончания регистрации')
-            elif message.user['role'] == 'Employee':
-                if message.command not in ['start', 'Заполнение анкеты', 'Оценка коллег']:
-                    message.command = 'wrong'
-            elif message.user['role'] == 'Lead':
-                if message.command not in ['start', 'Заполнение анкеты', 'Оценка подчиненных', 'Оценка коллег']:
-                    message.command = 'wrong'
-            elif message.user['role'] == 'HR':
-                if message.command == 'Оценка подчиненных':
-                    message.command = 'wrong'
+            elif message.command not in PERMISSIONS[message.user['role']]:
+                message.command = 'wrong'
         elif message.text.replace('/', '') in COMMANDS.keys():
             message.is_exist = True
             message.command = 'start'
