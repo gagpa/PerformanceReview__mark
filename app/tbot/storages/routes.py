@@ -67,7 +67,7 @@ from app.tbot.resources.review_form_views import \
     review_form_achievements_edit_choose_view, \
     review_form_achievement_delete_view, \
     review_form_achievements_delete_choose_view
-from app.tbot.resources.review_period_views.archive_views import old_forms_list
+from app.tbot.resources.review_period_views.archive_views import old_forms_list, old_review_list
 
 from app.tbot.resources.review_period_views.current_review_views import employee_review, \
     current_forms_list, input_summary
@@ -179,6 +179,7 @@ ROUTES = \
         'date_period_2': calendar_handler,
 
         'get_old_review': old_forms_list,
+        'old_review_list': old_review_list,
         'get_rapport': get_rapport,
         'get_hr_rapport': get_hr_rapport,
         'get_boss_rapport': get_boss_rapport,
