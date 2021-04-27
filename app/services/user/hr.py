@@ -48,7 +48,7 @@ class HRService(UserService):
                              )
         reviews = query.all()
         return reviews
-
+    
     def all(self):
         return self.all_by(role=RoleService().hr)
 

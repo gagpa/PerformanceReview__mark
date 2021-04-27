@@ -3,7 +3,7 @@ from sqlalchemy import or_
 from app.db import Session
 from app.models import Form, Rating, CoworkerProjectRating, Project, User, CoworkerAdvice, CoworkerReview
 from app.services.dictinary import StatusService, HrReviewStatusService, RatingService
-from app.services.review import CoworkerReviewService
+from app.services.review import CoworkerReviewService, ReviewPeriodService
 from app.services.user.user import UserService
 
 
@@ -85,10 +85,12 @@ class CoworkerService(UserService):
         """ Верунть формы на review """
         form_status = StatusService().coworker_review
         hr_status = HrReviewStatusService().coworker
+        review_period = ReviewPeriodService().current
         query = Session.query(CoworkerReview).join(CoworkerAdvice, Form, User)
         query = query.filter(or_(CoworkerReview.coworker == self.model),
                              or_(CoworkerReview.hr_status_id.is_(None), CoworkerReview.hr_status == hr_status),
-                             Form.status == form_status
+                             Form.status == form_status,
+                             Form.review_period == review_period
                              )
         reviews = query.all()
         return reviews

@@ -125,4 +125,9 @@ BUTTONS_TEMPLATES = \
 
     }
 
+GENERAL_BUTTONS = \
+    {
+        ''
+    }
+
 __all__ = ['BUTTONS_TEMPLATES']

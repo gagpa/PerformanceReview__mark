@@ -1,7 +1,8 @@
 from app.services.review import HrReviewService
 from app.services.user import HRService
 from app.tbot.resources.hr_review_views.list_forms_views import list_forms_view
-from app.tbot.services.forms import ReviewForm
+from app.tbot.services.forms import ReviewForm, Notification
+from app.tbot import notificator
 
 
 def form_view(request):
@@ -20,7 +21,12 @@ def form_view(request):
 def accept_view(request):
     """ Принять форму """
     review_pk = request.args['review'][0]
-    HRService(model=request.user).accept_coworker_review(review_pk)
+    service = HRService(model=request.user)
+    review = service.accept_coworker_review(review_pk)
+    service = HrReviewService()
+    if service.is_last_review(review) and HRService().all():
+        notificator.notificate(Notification(view='accept_to_hr', form=review.advice.form, review=review),
+                               *[hr.chat_id for hr in HRService().all()])
     return list_forms_view(request)
 
 

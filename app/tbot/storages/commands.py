@@ -13,6 +13,7 @@ from app.tbot.resources.review_period_views.current_review_views import current_
 from app.tbot.resources.review_period_views.review_period_views import review_period
 from app.tbot.resources.user_views.users_list_views import users_list_view
 
+
 COMMANDS = \
     {
         'start': start_auth,
@@ -27,7 +28,6 @@ COMMANDS = \
         'Архив': old_forms_list,
         'Текущий Review': current_forms_list,
         'wrong': wrong_way,
-
     }
 
 __all__ = ['COMMANDS']

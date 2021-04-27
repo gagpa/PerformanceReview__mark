@@ -6,6 +6,8 @@ from app.tbot import bot
 from app.tbot.resources.user_views.users_list_views import users_list_view, user_view
 from app.tbot.services.auth import UserServiceTBot
 from app.tbot.services.forms.user_form import UserForm
+from app.tbot.services.forms.notification import Notification
+from app.tbot import notificator
 
 
 def delete_user_view(request):
@@ -74,6 +76,8 @@ def change_user_role(request):
     user.role = Session().query(Role).get(pk)
     Session.add(user)
     Session.commit()
+    chat_id = user.chat_id
+    notificator.notificate(Notification(view='change_role', role=user.role.name), chat_id)
     return UserForm(model=user, can_edit_user=True)
 
 

@@ -9,7 +9,7 @@ def edit_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    return ProjectForm(project=project, review_type='write', have_markup=True)
+    return ProjectForm(project=project, view='edit', review_type='write', have_markup=True)
 
 
 def edit_name_view(request):
@@ -18,7 +18,7 @@ def edit_name_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    template = ProjectForm(project=project, review_type='write')
+    template = ProjectForm(project=project, view='edit_name', review_type='write')
     next_view = service.update_name_before(edit_view)
     return template, next_view
 
@@ -29,7 +29,7 @@ def edit_contacts_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    template = ProjectForm(project=project, review_type='write')
+    template = ProjectForm(project=project, view='edit_coworkers', review_type='write')
     next_view = service.update_contacts_before(edit_view)
     return template, next_view
 
@@ -40,7 +40,7 @@ def edit_description_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    template = ProjectForm(project=project, review_type='write')
+    template = ProjectForm(project=project, view='edit_description', review_type='write')
     next_view = service.update_description_before(edit_view)
     return template, next_view
 

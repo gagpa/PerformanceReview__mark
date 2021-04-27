@@ -28,6 +28,8 @@ def accept_form_view(request):
         pk_form = request.args['form'][0]
         form = FormService().by_pk(pk_form)
         StatusService().change_to_coworker_review(form)
+        for advice in form.advices:
+            notificator.notificate(Notification(view='to_coworkers', form=form, review=advice.coworker_review), advice.coworker_review.coworker.chat_id)
     return list_forms_view(request)
 
 

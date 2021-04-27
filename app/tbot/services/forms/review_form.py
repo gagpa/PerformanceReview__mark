@@ -176,7 +176,7 @@ class ReviewForm(Template):
                 for rating in review.projects_ratings:
                     if rating.text:
                         count_comment += 1
-                    elif rating.rating:
+                    if rating.rating:
                         count_rate += 1
                 self.build_message(description=f'❕ Состояние заполнения\n'
                                                f' -  Вы оценили {int(count_rate / max_rates * 100)}% проектов\n'

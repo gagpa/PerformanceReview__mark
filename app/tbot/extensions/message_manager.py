@@ -25,7 +25,11 @@ class MessageManager:
             text, markup = template.dump()
             chat_id = message.chat.id
             if message.from_user.is_bot:
-                message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
+                try:
+                    message = self.bot.edit_message_text(chat_id=chat_id, message_id=message.id, text=text, reply_markup=markup, parse_mode='html')
+                except Exception:
+                    self.bot.delete_message(chat_id=chat_id, message_id=message.id)
+                    message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
             else:
                 message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
             return message
