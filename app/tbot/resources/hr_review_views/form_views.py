@@ -24,9 +24,9 @@ def accept_view(request):
     service = HRService(model=request.user)
     review = service.accept_coworker_review(review_pk)
     service = HrReviewService()
-    if service.is_last_review(review) and HRService().all():
-        notificator.notificate(Notification(view='accept_to_hr', form=review.advice.form, review=review),
-                               *[hr.chat_id for hr in HRService().all()])
+    # if service.is_last_review(review) and HRService().all():
+    #     notificator.notificate(Notification(view='accept_to_hr', form=review.advice.form, review=review),
+    #                            *[hr.chat_id for hr in HRService().all()])
     return list_forms_view(request)
 
 

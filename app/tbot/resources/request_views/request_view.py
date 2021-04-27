@@ -2,9 +2,10 @@ from app.db import Session
 from app.models import Role
 from app.services.form_review import FormService
 from app.services.user import UserService
-from app.tbot import bot
+from app.tbot import bot, notificator
 from app.tbot.resources.request_views import request_list_view
 from app.tbot.services.auth import UserServiceTBot
+from app.tbot.services.forms import Notification
 from app.tbot.services.forms.user_form import UserForm
 
 
@@ -38,5 +39,6 @@ def accept_request_view(request):
     user.role = Session().query(Role).filter_by(name='Employee').one_or_none()
     sess = Session().object_session(user)
     sess.commit()
-    bot.send_message(user.chat_id, 'Вам предоставили доступ.')
+    chat_id = user.chat_id
+    notificator.notificate(Notification(view='change_role', role=user.role.name), chat_id)
     return request_list_view(request=request)

@@ -28,7 +28,10 @@ class MessageManager:
                 try:
                     message = self.bot.edit_message_text(chat_id=chat_id, message_id=message.id, text=text, reply_markup=markup, parse_mode='html')
                 except Exception:
-                    self.bot.delete_message(chat_id=chat_id, message_id=message.id)
+                    try:
+                        self.bot.delete_message(chat_id=chat_id, message_id=message.id)
+                    except Exception:
+                        pass
                     message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
             else:
                 message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
