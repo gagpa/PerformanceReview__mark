@@ -93,7 +93,7 @@ def get_data_for_rapport(pk):
                      "projects": projects,
                      "achievements": achievements,
                      "fails": fails,
-                     "summary": summary.text if summary else 'Отсутсвует'}
+                     "summary": summary.text if summary else 'Отсутствует'}
 
     return template_vars
 
