@@ -38,8 +38,12 @@ class ArchiveForm(Template):
             rows = list()
             rows.append([BUTTONS_TEMPLATES['get_hr_rapport'].add(form_id=self.args.get('pk')),
                          BUTTONS_TEMPLATES['get_boss_rapport'].add(form_id=self.args.get('pk'))])
-            rows.append([BUTTONS_TEMPLATES['back_to_rapport']
-                        .add(pk=self.args.get('period_id'))])
+            if self.args.get('period_id'):
+                rows.append([BUTTONS_TEMPLATES['back_to_rapport']
+                            .add(pk=self.args.get('period_id'))])
+            else:
+                rows.append([BUTTONS_TEMPLATES['back_to_form']
+                            .add(pk=self.args.get('pk'))])
             markup = self.markup_builder.build(*rows)
             return markup
 

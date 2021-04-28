@@ -185,6 +185,7 @@ ROUTES = \
         'back_to_old_review_list': old_review_list,
         'get_rapport': get_rapport,
         'back_to_rapport': old_forms_list,
+        'back_to_form': employee_review,
         'get_hr_rapport': get_hr_rapport,
         'get_boss_rapport': get_boss_rapport,
         'employee_review': employee_review,

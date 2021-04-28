@@ -121,6 +121,7 @@ BUTTONS_TEMPLATES = \
         'back_to_old_review_list': ButtonTemplate('back_to_old_review_list', 'Назад'),
         'get_rapport': ButtonTemplate('get_rapport'),
         'back_to_rapport': ButtonTemplate('back_to_rapport', 'Назад'),
+        'back_to_form': ButtonTemplate('back_to_form', 'Назад'),
         'get_hr_rapport': ButtonTemplate('get_hr_rapport', 'Для HR'),
         'get_boss_rapport': ButtonTemplate('get_boss_rapport', 'Для руководителя'),
         'employee_review': ButtonTemplate('employee_review'),
