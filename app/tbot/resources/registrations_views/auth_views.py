@@ -65,6 +65,7 @@ def add_boss_user(request):
     role = Session().query(Role).filter_by(name='Undefined').first()
     service.role = role
     service.boss = request.text
+    user = service.model
     if HRService().all():
         notificator.notificate(Notification(view='request_for_hr', user=user),
                                *[hr.chat_id for hr in HRService().all()])
