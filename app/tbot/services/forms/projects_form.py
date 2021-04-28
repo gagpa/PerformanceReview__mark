@@ -118,24 +118,23 @@ class ProjectsForm(Template):
 
             if view == 'list':
                 if projects:
-                    list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project
+                    list_text = [f'{project.name}\n -  {project.description}\n •  {find_coworkers(project)}' for project
                                  in projects]
                     self.build_list_message(title=title,
-                                            description='\n❕  Добавьте проекты, которые ты выполнял, или измените их',
                                             list_text=list_text)
                 else:
                     self.build_message(title=title, description='❕  Добавьте проекты, которые ты выполнял')
                 return self.MESSAGE
 
             elif view == 'edit_choose':
-                list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
+                list_text = [f'{project.name}\n -  {project.description}\n •  {find_coworkers(project)}' for project in
                              projects]
                 self.build_list_message(title=title,
                                         description='\n❕  Выберите проект, который хотите изменить',
                                         list_text=list_text)
 
             elif view == 'delete_choose':
-                list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
+                list_text = [f'{project.name}\n -  {project.description}\n •  {find_coworkers(project)}' for project in
                              projects]
                 self.build_list_message(title=title,
                                         description='\n❕  Выберите проект, который хотите удалить',

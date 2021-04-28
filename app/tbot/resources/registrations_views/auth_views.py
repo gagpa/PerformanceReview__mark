@@ -8,7 +8,8 @@ from app.tbot.services.forms.auth_form import AuthForm
 
 
 def wrong_way(request):
-    return AuthForm(wrong=True)
+    user = request.user
+    return AuthForm(wrong=True, user=user)
 
 
 def add_new_username(request):

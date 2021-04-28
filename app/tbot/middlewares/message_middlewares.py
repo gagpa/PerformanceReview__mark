@@ -3,7 +3,6 @@ from app.tbot.middlewares.generals_middlewares import \
     add_user as general_add_user, \
     add_review_period as general_add_review_period, \
     add_form as general_add_form, \
-    add_keyboard as general_add_keyboard, \
     log_command as general_log_user, \
     log_unknown as general_log_unknown, \
     parse_command
@@ -22,11 +21,6 @@ def add_review_period(bot_instance, message):
 def add_form(bot_instance, message):
     """ Добавить форму в сообщение """
     general_add_form(message=message)
-
-
-def add_keyboard(bot_instance, message):
-    """ Выдача клавиатуры роле пользвателя """
-    general_add_keyboard(message=message)
 
 
 def log_user(bot_instance, message):
@@ -52,7 +46,6 @@ ORDER_MESSAGE_MIDDLEWARES = \
         check_permissions,
         add_review_period,
         add_form,
-        add_keyboard,
         log_user,
     ]
 

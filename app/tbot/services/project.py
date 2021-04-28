@@ -1,5 +1,6 @@
 from app.db import Session
 from app.services.form_review import ProjectsService
+from app.services.validator import Validator
 
 
 class ProjectsServiceTBot(ProjectsService):
@@ -31,7 +32,9 @@ class ProjectsServiceTBot(ProjectsService):
         """ Декоратор для обновления проекта за текущее review """
 
         def wrapper(request):
-            self.model.name = request.text
+            text = request.text
+            Validator().validate_text(text, 'form')
+            self.model.name = text
             request.add('project', [self.model.id])
             Session.add(self.model)
             Session.commit()
@@ -44,7 +47,9 @@ class ProjectsServiceTBot(ProjectsService):
         """ Декоратор для обновления проекта за текущее review """
 
         def wrapper(request):
-            self.description = request.text
+            text = request.text
+            Validator().validate_text(text, 'project_description')
+            self.description = text
             request.add('project', [self.model.id])
             Session.add(self.model)
             Session.commit()
@@ -57,6 +62,8 @@ class ProjectsServiceTBot(ProjectsService):
         """ Декоратор для обновления проекта за текущее review """
 
         def wrapper(request):
+            for text in request.split_text:
+                Validator().validate_text(text, 'form')
             self.contacts = request.split_text
             request.add('project', [self.model.id])
             Session.commit()

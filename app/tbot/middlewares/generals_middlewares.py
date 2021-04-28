@@ -51,7 +51,6 @@ def add_review_period(message):
     """ Добавить review преиод """
     service = ReviewPeriodService()
     answer = service.is_now
-    Session().commit()
     message.review_period = \
         {
             'is_active': answer,
@@ -85,11 +84,6 @@ def add_form(message):
             {
                 'is_exist': False
             }
-
-
-def add_keyboard(message):
-    """ Выдача клавиатуры роле пользвателя """
-    pass
 
 
 def log_command(message):
@@ -162,7 +156,6 @@ __all__ = \
         'add_user',
         'add_review_period',
         'add_form',
-        'add_keyboard',
         'log_callback',
         'log_command',
         'log_unknown',

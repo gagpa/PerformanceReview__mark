@@ -54,7 +54,12 @@ class ProjectForm(Template):
             if view == 'comment':
                 self.build_message(description='❕  Напишите свой комментарий к проекту')
             else:
-                self.build_message(description='❕  Поставьте оценку проекту и не забудьте оставить комментарий')
+                if not coworker_comment_rating.text and not coworker_comment_rating.rating:
+                    self.build_message(description='❕  Поставьте оценку проекту и не забудьте оставить комментарий')
+                elif not coworker_comment_rating.text:
+                    self.build_message(description='❕  Оставьте свой комментарий')
+                elif not coworker_comment_rating.rating:
+                    self.build_message(description='❕  Поставьте оценку проекту')
             return self.MESSAGE
 
         elif review_type == 'hr':

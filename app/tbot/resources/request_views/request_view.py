@@ -40,5 +40,5 @@ def accept_request_view(request):
     sess = Session().object_session(user)
     sess.commit()
     chat_id = user.chat_id
-    notificator.notificate(Notification(view='change_role', role=user.role.name), chat_id)
+    notificator.notificate(Notification(view='add_role', role=user.role.name), chat_id)
     return request_list_view(request=request)

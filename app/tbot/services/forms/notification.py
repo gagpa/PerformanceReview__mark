@@ -100,6 +100,9 @@ class Notification(Template):
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE
 
+        elif view == 'add_role':
+            self.build_message(title='🔔 Оповещение', description='Добро пожаловать!\nВам дали доступ к работе с ботом.')
+
         elif view == 'change_role':
             self.build_message(title='🔔 Оповещение', description='Вам поменяли роль')
             return self.MESSAGE
