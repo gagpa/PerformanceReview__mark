@@ -84,9 +84,10 @@ class MessageManager:
                 elif message.text in self.commands.keys():
                     response = self.commands[message.text](request)
                 else:
-                    markup = InlineKeyboardBuilder.build_reply_keyboard(self.permissions[user.role.name])
-                    self.bot.send_message(chat_id=user.chat_id, text='Данные приняты', reply_markup=markup,
-                                          parse_mode='html')
+                    if message.user['is_exist']:
+                        markup = InlineKeyboardBuilder.build_reply_keyboard(self.permissions[user.role.name])
+                        self.bot.send_message(chat_id=user.chat_id, text='Данные приняты', reply_markup=markup,
+                                              parse_mode='html')
                     response = func(request)
 
             except InvalidTypeValidationError as e:
