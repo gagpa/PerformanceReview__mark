@@ -178,11 +178,16 @@ class ReviewForm(Template):
                         count_comment += 1
                     if rating.rating:
                         count_rate += 1
+                ratings_percent = int(count_rate / max_rates * 100)
+                rating_mark = '✅' if ratings_percent == 100 else '❌'
+                comments_percent = int(count_comment / max_rates * 100)
+                comments_mark = '✅' if comments_percent == 100 else '❌'
+
                 self.build_message(description=f'❕ Состояние заполнения\n'
-                                               f' -  Вы оценили {int(count_rate / max_rates * 100)}% проектов\n'
-                                               f' -  Вы прокомментировали {int(count_comment / max_rates * 100)}% проектов\n'
-                                               f' -  "Что делать?" {"✔️" if review.advice.todo else "❌"}\n'
-                                               f' -  "Что перестать делать?" {"✔️" if review.advice.not_todo else "❌"}\n')
+                                               f' {rating_mark}  Вы оценили {int(count_rate / max_rates * 100)}% проектов\n'
+                                               f' {comments_mark}  Вы прокомментировали {int(count_comment / max_rates * 100)}% проектов\n'
+                                               f' {"✅" if review.advice.todo else "❌"}  "Что делать?"\n'
+                                               f' {"✅" if review.advice.not_todo else "❌"}  "Что перестать делать?"\n')
             return self.MESSAGE
 
         elif review_type == 'hr':
@@ -229,8 +234,7 @@ class ReviewForm(Template):
             return self.MESSAGE
 
         elif review_type == 'not_active':
-            self.build_message(description='❕  В данный момент анкетирование не проходит так, '
-                                           'что можете спокойно вернуться к работе')
+            self.build_message(description='❕  В данный момент анкетирование не проходит.')
             return self.MESSAGE
 
 

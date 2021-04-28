@@ -3,9 +3,10 @@ from typing import Callable
 from loguru import logger
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
+from app.services.validator import TextValidationError, InvalidTypeValidationError
+from app.tbot.extensions.keyboard_builder import InlineKeyboardBuilder
 from app.tbot.extensions.request_serializer import RequestSerializer
 from app.tbot.services.user import get_previous, save_user_step
-from app.tbot.extensions.keyboard_builder import InlineKeyboardBuilder
 
 
 class MessageManager:
@@ -24,7 +25,7 @@ class MessageManager:
             self.ask_user(message=message, template=response[0], next_view=response[1])
         else:
             self.send_message(message=message, template=response)
-            if url and url_type:
+            if request.user and url and url_type:
                 save_user_step(request, url, url_type)
 
     def send_message(self, message, template, general_markup=None) -> None:
@@ -39,7 +40,8 @@ class MessageManager:
                         message = self.bot.edit_message_text(chat_id=chat_id, message_id=message.id, text=text,
                                                              reply_markup=markup, parse_mode='html')
                     else:
-                        message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
+                        message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup,
+                                                        parse_mode='html')
 
                 except Exception:
                     try:
@@ -47,7 +49,8 @@ class MessageManager:
                     except Exception:
                         pass
                     finally:
-                        message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
+                        message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup,
+                                                        parse_mode='html')
             else:
                 message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
             return message
@@ -55,7 +58,8 @@ class MessageManager:
     def ask_user(self, message, template, next_view: Callable) -> None:
         """ Спросить пользователя """
         markup = ReplyKeyboardMarkup()
-        markup.add(KeyboardButton(text='Отменить'))
+        if message.user['is_exist']:
+            markup.add(KeyboardButton(text='Отменить'))
         self.send_message(message=message, template=template, general_markup=markup)
         try:
             self.bot.register_next_step_handler(message=message, callback=self.route(next_view))
@@ -66,19 +70,45 @@ class MessageManager:
     def route(self, func):
         def wrapper(message):
             request = RequestSerializer(message=message)
-            if message.text == 'Отменить':
+            user = request.user
+            try:
+                if message.user['is_exist'] and message.text == 'Отменить':
+                    step = get_previous(request)
+                    markup = InlineKeyboardBuilder.build_reply_keyboard(self.permissions[user.role.name])
+                    self.bot.send_message(chat_id=user.chat_id, text='Вы отменили ввод', reply_markup=markup,
+                                          parse_mode='html')
+                    if step.url_type == 'callback':
+                        response = self.routes[step.text](request)
+                    else:
+                        response = self.commands[step.text](request)
+                elif message.text in self.commands.keys():
+                    response = self.commands[message.text](request)
+                else:
+                    response = func(request)
+
+            except InvalidTypeValidationError as e:
                 step = get_previous(request)
-                user = request.user
                 markup = InlineKeyboardBuilder.build_reply_keyboard(self.permissions[user.role.name])
-                self.bot.send_message(chat_id=user.chat_id, text='Вы отменили ввод', reply_markup=markup, parse_mode='html')
+                self.bot.send_message(chat_id=user.chat_id, text='‼️ Отправлять можно только текст', reply_markup=markup,
+                                      parse_mode='html')
                 if step.url_type == 'callback':
                     response = self.routes[step.text](request)
                 else:
-                    response = self.commands[step.text](request)
-            elif message.text in self.commands.keys():
-                response = self.commands[message.text](request)
-            else:
-                response = func(request)
+                    response = self.commands[step.text](request=request)
+
+            except TextValidationError as e:
+                step = get_previous(request)
+                markup = InlineKeyboardBuilder.build_reply_keyboard(self.permissions[user.role.name])
+                self.bot.send_message(chat_id=user.chat_id,
+                                      text=f'‼️ Максимальное количество сиволов {e.args[1]},'
+                                           f' а вы отправили {e.args[0]}',
+                                      reply_markup=markup,
+                                      parse_mode='html')
+                if step.url_type == 'callback':
+                    response = self.routes[step.text](request)
+                else:
+                    response = self.commands[step.text](request=request)
+
             self.handle_response(request, response)
 
         return wrapper

@@ -2,7 +2,7 @@ from telebot.types import InlineKeyboardMarkup
 
 from app.tbot.extensions.template import Template
 from app.tbot.storages import BUTTONS_TEMPLATES
-from configs.bot_config import COMMANDS_KEYBOARD
+from app.tbot.storages.permissions import PERMISSIONS
 
 
 class AuthForm(Template):
@@ -10,6 +10,7 @@ class AuthForm(Template):
 
     def create_markup(self) -> InlineKeyboardMarkup:
         """ Создать клавиатуру """
+        user = self.args.get('user')
         if self.args.get('is_position'):
             row = BUTTONS_TEMPLATES['get_position']
             markup = self.markup_builder.build_list(self.args['models'], row)
@@ -20,7 +21,7 @@ class AuthForm(Template):
                                                     position=self.args.get('position'))
             return markup
         elif self.args.get('wrong'):
-            markup = self.markup_builder.build_reply_keyboard(COMMANDS_KEYBOARD)
+            markup = self.markup_builder.build_reply_keyboard(PERMISSIONS[user.role.name])
             return markup
 
     def create_message(self) -> str:

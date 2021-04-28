@@ -40,14 +40,14 @@ class FailsForm(Template):
         title = '▪️Провалы'
 
         if view == 'list':
-            description = '❕  Факты, которые ты считаешь своими основными провалами, ' \
-                          'то, чем вы сами недовольны и что хотели бы исправить и' \
-                          ' улучшить в будущем'
+
             if fails:
                 self.build_list_message(title=title,
-                                        description=f'\n{description}',
                                         list_text=[f'{fail.text}' for fail in fails])
             else:
+                description = '❕  Факты, которые ты считаешь своими основными провалами, ' \
+                              'то, чем вы сами недовольны и что хотели бы исправить и' \
+                              ' улучшить в будущем'
                 self.build_message(title=title, description=description)
             return self.MESSAGE
 

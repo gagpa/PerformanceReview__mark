@@ -1,5 +1,6 @@
 from app.db import Session
 from app.services.form_review import DutyService
+from app.services.validator import Validator
 
 
 class DutyServiceTBot(DutyService):
@@ -9,6 +10,8 @@ class DutyServiceTBot(DutyService):
         """ Декоратор для создания обязанности за текущее review """
 
         def wrapper(message):
+            text = message.text
+            Validator().validate_text(text, 'form')
             self.create(text=message.text, form=message.form)
             Session.commit()
             Session.remove()
@@ -20,7 +23,9 @@ class DutyServiceTBot(DutyService):
         """ Декоратор для изменения обязанности за текущее review """
 
         def wrapper(request):
-            self.update(text=request.text)
+            text = request.text
+            Validator().validate_text(text, 'form')
+            self.update(text=text)
             Session.commit()
             Session.remove()
             return func(request=request)

@@ -45,10 +45,11 @@ class RequestSerializer:
     @property
     def user(self):
         """ Парсинг user из сообщения и вернуть сериализованные данные """
-        pk = self.__message.user['pk']
-        service = UserService()
-        user = service.by_pk(pk=pk)
-        return user
+        if self.__message.user['is_exist']:
+            pk = self.__message.user['pk']
+            service = UserService()
+            user = service.by_pk(pk=pk)
+            return user
 
     @property
     def review_period(self):

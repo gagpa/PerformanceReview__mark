@@ -39,12 +39,11 @@ class AchievementsForm(Template):
         title = '▪️Достижения'
 
         if view == 'list':
-            description = '❕  Факты, которые ты считаешь своими основными достижениями и успехами'
             if achievements:
                 self.build_list_message(title=title,
-                                        description=f'\n{description}',
                                         list_text=[f'{achievement.text}' for achievement in achievements])
             else:
+                description = '❕  Факты, которые ты считаешь своими основными достижениями и успехами'
                 self.build_message(title=title, description=description)
             return self.MESSAGE
 

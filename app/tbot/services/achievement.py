@@ -1,5 +1,6 @@
 from app.services.form_review import AchievementService
 from app.db import Session
+from app.services.validator import Validator
 
 
 class AchievementServiceTBot(AchievementService):
@@ -9,7 +10,10 @@ class AchievementServiceTBot(AchievementService):
         """ Декоратор для создания достижений за текущее review """
 
         def wrapper(request):
-            achievements = [self.create(text=text, form=self.form) for text in request.split_text]
+            achievements = []
+            for text in request.split_text:
+                Validator().validate_text(text, 'form')
+                achievements.append(self.create(text=text, form=self.form))
             Session.commit()
             Session.remove()
             return func(request=request)
@@ -21,6 +25,7 @@ class AchievementServiceTBot(AchievementService):
 
         def wrapper(request):
             text = request.text
+            Validator().validate_text(text, 'form')
             self.update(text=text)
             Session.commit()
             Session.remove()
