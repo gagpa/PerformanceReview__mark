@@ -16,7 +16,9 @@ class ProjectCommentService(Entity):
         form = FormService().by_pk(pk)
         projects_comments = Session().query(CoworkerProjectRating) \
             .join(Project, CoworkerProjectRating.project) \
-            .join(Form, Project.form).join(User, Form.user)
+            .join(Form, Project.form) \
+            .join(CoworkerReview, CoworkerReview.id == CoworkerProjectRating.coworker_review_id) \
+            .join(User, CoworkerReview.coworker)
         boss_comments = projects_comments \
             .filter(Form.id == form.id) \
             .filter(User.id == form.user.boss_id).all()
@@ -28,10 +30,13 @@ class ProjectCommentService(Entity):
         form = FormService().by_pk(pk)
         projects_comments = Session().query(CoworkerProjectRating) \
             .join(Project, CoworkerProjectRating.project) \
-            .join(Form, Project.form).join(User, Form.user)
+            .join(Form, Project.form) \
+            .join(CoworkerReview, CoworkerReview.id == CoworkerProjectRating.coworker_review_id) \
+            .join(User, CoworkerReview.coworker)
         coworkers_comments = projects_comments \
             .filter(Form.id == form.id) \
-            .filter(User.boss_id == form.user.boss_id).all()
+            .filter(User.id != form.user.boss_id) \
+            .filter(User.boss_id != form.user.id).all()
         return coworkers_comments
 
     @staticmethod
@@ -40,7 +45,9 @@ class ProjectCommentService(Entity):
         form = FormService().by_pk(pk)
         projects_comments = Session().query(CoworkerProjectRating) \
             .join(Project, CoworkerProjectRating.project) \
-            .join(Form, Project.form).join(User, Form.user)
+            .join(Form, Project.form) \
+            .join(CoworkerReview, CoworkerReview.id == CoworkerProjectRating.coworker_review_id) \
+            .join(User, CoworkerReview.coworker)
         subordinate_comments = projects_comments.filter(Form.id == form.id) \
             .filter(User.boss_id == form.user.id).all()
         return subordinate_comments
