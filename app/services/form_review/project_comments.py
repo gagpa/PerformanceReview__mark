@@ -1,5 +1,7 @@
 from statistics import mean
 
+from sqlalchemy import or_
+
 from app.db import Session
 from app.models import Form, User, Project, CoworkerProjectRating, CoworkerReview
 from app.services.abc_entity import Entity
@@ -35,8 +37,8 @@ class ProjectCommentService(Entity):
             .join(User, CoworkerReview.coworker)
         coworkers_comments = projects_comments \
             .filter(Form.id == form.id) \
-            .filter(User.id != form.user.boss_id) \
-            .filter(User.boss_id != form.user.id).all()
+            .filter(User.id != form.user.boss_id)\
+            .filter(or_(User.boss_id != form.user_id, User.boss_id == None)).all()
         return coworkers_comments
 
     @staticmethod
