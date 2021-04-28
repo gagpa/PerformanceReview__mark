@@ -18,7 +18,7 @@ class Fail(Base):
 
     form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
 
-    form = relationship('Form', backref=backref('fails', cascade='all, delete-orphan'))
+    form = relationship('Form', backref=backref('fails', cascade='all, delete'))
 
     def __repr__(self):
         return f'Fail'

@@ -18,7 +18,7 @@ class CoworkerReview(Base):
     coworker_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
     hr_status = relationship('HrReviewStatus', backref='coworker_reviews')
-    coworker = relationship('User', backref=backref('coworker_reviews', cascade='all, delete-orphan'))
+    coworker = relationship('User', backref=backref('coworker_reviews', cascade='all, delete'))
     projects = relationship('Project', secondary='coworker_project_ratings')
     projects_ratings = relationship('CoworkerProjectRating', backref=backref('review', uselist=False))
 

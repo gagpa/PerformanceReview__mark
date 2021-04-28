@@ -46,10 +46,12 @@ def get_hr_rapport(request):
                    project_rating.rating]
         mark = ' + '.join(map(str, ratings))
         mark += f' = {round(mean(ratings), 2)}' if len(ratings) > 1 else ''
-        comments = '\n'.join([project_rating.text for project_rating in comment.projects_ratings if
+
+        comments = '<br>• '.join([project_rating.text for project_rating in comment.projects_ratings if
                               project_rating.rating])
-        todo = comment.advice.todo
-        not_todo = comment.advice.not_todo
+        comments = f'Комментарии по проектам:<br>•{comments}<br>'
+        todo = f'Что делать:<br>{comment.advice.todo}<br>'
+        not_todo = f'Что не делать:<br>{comment.advice.not_todo}'
         template_vars['reviews'].append([fullname, role, mark, comments, todo, not_todo])
 
     create_and_send_pdf(request.user.chat_id, HR_REPORT_TEMPLATE, template_vars)

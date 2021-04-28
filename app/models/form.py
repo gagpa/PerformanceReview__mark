@@ -18,7 +18,7 @@ class Form(Base):
     review_period_id = Column(Integer, ForeignKey('review_periods.id'), nullable=False)
     status_id = Column(SmallInteger, ForeignKey('statuses.id'), nullable=False)
 
-    user = relationship('User', backref=backref('forms', cascade='all, delete-orphan'))
+    user = relationship('User', backref=backref('forms', cascade='all, delete'))
     review_period = relationship('ReviewPeriod', backref='forms')
     status = relationship('Status', backref='forms')
 

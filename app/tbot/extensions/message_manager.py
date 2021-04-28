@@ -85,7 +85,7 @@ class MessageManager:
                     response = self.commands[message.text](request)
                 else:
                     markup = InlineKeyboardBuilder.build_reply_keyboard(self.permissions[user.role.name])
-                    self.bot.send_message(chat_id=user.chat_id, text='+', reply_markup=markup,
+                    self.bot.send_message(chat_id=user.chat_id, text='Данные приняты', reply_markup=markup,
                                           parse_mode='html')
                     response = func(request)
 

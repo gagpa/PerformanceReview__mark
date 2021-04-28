@@ -19,7 +19,7 @@ class Project(Base):
 
     form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
 
-    form = relationship('Form', backref=backref('projects', cascade='all, delete-orphan'))
+    form = relationship('Form', backref=backref('projects', cascade='all, delete'))
     reviews = relationship('CoworkerReview', secondary='coworker_project_ratings')
 
     def __repr__(self):

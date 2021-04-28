@@ -19,8 +19,8 @@ class Summary(Base):
     form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
     from_hr_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
-    form = relationship('Form', backref=backref('summaries', cascade='all, delete-orphan'))
-    users = relationship('User', backref=backref('summaries', cascade='all, delete-orphan'))
+    form = relationship('Form', backref=backref('summaries', cascade='all, delete'))
+    users = relationship('User', backref=backref('summaries', cascade='all, delete'))
 
     def __repr__(self):
         return f'Summary :{self.text}'

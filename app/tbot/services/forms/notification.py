@@ -56,6 +56,9 @@ class Notification(Template):
             self.extend_keyboard(False, to_request)
             return self.build()
 
+        elif view == 'add_role':
+            return self.markup_builder.build_reply_keyboard(PERMISSIONS[role])
+
     def create_message(self) -> str:
         view = self.args.get('view')
         form = self.args.get('form')
@@ -101,12 +104,15 @@ class Notification(Template):
             return self.MESSAGE
 
         elif view == 'add_role':
-            self.build_message(title='🔔 Оповещение', description='Добро пожаловать!\nВам дали доступ к работе с ботом.')
+            self.build_message(title='🔔 Оповещение',
+                               description='Добро пожаловать!\nВам дали доступ к работе с ботом.')
+            return self.MESSAGE
 
         elif view == 'change_role':
             self.build_message(title='🔔 Оповещение', description='Вам поменяли роль')
             return self.MESSAGE
 
         elif view == 'request_for_hr':
-            self.build_message(title='🔔 Оповещение', description='Новый запрос на доступ к системе')
+            self.build_message(title='🔔 Оповещение',
+                               description='Новый запрос на доступ к системе')
             return self.MESSAGE

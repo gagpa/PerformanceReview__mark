@@ -22,8 +22,8 @@ class CoworkerAdvice(Base):
 
     coworker_review = relationship('CoworkerReview', uselist=False,
                                    backref=backref('advice', uselist=False,
-                                                   cascade='all, delete-orphan'))
-    form = relationship('Form', backref=backref('advices', cascade='all, delete-orphan'))
+                                                   cascade='all, delete'))
+    form = relationship('Form', backref=backref('advices', cascade='all, delete'))
 
     def __repr__(self):
         return f'CoworkerAdvice'

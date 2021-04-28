@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, ForeignKey, TIMESTAMP, VARCHAR
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from app.db import Base
 
@@ -19,7 +19,7 @@ class UserHistory(Base):
 
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
-    user = relationship('User', backref='history')
+    user = relationship('User', backref=backref('history', cascade='all, delete'))
 
     def __repr__(self):
         return f'UserHistory {self.user} Previous {self.url_type} - {self.text}'

@@ -18,7 +18,7 @@ class Duty(Base):
 
     form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False, unique=True)
 
-    form = relationship('Form', backref=backref('duty', uselist=False, cascade='all, delete-orphan'))
+    form = relationship('Form', backref=backref('duty', uselist=False, cascade='all, delete'))
 
     def __repr__(self):
         return f'Duty {self.text}'

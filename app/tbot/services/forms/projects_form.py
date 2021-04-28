@@ -72,7 +72,7 @@ class ProjectsForm(Template):
         if page:
             ratings = self.cut_per_page(ratings, page)
             projects = self.cut_per_page(projects, page)
-        find_coworkers = lambda project: '\n -  '.join(
+        find_coworkers = lambda project: '\n •  '.join(
             [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
 
         if review_type == 'hr':
@@ -118,7 +118,7 @@ class ProjectsForm(Template):
 
             if view == 'list':
                 if projects:
-                    list_text = [f'{project.name}\n -  {project.description}\n •  {find_coworkers(project)}' for project
+                    list_text = [f'{project.name}\n -  {project.description}\n Оценивающие:  {find_coworkers(project)}' for project
                                  in projects]
                     self.build_list_message(title=title,
                                             list_text=list_text)

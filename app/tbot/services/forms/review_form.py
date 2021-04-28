@@ -87,9 +87,9 @@ class ReviewForm(Template):
                 self.build_list_message(title='▪️Провалы', list_text=list_text)
             if form.projects:
                 fill_volume += 1
-                find_coworkers = lambda project: '\n -  '.join(
+                find_coworkers = lambda project: '\n •  '.join(
                     [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
-                list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
+                list_text = [f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}' for project in
                              form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
 
@@ -115,9 +115,9 @@ class ReviewForm(Template):
                 list_text = [f'{fail.text}' for fail in form.fails]
                 self.build_list_message(title='▪️Провалы', list_text=list_text)
             if form.projects:
-                find_coworkers = lambda project: '\n -  '.join(
+                find_coworkers = lambda project: '\n •  '.join(
                     [f"@{review.coworker.username}" for review in project.reviews])
-                list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
+                list_text = [f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}' for project in
                              form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
             if review.text:
@@ -138,9 +138,9 @@ class ReviewForm(Template):
                 list_text = [f'{fail.text}' for fail in form.fails]
                 self.build_list_message(title='▪️Провалы', list_text=list_text)
             if form.projects:
-                find_coworkers = lambda project: '\n -  '.join(
+                find_coworkers = lambda project: '\n •  '.join(
                     [f"@{review.coworker.username}" for review in project.reviews])
-                list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
+                list_text = [f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}' for project in
                              form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
             list_data = []
@@ -202,9 +202,9 @@ class ReviewForm(Template):
                 list_text = [f'{fail.text}' for fail in form.fails]
                 self.build_list_message(title='▪️Провалы', list_text=list_text)
             if form.projects:
-                find_coworkers = lambda project: '\n -  '.join(
+                find_coworkers = lambda project: '\n •  '.join(
                     [f"@{review.coworker.username}" for review in project.reviews])
-                list_text = [f'{project.name}\n -  {project.description}\n -  {find_coworkers(project)}' for project in
+                list_text = [f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}' for project in
                              form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
             list_data = []
