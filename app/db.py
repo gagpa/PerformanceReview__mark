@@ -7,7 +7,6 @@ from configs.db_config import DATABASE_URI
 Base = declarative_base()
 
 engine = create_engine(DATABASE_URI)
-from app.models import *
 
 # Импорт необходим для создания новых миграций.
 
