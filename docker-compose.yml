@@ -32,7 +32,6 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: psql_pass
-    ports:
-      - 5432:5432
+    container_name: hr_postgres_db
     volumes:
       - /opt/disk/hr-test-bot/postgres:/var/lib/postgresql/data
