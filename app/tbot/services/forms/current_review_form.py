@@ -91,10 +91,10 @@ class CurrentReviewForm(Template):
 
             message_text = self.message_builder.build_message(title, '', text)
         elif self.args.get('change_summary'):
-            text = 'Введите summaries на основе полученных советов:'
+            text = 'Введите краткие итоги на основе полученных советов:'
             message_text = self.message_builder.build_message('', '', text=text)
         elif self.args.get('changed'):
-            text = 'Summaries сформировано. Доступна опция выгрузки анкеты.'
+            text = 'Итоги сформированы. Доступна опция выгрузки анкеты.'
             message_text = self.message_builder.build_message('', '', text=text)
         else:
             text = 'Review не запущен, Вы можете запустить его в разделе "Запуск/остановка Review"'
