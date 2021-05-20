@@ -72,7 +72,7 @@ from app.tbot.resources.review_period_views.archive_views import old_forms_list,
 from app.tbot.resources.review_period_views.current_review_views import employee_review, \
     current_forms_list, input_summary
 from app.tbot.resources.review_period_views.rapport_views import get_rapport, get_hr_rapport, \
-    get_boss_rapport
+    get_boss_rapport, send_rapport_to_boss
 
 from app.tbot.resources.review_period_views.review_period_views import \
     review_period_start, \
@@ -188,6 +188,7 @@ ROUTES = \
         'back_to_form': employee_review,
         'get_hr_rapport': get_hr_rapport,
         'get_boss_rapport': get_boss_rapport,
+        'send_rapport_to_boss': send_rapport_to_boss,
         'employee_review': employee_review,
         'current_forms_list': current_forms_list,
         'input_summary': input_summary,

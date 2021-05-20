@@ -21,6 +21,20 @@ def get_rapport(request):
     return ArchiveForm(pk=pk, period_id=period_id, choose_rapport=True)
 
 
+def get_boss_rapport(request):
+    pk = request.args['form_id'][0]
+    user = request.user
+    template_vars = update_data_for_boss_rapport(pk)
+    create_and_send_pdf(user.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
+
+
+def send_rapport_to_boss(request):
+    pk = request.args['form_id'][0]
+    user = request.user
+    template_vars = update_data_for_boss_rapport(pk)
+    create_and_send_pdf(user.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
+
+
 def get_hr_rapport(request):
     pk = request.args['form_id'][0]
     template_vars = get_data_for_rapport(pk)
@@ -36,8 +50,6 @@ def get_hr_rapport(request):
         fullname = comment.coworker.fullname
         if comment.coworker.id == form.user.boss_id:
             role = 'Руководитель'
-        # elif comment.coworker.boss_id == form.user.boss_id:
-        #     role = 'Коллега'
         elif comment.coworker.boss_id == form.user.id:
             role = 'Подчиненный'
         else:
@@ -47,19 +59,18 @@ def get_hr_rapport(request):
         mark = ' + '.join(map(str, ratings))
         mark += f' = {round(mean(ratings), 2)}' if len(ratings) > 1 else ''
 
-        comments = '<br>• '.join([project_rating.text for project_rating in comment.projects_ratings if
-                              project_rating.rating])
+        comments = '<br>• '.join(
+            [project_rating.text for project_rating in comment.projects_ratings if
+             project_rating.rating])
         comments = f'Комментарии по проектам:<br>•{comments}<br>'
         todo = f'Что делать:<br>{comment.advice.todo}<br>'
-        not_todo = f'Что не делать:<br>{comment.advice.not_todo}'
+        not_todo = f'Что перестать делать:<br>{comment.advice.not_todo}'
         template_vars['reviews'].append([fullname, role, mark, comments, todo, not_todo])
 
     create_and_send_pdf(request.user.chat_id, HR_REPORT_TEMPLATE, template_vars)
 
 
-def get_boss_rapport(request):
-    pk = request.args['form_id'][0]
-    user = request.user
+def update_data_for_boss_rapport(pk):
     template_vars = get_data_for_rapport(pk)
     coworkers_comments = ProjectCommentService().coworkers_projects_comments(pk)
     coworkers_rating = [comment.rating.value for comment in coworkers_comments]
@@ -73,8 +84,7 @@ def get_boss_rapport(request):
                          coworkers_rating=mean(coworkers_rating) if coworkers_rating else 'Нет',
                          subordinate_rating=mean(
                              subordinate_rating) if subordinate_rating else 'Нет')
-    create_and_send_pdf(user.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
-    return
+    return template_vars
 
 
 def get_data_for_rapport(pk):
