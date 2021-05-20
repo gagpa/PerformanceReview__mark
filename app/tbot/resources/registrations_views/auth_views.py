@@ -15,12 +15,14 @@ def wrong_way(request):
 def add_new_username(request):
     """ Начать регистрацию нового пользователя """
     chat_id = request.message.chat.id
-    if not UserService().is_exist(chat_id=str(chat_id)):
-        positions = Session().query(Position).all()
-        template = AuthForm(models=positions, is_position=True)
-        return template
+    if request.message.username:
+        if not UserService().is_exist(chat_id=str(chat_id)):
+            positions = Session().query(Position).all()
+            return AuthForm(models=positions, is_position=True)
+        else:
+            return AuthForm(exist=True)
     else:
-        return AuthForm(exist=True)
+        return AuthForm(no_username=True)
 
 
 def add_position_user(request):

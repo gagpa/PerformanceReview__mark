@@ -58,6 +58,9 @@ class AuthForm(Template):
         elif self.args.get('exist'):
             description = 'Добро пожаловать!'
 
+        elif self.args.get('no_username'):
+            description = 'Пожалуйста, установите логин в Telegram для использования системы.'
+
         elif self.args.get('wrong'):
             description = 'У вас недостаточно прав.'
 
