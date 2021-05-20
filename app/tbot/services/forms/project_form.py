@@ -43,7 +43,7 @@ class ProjectForm(Template):
             description = ''
             for i, rating in enumerate(RatingService().all):
                 description += f'\n{"🌟" * rating.value} - {rating.name}'
-            text = f' -  Цели и обязаннсоти: {project.description}'
+            text = f' -  Цели и обязанности: {project.description}'
             if coworker_comment_rating.rating:
                 text += f'\n -  Текущая оценка: {"🌟" * coworker_comment_rating.rating.value}'
             if coworker_comment_rating.text:
@@ -64,7 +64,7 @@ class ProjectForm(Template):
 
         elif review_type == 'hr':
             self.build_message(title=f'Проект: {project.name}',
-                               text=f' -  Цели и обязаннсоти: {project.description}\n'
+                               text=f' -  Цели и обязанности: {project.description}\n'
                                     f' -  Текущая оценка: {"🌟" * coworker_comment_rating.rating.value}\n'
                                     f' -  Комментарий к проекту: {coworker_comment_rating.text}')
             if coworker_comment_rating.hr_comment:
@@ -77,7 +77,7 @@ class ProjectForm(Template):
                     [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
                 self.build_message(title=f'Проект - {project.name}',
                                    description='\n❕  Выберите, что вы хотите изменить в своём проекте',
-                                   text=f'Цели и обязаннсоти: {project.description}\n'
+                                   text=f'Цели и обязанности: {project.description}\n'
                                         f'Коллеги: {coworkers}')
 
             elif view == 'edit_name':
@@ -85,7 +85,7 @@ class ProjectForm(Template):
                     [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
                 self.build_message(title=f'Проект - {project.name}',
                                    description='\n❕  Напишите название проекта',
-                                   text=f'Цели и обязаннсоти: {project.description}\n'
+                                   text=f'Цели и обязанности: {project.description}\n'
                                         f'Коллеги: {coworkers}')
 
             elif view == 'edit_description':
@@ -93,7 +93,7 @@ class ProjectForm(Template):
                     [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
                 self.build_message(title=f'Проект - {project.name}',
                                    description='\n❕  Опишите цель проекта и свои обязанности',
-                                   text=f'Цели и обязаннсоти: {project.description}\n'
+                                   text=f'Цели и обязанности: {project.description}\n'
                                         f'Коллеги: {coworkers}')
 
             elif view == 'edit_coworkers':
@@ -101,7 +101,7 @@ class ProjectForm(Template):
                     [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
                 self.build_message(title=f'Проект - {project.name}',
                                    description='\n❕  Введите username коллеги, который может оценить ваш вклад в проект',
-                                   text=f'Цели и обязаннсоти: {project.description}\n'
+                                   text=f'Цели и обязанности: {project.description}\n'
                                         f'Коллеги: {coworkers}')
 
             elif not project.name:
@@ -116,11 +116,11 @@ class ProjectForm(Template):
                 self.build_message(title='Заполнение проекта',
                                    description='\n❕  Введите username коллеги, который может оценить ваш вклад в проект',
                                    text=f'Название проекта: {project.name}\n'
-                                        f'Цели и обязаннсоти: {project.description}')
+                                        f'Цели и обязанности: {project.description}')
             else:
                 coworkers = ' '.join(
                     [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
-                self.build_message(title=f'Проект - {project.name}', text=f'Цели и обязаннсоти: {project.description}\n'
+                self.build_message(title=f'Проект - {project.name}', text=f'Цели и обязанности: {project.description}\n'
                                                                           f'Коллеги: {coworkers}')
             return self.MESSAGE
 
