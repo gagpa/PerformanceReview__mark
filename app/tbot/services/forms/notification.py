@@ -65,7 +65,10 @@ class Notification(Template):
         review = self.args.get('review')
 
         if view == 'to_boss':
-            description = f'Пользователь {form.user.fullname} (@{form.user.username}) - Заполнил анкету'
+            description = f'Твой сотрудник {form.user.fullname} (@{form.user.username}) заполнил анкету.' \
+                          f'Проверь правильность и напиши свои комментарии, ' \
+                          f'если ты считаешь, что анкету нужно дополнить или исправить, ' \
+                          f'прежде чем отправлять коллегам на оценку.'
             self.build_message(title='🔔 Оповещение',
                                description=description)
             return self.MESSAGE
