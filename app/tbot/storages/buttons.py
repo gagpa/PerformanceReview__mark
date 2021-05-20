@@ -125,8 +125,8 @@ BUTTONS_TEMPLATES = \
         'get_hr_rapport': ButtonTemplate('get_hr_rapport', 'Для HR'),
         'get_boss_rapport': ButtonTemplate('get_boss_rapport', 'Для руководителя'),
         'employee_review': ButtonTemplate('employee_review'),
-        'input_summary': ButtonTemplate('input_summary', 'Ввести summaries'),
-        'change_summary': ButtonTemplate('input_summary', 'Изменить summaries'),
+        'input_summary': ButtonTemplate('input_summary', 'Написать отчет'),
+        'change_summary': ButtonTemplate('input_summary', 'Изменить отчет'),
         'get_current_rapport': ButtonTemplate('get_current_rapport', 'Выгрузить анкету'),
         'current_forms_list': ButtonTemplate('current_forms_list', 'Назад'),
 

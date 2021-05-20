@@ -84,7 +84,7 @@ class CurrentReviewForm(Template):
                    f"{to_do}" \
                    f"\nЧто не делать:\n" \
                    f"{not_todo}" \
-                   f"\n\nSummary:" \
+                   f"\n\nПодведение итогов:" \
                    f"\n{summary}"
 
             text += '\n\n❕ Доступна опция выгрузки анкеты' if self.args.get('summary') else ''
