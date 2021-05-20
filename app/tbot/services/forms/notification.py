@@ -74,13 +74,13 @@ class Notification(Template):
             return self.MESSAGE
 
         elif view == 'to_coworkers':
-            description = f'Ваш коллега {form.user.fullname} (@{form.user.username}) - Попросил вас оценить его работу'
+            description = f'Ваш коллега {form.user.fullname} (@{form.user.username}) попросил вас оценить его работу'
             self.build_message(title='🔔 Оповещение',
                                description=description)
             return self.MESSAGE
 
         elif view == 'to_hr':
-            description = f'Сотрудник {review.coworker.fullname} (@{review.coworker.username}) - Оценил анкету ' \
+            description = f'Сотрудник {review.coworker.fullname} (@{review.coworker.username}) оценил анкету ' \
                           f'{review.advice.form.user.fullname} (@{review.advice.form.user.username})'
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE
