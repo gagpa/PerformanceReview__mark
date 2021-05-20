@@ -31,7 +31,7 @@ BUTTONS_TEMPLATES = \
         'coworker_projects': ButtonTemplate('coworker_projects', 'Оценить проекты'),
         'coworker_project': ButtonTemplate('coworker_project'),
         'coworker_rate': ButtonTemplate('coworker_rate', 'Оценить'),
-        'coworker_back_form': ButtonTemplate('coworker_review_form', '« К форме'),
+        'coworker_back_form': ButtonTemplate('coworker_review_form', '« К анкете'),
         'coworker_back_projects': ButtonTemplate('coworker_projects', '« К проектам'),
         'coworker_comment': ButtonTemplate('coworker_comment', 'Прокомментировать'),
         'coworker_review_todo': ButtonTemplate('coworker_review_todo', 'Что делать'),
