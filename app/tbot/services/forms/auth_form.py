@@ -33,7 +33,10 @@ class AuthForm(Template):
             description = 'Введите свое ФИО'
 
         elif self.args.get('is_position'):
-            description = '\n❕ Выберите свою должность:'
+            description = 'Привет, я бот Марк.\n' \
+                          'Я помогу тебе пройти Performance review: обзор эффективности работы сотрудника за определенный период времени. Этот инструмент позволяет  выявить “слабые” и “сильные” места в компании и повысить  эффективность работы организации в целом.' \
+                          '\nДавай знакомиться, в каком отделе ты работаешь?' \
+                          '\n❕ Выберите свою должность:'
             list_data = [model.name for model in self.args.get('models')]
 
         elif self.args.get('is_department'):
