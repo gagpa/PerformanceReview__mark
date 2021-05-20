@@ -61,7 +61,9 @@ class ArchiveForm(Template):
             description = 'Выберите номер Review, чтобы посмотреть анкеты:'
             list_data = list()
             for model in old_reviews:
-                string = f'Ревью с {model.start_date.date()} по {model.end_date.date()}\n'
+                start_date = model.start_date.date().strftime("%d.%m.%Y")
+                end_date = model.end_date.date().strftime("%d.%m.%Y")
+                string = f'Ревью с {start_date} по {end_date}\n'
                 list_data.append(string)
 
             message_text = self.message_builder.build_list_message(title=title,
@@ -69,8 +71,9 @@ class ArchiveForm(Template):
                                                                    list_data=list_data,
                                                                    )
         elif old_forms and self.args.get('archive_list'):
-            title = f'Период Review{old_forms[0].review_period.start_date.date()}' \
-                    f' - {old_forms[0].review_period.end_date.date()}'
+            start_date = old_forms[0].review_period.start_date.date().strftime("%d.%m.%Y")
+            end_date = old_forms[0].review_period.end_date.date().strftime("%d.%m.%Y")
+            title = f'Период Review {start_date} - {end_date}'
             description = 'Выберите номер анкеты, чтобы сформировать отчет:'
             list_data = list()
             for model in old_forms:
