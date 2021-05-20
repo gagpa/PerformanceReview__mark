@@ -15,7 +15,7 @@ def wrong_way(request):
 def add_new_username(request):
     """ Начать регистрацию нового пользователя """
     chat_id = request.message.chat.id
-    if request.message.username:
+    if request.message.chat.username:
         if not UserService().is_exist(chat_id=str(chat_id)):
             positions = Session().query(Position).all()
             return AuthForm(models=positions, is_position=True)
