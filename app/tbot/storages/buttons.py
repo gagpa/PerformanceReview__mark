@@ -27,7 +27,7 @@ BUTTONS_TEMPLATES = \
         'boss_review_to_list': ButtonTemplate('boss_review_list', 'Список анкет'),
 
         'coworker_review_form': ButtonTemplate('coworker_review_form', 'Анкета'),
-        'coworker_review_list': ButtonTemplate('coworker_review_list', '« К списку'),
+        'coworker_review_list': ButtonTemplate('coworker_review_list', '« К анкете'),
         'coworker_projects': ButtonTemplate('coworker_projects', 'Оценить проекты'),
         'coworker_project': ButtonTemplate('coworker_project'),
         'coworker_rate': ButtonTemplate('coworker_rate', 'Оценить'),
@@ -35,7 +35,7 @@ BUTTONS_TEMPLATES = \
         'coworker_back_projects': ButtonTemplate('coworker_projects', '« К проектам'),
         'coworker_comment': ButtonTemplate('coworker_comment', 'Прокомментировать'),
         'coworker_review_todo': ButtonTemplate('coworker_review_todo', 'Что делать'),
-        'coworker_review_not_todo': ButtonTemplate('coworker_review_not_todo', 'Что не делать'),
+        'coworker_review_not_todo': ButtonTemplate('coworker_review_not_todo', 'Что перестать делать'),
         'coworker_review_form_send_to_hr': ButtonTemplate('coworker_review_form_send_to_hr', 'Отправить HR'),
         'coworker_review_sort_asc': ButtonTemplate('coworker_review_list', '🔺').add(asc=True),
         'coworker_review_sort_desc': ButtonTemplate('coworker_review_list', '🔻').add(asc=False),
