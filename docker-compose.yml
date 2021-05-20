@@ -15,17 +15,17 @@ services:
       - hr_postgres_db
     tty: True
 
-#  hr-test-bot-migrate:
-#    build:
-#      context: .
-#      dockerfile: docker/Dockerfile
-#    image: hr-test-bot
-#    env_file: .env
-#    volumes:
-#      - .:/usr/src/hr-test-bot
-#    command: bash -c "alembic stamp head && alembic revision --autogenerate -m "update" && alembic upgrade head"
-#    depends_on:
-#      - hr_postgres_db
+  #  hr-test-bot-migrate:
+  #    build:
+  #      context: .
+  #      dockerfile: docker/Dockerfile
+  #    image: hr-test-bot
+  #    env_file: .env
+  #    volumes:
+  #      - .:/usr/src/hr-test-bot
+  #    command: bash -c "alembic stamp head && alembic revision --autogenerate -m "update" && alembic upgrade head"
+  #    depends_on:
+  #      - hr_postgres_db
 
   hr_postgres_db:
     image: postgres
@@ -33,5 +33,7 @@ services:
     environment:
       POSTGRES_PASSWORD: psql_pass
     container_name: hr_postgres_db
+    ports:
+      - 5423:5432
     volumes:
       - /opt/disk/hr-test-bot/postgres:/var/lib/postgresql/data
