@@ -30,7 +30,7 @@ class AuthForm(Template):
         text = ''
 
         if self.args.get('is_name'):
-            description = 'Введите свое ФИО'
+            description = 'Как тебя зовут? Напиши свою Фамилию Имя Отчество'
 
         elif self.args.get('is_position'):
             description = 'Привет, я бот Марк.\n' \
@@ -44,10 +44,13 @@ class AuthForm(Template):
             list_data = [model.name for model in self.args.get('models')]
 
         elif self.args.get('is_boss'):
-            description = 'Введите логин руководителя в телеграмм @login или введите "Нет"'
+            name = self.args.get('fullname').split(' ')[1]
+            description = f'Очень приятно, {name.capitalize()}! Кто твой руководитель? ' \
+                          f'Напиши логин руководителя в формате @login. ' \
+                          f'Если у тебя нет руководителя, напиши слово НЕТ'
 
         elif self.args.get('is_end'):
-            description = 'Спасибо. Ожидайте разрешения доступа. Вам поступит сообщение.'
+            description = 'Спасибо. Скоро ты получишь доступ для дальнейшей работы.'
 
         elif self.args.get('is_not_name'):
             description = 'Что-то пошло не так. Введите заново свое ФИО'

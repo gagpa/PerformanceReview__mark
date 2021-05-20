@@ -56,7 +56,7 @@ def add_fullname_user(request):
     user = request.model
     service = UserServiceTBot(model=user)
     service.fullname = request.text
-    template = AuthForm(is_boss=True)
+    template = AuthForm(is_boss=True, fullname=request.text)
     return template, service.add_model(add_boss_user)
 
 
