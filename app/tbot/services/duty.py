@@ -9,13 +9,14 @@ class DutyServiceTBot(DutyService):
     def create_before(self, func):
         """ Декоратор для создания обязанности за текущее review """
 
-        def wrapper(message):
-            text = message.text
-            Validator().validate_text(text, 'form')
-            self.create(text=message.text, form=message.form)
+        def wrapper(request):
+            duties = []
+            for text in request.split_text:
+                Validator().validate_text(text, 'form')
+                duties.append(self.create(text=text, form=self.form))
             Session.commit()
             Session.remove()
-            return func(request=message)
+            return func(request=request)
 
         return wrapper
 

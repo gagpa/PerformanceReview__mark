@@ -35,7 +35,7 @@ def add_all_mock_data_in_db():
 
     add_all_forms_in_db()
 
-    add_all_duties_in_db(mock_data['duties'])
+    # add_all_duties_in_db(mock_data['duties'])
     add_all_projects_in_db(mock_data['projects'])
     add_all_achievements_in_db(mock_data['achievements'])
     add_all_fails_in_db(mock_data['fails'])

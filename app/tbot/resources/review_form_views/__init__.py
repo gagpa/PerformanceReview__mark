@@ -9,9 +9,14 @@ from app.tbot.resources.review_form_views.achievements_views import \
     delete_choose_view as review_form_achievements_delete_choose_view
 
 from app.tbot.resources.review_form_views.duty_views import \
-    list_view as review_form_duty_list_view, \
-    add_view as review_form_duty_add_view, \
-    edit_view as review_form_duty_edit_view
+    edit_view as review_form_duty_edit_view, \
+    delete_view as review_form_duty_delete_view
+
+from app.tbot.resources.review_form_views.duties_views import \
+    list_view as review_form_duties_list_view, \
+    add_view as review_form_duties_add_view, \
+    edit_choose_view as review_form_duties_edit_choose_view, \
+    delete_choose_view as review_form_duties_delete_choose_view
 
 from app.tbot.resources.review_form_views.fail_views import \
     delete_view as review_form_fail_delete_view, \

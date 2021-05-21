@@ -2,44 +2,33 @@
 View обязанности.
 """
 from app.services.form_review import DutyService
+from app.tbot.resources.review_form_views.duties_views import list_view
 from app.tbot.services import DutyServiceTBot
 from app.tbot.services.forms import DutyForm
 
 
-def list_view(request):
-    """  Показать обязанность в форме """
+def delete_view(request):
+    """ Удалить достижение """
+    pk = request.args['duty'][0]
     form = request.form
-    service = DutyService()
-    duty = service.by(form=form)
-    if duty:
-        can_edit = bool(duty)
-        template = DutyForm(model=duty, can_add=not can_edit, can_edit=can_edit)
-    else:
-        template = add_view(request=request)
-    return template
-
-
-def add_view(request):
-    """ Добавить обязанность """
-    template = DutyForm(can_add=False, can_edit=False)
-    service = DutyServiceTBot()
-    next_view = service.create_before(list_view)
-    return template, next_view
+    service = DutyService(form=form)
+    duty = service.by_pk(pk=pk)
+    service.delete(duty)
+    return list_view(request=request)
 
 
 def edit_view(request):
-    """ Изменить обязанность """
+    """ Изменить достижение """
+    pk = request.args['duty'][0]
     form = request.form
-    service = DutyServiceTBot()
-    duty = service.by(form=form)
-    template = DutyForm(model=duty, can_add=False, can_edit=False)
-    next_view = service.update_before(list_view)
-    return template, next_view
+    service = DutyServiceTBot(form=form)
+    duty = service.by_pk(pk=pk)
+    template = DutyForm(duty=duty, view='edit')
+    return template, service.update_before(list_view)
 
 
 __all__ = \
     [
-        'list_view',
-        'add_view',
+        'delete_view',
         'edit_view',
     ]

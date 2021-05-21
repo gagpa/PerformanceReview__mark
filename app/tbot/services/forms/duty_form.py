@@ -1,59 +1,27 @@
+from typing import Optional
+
 from telebot.types import InlineKeyboardMarkup
 
-from app.tbot.extensions import InlineKeyboardBuilder
 from app.tbot.extensions.template import Template
-from app.tbot.storages import BUTTONS_TEMPLATES
 
 
 class DutyForm(Template):
-    """ Шаблон формы обязанностей """
+    """ Шаблон формы достижений """
 
-    def create_markup(self) -> InlineKeyboardMarkup:
+    def create_markup(self) -> Optional[InlineKeyboardMarkup]:
         """ Создать клавиатуру """
-        rows = []
-        if self.args.get('can_add'):
-            rows.append([BUTTONS_TEMPLATES['review_form_duty_add']])
-            rows.append([BUTTONS_TEMPLATES['review_form']])
-            markup = InlineKeyboardBuilder.build(*rows)
-            return markup
-
-        elif self.args.get('can_edit'):
-            rows.append([BUTTONS_TEMPLATES['review_form_duty_edit']])
-            rows.append([BUTTONS_TEMPLATES['review_form']])
-            markup = InlineKeyboardBuilder.build(*rows)
-            return markup
+        pass
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
-        title = '▪️Обязанности'
-        model = self.args.get('model')
-        if self.args.get('can_add'):
-            description = '❕ Функционал, который ты выполняешь в ходе своей работы'
-            text = self.args['model'].text if self.args['model'] else ''
+        view = self.args.get('view')
+        duty = self.args.get('duty')
 
-        elif self.args.get('can_edit'):
-            description = '\n❕ Внесите изменения или вернитесь к анкете'
-            text = f' -  {self.args["model"].text}'
-
-        elif self.args.get('form'):
-            if model:
-                text = self.args['model'].text
-            else:
-                text = 'Не заполнено'
-            message_text = self.message_builder.build_message(title=title,
-                                                              text=text,
-                                                              )
-            return message_text
-
-        else:
-            description = '❕ Отправьте в сообщении свои обязанности'
-            text = ''
-
-        message_text = self.message_builder.build_message(title=title,
-                                                          description=description,
-                                                          text=text,
-                                                          )
-        return message_text
+        if view == 'edit':
+            self.build_message(title='▪️Достижение',
+                               description='\n❕ Отправьте в сообщении свои обязанности',
+                               text=f' -  {duty.text}')
+            return self.MESSAGE
 
 
 __all__ = ['DutyForm']

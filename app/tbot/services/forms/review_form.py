@@ -15,11 +15,11 @@ class ReviewForm(Template):
             review_type = self.args.get('review_type')
             review = self.args.get('review')
             if review_type == 'write':
-                self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_duty'],
+                self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_duties_list'],
                                      BUTTONS_TEMPLATES['review_form_projects_list'], )
                 self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_achievements_list'],
                                      BUTTONS_TEMPLATES['review_form_fails'])
-                if form.achievements and form.fails and form.projects and form.duty:
+                if form.achievements and form.fails and form.projects and form.duties:
                     if form.user.boss:
                         self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_send_to_boss'])
                     else:
@@ -75,9 +75,10 @@ class ReviewForm(Template):
         if review_type == 'write':
             self.build_message(title='📝 Анкета')
             fill_instance = ''
-            if form.duty:
+            if form.duties:
                 fill_volume += 1
-                self.build_message(title='▪️Обязанности', text=f' -  {form.duty.text}')
+                list_text = [f'{duty.text}' for duty in form.duties]
+                self.build_list_message(title='▪️Обязанности', list_text=list_text)
             else:
                 fill_instance += '\n❌  Вы не заполнили раздел “Обязанности”'
 
@@ -130,8 +131,9 @@ class ReviewForm(Template):
 
         elif review_type == 'boss':
             self.build_message(title='📝 Анкета подчинённого', text=f'Сотрудник: {form.user.fullname}')
-            if form.duty:
-                self.build_message(title='▪️Обязанности', text=f' -  {form.duty.text}')
+            if form.duties:
+                list_text = [f'{duty.text}' for duty in form.duties]
+                self.build_list_message(title='▪️Обязанности', list_text=list_text)
             if form.achievements:
                 list_text = [f'{achievement.text}' for achievement in form.achievements]
                 self.build_list_message(title='▪️Достижения', list_text=list_text)
@@ -155,8 +157,9 @@ class ReviewForm(Template):
         elif review_type == 'coworker':
             self.build_message(title='📝 Анкета коллеги',
                                text=f'Сотрудник: @{form.user.username} - {form.user.fullname}')
-            if form.duty:
-                self.build_message(title='▪️Обязанности', text=f' -  {form.duty.text}')
+            if form.duties:
+                list_text = [f'{duty.text}' for duty in form.duties]
+                self.build_list_message(title='▪️Обязанности', list_text=list_text)
             if form.achievements:
                 list_text = [f'{achievement.text}' for achievement in form.achievements]
                 self.build_list_message(title='▪️Достижения', list_text=list_text)
@@ -221,8 +224,9 @@ class ReviewForm(Template):
         elif review_type == 'hr':
             self.build_message(title='📝 Анкета коллеги',
                                text=f'Сотрудник: @{form.user.username} - {form.user.fullname}')
-            if form.duty:
-                self.build_message(title='▪️Обязанности', text=f' -  {form.duty.text}')
+            if form.duties:
+                list_text = [f'{duty.text}' for duty in form.duties]
+                self.build_list_message(title='▪️Обязанности', list_text=list_text)
             if form.achievements:
                 list_text = [f'{achievement.text}' for achievement in form.achievements]
                 self.build_list_message(title='▪️Достижения', list_text=list_text)

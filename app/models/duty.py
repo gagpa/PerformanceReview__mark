@@ -16,9 +16,9 @@ class Duty(Base):
     created_at = Column(TIMESTAMP, default=datetime.now(), nullable=False)
     updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=True)
 
-    form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False, unique=True)
+    form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
 
-    form = relationship('Form', backref=backref('duty', uselist=False, cascade='all, delete'))
+    form = relationship('Form', backref=backref('duties', cascade='all, delete'))
 
     __mapper_args__ = {
         'order_by': id

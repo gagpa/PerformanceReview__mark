@@ -44,9 +44,8 @@ from app.tbot.resources.review_form_views import \
     review_form_view, \
     review_form_achievements_add_view, \
     review_form_achievements_list_view, \
-    review_form_duty_add_view, \
-    review_form_duty_edit_view, \
-    review_form_duty_list_view, \
+    review_form_duties_add_view, \
+    review_form_duties_list_view, \
     review_form_fail_delete_view, \
     review_form_fails_add_view, \
     review_form_fails_list_view, \
@@ -66,7 +65,12 @@ from app.tbot.resources.review_form_views import \
     review_form_achievement_edit_view, \
     review_form_achievements_edit_choose_view, \
     review_form_achievement_delete_view, \
-    review_form_achievements_delete_choose_view
+    review_form_achievements_delete_choose_view, \
+    review_form_duties_edit_choose_view, \
+    review_form_duties_delete_choose_view,\
+    review_form_duty_edit_view,\
+    review_form_duty_delete_view
+
 from app.tbot.resources.review_period_views.archive_views import old_forms_list, old_review_list
 
 from app.tbot.resources.review_period_views.current_review_views import employee_review, \
@@ -95,9 +99,12 @@ from app.tbot.resources.user_views.users_list_views import \
 ROUTES = \
     {
         'review_form': review_form_view,
-        'review_form_duty': review_form_duty_list_view,
-        'review_form_duty_add': review_form_duty_add_view,
+        'review_form_duties_list': review_form_duties_list_view,
+        'review_form_duties_add': review_form_duties_add_view,
+        'review_form_duties_edit_choose': review_form_duties_edit_choose_view,
         'review_form_duty_edit': review_form_duty_edit_view,
+        'review_form_duty_delete': review_form_duty_delete_view,
+        'review_form_duties_delete_choose': review_form_duties_delete_choose_view,
         'review_form_project_add': review_form_project_add_view,
         'review_form_project_delete': review_form_project_delete_view,
         'review_form_project_delete_choose': review_form_projects_delete_choose_view,
