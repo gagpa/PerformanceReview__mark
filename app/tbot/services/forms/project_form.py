@@ -110,13 +110,16 @@ class ProjectForm(Template):
             elif not project.description:
                 self.build_message(title='Заполнение проекта',
                                    description='\n❕ Опиши полученные результаты и свою роль в этом проекте:',
-                                   text=f'Название проекта: {project.name}')
+                                   text=f'\n<b>Название проекта:</b>\n {project.name}')
 
             elif not project.reviews:
                 self.build_message(title='Заполнение проекта',
-                                   description='\n❕  Введите username коллеги, который может оценить ваш вклад в проект',
-                                   text=f'Название проекта: {project.name}\n'
-                                        f'Цели и обязанности: {project.description}')
+                                   description='\n❕ Перечисли через “;” имена коллег с использованием @:',
+                                   text=f'\n<b>Название проекта:</b>\n {project.name}\n'
+                                        f'<b>Цели и обязанности:</b>\n {project.description}\n\n'
+                                        f'Введи username коллег, которые могут оценить твой вклад в этот проект: '
+                                        f'коллеги по команде, все, с кем пересекались по этой задаче, твой наставник, твои подчиненные и стажеры.\n\n'
+                                        f'Руководителя добавлять не нужно – если ты указал его ник при регистрации, он автоматически оценит все твои проекты.')
             else:
                 coworkers = ' '.join(
                     [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
