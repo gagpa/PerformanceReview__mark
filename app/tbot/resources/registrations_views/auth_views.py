@@ -28,7 +28,8 @@ def add_new_username(request):
 def add_position_user(request):
     """ Добавить должность пользователя """
     pk = request.pk()
-    positions = Session().query(Position).all()
+    department = Session().query(Department).get(pk)
+    positions = department.positions
     return AuthForm(models=positions, is_position=True, departament=pk)
 
 

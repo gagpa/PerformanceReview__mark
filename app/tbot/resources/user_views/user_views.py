@@ -81,7 +81,8 @@ def change_user_role(request):
 
 def user_edit_position(request):
     pk = request.args['user'][0]
-    positions = Session().query(Position).all()
+    user = UserServiceTBot().by_pk(pk)
+    positions = user.department.positions
     return UserForm(user_id=pk, positions=positions, edit_position_step=True)
 
 
