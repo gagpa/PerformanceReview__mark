@@ -24,22 +24,22 @@ def add_all_mock_data_in_db():
     """
     mock_data = get_mock_data()
 
-    add_all_roles_in_db(mock_data['roles'])
-    add_all_positions_in_db(mock_data['positions'])
+    #add_all_roles_in_db(mock_data['roles'])
+    #add_all_positions_in_db(mock_data['positions'])
     add_all_departments_in_db(mock_data['departments'])
-    add_all_users_in_db(mock_data['users'])
+    #add_all_users_in_db(mock_data['users'])
 
-    add_all_statuses_in_db(mock_data['statuses'])
-    add_all_review_periods_in_db(mock_data['review_periods'])
-    add_all_ratings_in_db(mock_data['ratings'])
+    #add_all_statuses_in_db(mock_data['statuses'])
+    #add_all_review_periods_in_db(mock_data['review_periods'])
+    #add_all_ratings_in_db(mock_data['ratings'])
 
-    add_all_forms_in_db()
-
-    add_all_duties_in_db(mock_data['duties'])
-    add_all_projects_in_db(mock_data['projects'])
-    add_all_achievements_in_db(mock_data['achievements'])
-    add_all_fails_in_db(mock_data['fails'])
-    add_all_hr_statuses_in_db(mock_data['hr_review_statuses'])
+    # add_all_forms_in_db()
+    #
+    # add_all_duties_in_db(mock_data['duties'])
+    # add_all_projects_in_db(mock_data['projects'])
+    # add_all_achievements_in_db(mock_data['achievements'])
+    # add_all_fails_in_db(mock_data['fails'])
+    # add_all_hr_statuses_in_db(mock_data['hr_review_statuses'])
 
 
 def add_all_roles_in_db(roles_mock_data):
@@ -69,7 +69,11 @@ def add_all_departments_in_db(departments_mock_data):
     Добавить тестовые отделы в БД.
     """
     for department_mock_data in departments_mock_data:
-        department = Department(**department_mock_data)
+        department = Department(name=department_mock_data['name'])
+        if department_mock_data.get('positions'):
+            for position in department_mock_data.get('positions'):
+                p = db_session().query(Position).filter_by(name=position).first()
+                department.positions.append(p) if p else None
         db_session.add(department)
 
     db_session.commit()
