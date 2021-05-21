@@ -17,6 +17,7 @@ class ProjectsForm(Template):
             ratings = self.args.get('ratings')
             page = self.args.get('page')
             view = self.args.get('view')
+            example = self.args.get('example')
             if review_type == 'write':
                 if view == 'delete_choose':
                     unique_args = [{'project': project.id} for project in projects]
@@ -35,6 +36,10 @@ class ProjectsForm(Template):
                     if projects:
                         self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_project_edit_choose'],
                                              BUTTONS_TEMPLATES['review_form_project_delete_choose'])
+                    elif example:
+                        self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_projects_descriptions'])
+                    else:
+                        self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_projects_examples'])
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form'])
                     return self.build()
 
@@ -69,6 +74,7 @@ class ProjectsForm(Template):
         ratings = self.args.get('ratings')
         form = self.args.get('form')
         view = self.args.get('view')
+        example = self.args.get('example')
         if page:
             ratings = self.cut_per_page(ratings, page)
             projects = self.cut_per_page(projects, page)
@@ -118,12 +124,28 @@ class ProjectsForm(Template):
 
             if view == 'list':
                 if projects:
-                    list_text = [f'{project.name}\n -  {project.description}\n Оценивающие:  {find_coworkers(project)}' for project
+                    list_text = [f'{project.name}\n -  {project.description}\n Оценивающие:  {find_coworkers(project)}'
+                                 for project
                                  in projects]
                     self.build_list_message(title=title,
                                             list_text=list_text)
+                elif example:
+                    self.build_message(title=title, text='“Проект: Оценка персонала за 1 полугодие 2021\n'
+                                                         'Описание: Зарегистрировала сотрудников ИЦ в количестве 70 человек\n'
+                                                         '\nПроект: Коммуникация\n'
+                                                         'Описание: Опубликовала 15 новостей о работе отделов ИЦ\n'
+                                                         '\nПроект: Обучение\n'
+                                                         'Описание: Сходила на тренинг для ботов”\n',
+                                       description='❕  Нажми кнопку “Добавить проект” и опиши каждый проект отдельно:')
+
                 else:
-                    self.build_message(title=title, description='❕  Добавьте проекты, которые ты выполнял')
+                    self.build_message(title='▪️Проекты',
+                                       text='Добавь проекты, которые ты делал последние полгода. Это могут быть:\n'
+                                            '– цели твоей команды, на которые ты фактически повлиял(-а),\n'
+                                            '– проекты, над которыми ты работал(-а), \n'
+                                            '– детали выполнения твоих базовых функциональных обязанностей,\n'
+                                            '– планы по росту и развитию.\n',
+                                       description='❕  Нажми кнопку “Добавить проект” и опиши каждый проект отдельно:')
                 return self.MESSAGE
 
             elif view == 'edit_choose':

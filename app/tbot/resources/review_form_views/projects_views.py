@@ -7,7 +7,8 @@ def list_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     projects = service.all
-    return ProjectsForm(projects=projects, review_type='write', view='list', have_markup=True)
+    return ProjectsForm(projects=projects, review_type='write', view='list', example=request.args.get('example'),
+                        have_markup=True)
 
 
 def edit_choose_view(request):

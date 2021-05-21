@@ -62,7 +62,7 @@ BUTTONS_TEMPLATES = \
 
         'review_form_projects_list': ButtonTemplate('review_form_projects_list', 'Проекты'),
         'review_form_back_projects': ButtonTemplate('review_form_projects_list', '« К проектам'),
-        'review_form_project_add': ButtonTemplate('review_form_project_add', 'Добавить'),
+        'review_form_project_add': ButtonTemplate('review_form_project_add', 'Добавить проект'),
         'review_form_project_delete': ButtonTemplate('review_form_project_delete'),
         'review_form_project_edit': ButtonTemplate('review_form_project_edit'),
         'review_form_project_edit_name': ButtonTemplate('review_form_project_edit_name', 'Название'),
@@ -71,7 +71,8 @@ BUTTONS_TEMPLATES = \
         'review_form_project_delete_choose': ButtonTemplate('review_form_project_delete_choose', 'Удалить'),
         'review_form_project_edit_choose': ButtonTemplate('review_form_project_edit_choose', 'Изменить'),
         'review_form_back_projects_list': ButtonTemplate('review_form_projects_list', '« К Проектам'),
-
+        'review_form_projects_examples': ButtonTemplate('review_form_projects_list', 'Пример').add(example=True),
+        'review_form_projects_descriptions': ButtonTemplate('review_form_projects_list', '« К описанию'),
         'hr_review_list': ButtonTemplate('hr_review_list', '« К списку'),
         'hr_review_form': ButtonTemplate('hr_review_form'),
         'hr_review_accept': ButtonTemplate('hr_review_accept', 'Принять'),
