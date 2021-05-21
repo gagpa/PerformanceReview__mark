@@ -74,32 +74,56 @@ class ReviewForm(Template):
         max_volume = 4
         if review_type == 'write':
             self.build_message(title='📝 Анкета')
+            fill_instance = ''
             if form.duty:
                 fill_volume += 1
                 self.build_message(title='▪️Обязанности', text=f' -  {form.duty.text}')
+            else:
+                fill_instance += '\n❌  Вы не заполнили раздел “Обязанности”'
+
             if form.achievements:
                 fill_volume += 1
                 list_text = [f'{achievement.text}' for achievement in form.achievements]
                 self.build_list_message(title='▪️Достижения', list_text=list_text)
+            else:
+                fill_instance += '\n❌  Вы не заполнили раздел “Достижения”'
+
             if form.fails:
                 fill_volume += 1
                 list_text = [f'{fail.text}' for fail in form.fails]
                 self.build_list_message(title='▪️Провалы', list_text=list_text)
+            else:
+                fill_instance += '\n❌  Вы не заполнили раздел “Провалы”'
+
             if form.projects:
                 fill_volume += 1
                 find_coworkers = lambda project: '\n •  '.join(
                     [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
-                list_text = [f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}' for project in
-                             form.projects]
+                list_text = [
+                    f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}'
+                    for project in
+                    form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
+            else:
+                fill_instance += '\n❌  Вы не заполнили раздел “Проекты”'
 
             if fill_volume == max_volume:
-                filling = f' -  Статус: {form.status.name} ✔'
+                filling = f' - Статус: {form.status.name} ✔'
             else:
-                filling = f' -  Статус: заполнение ({int(fill_volume / max_volume * 100)}%)'
+                filling = f' - Статус: заполнение ({int(fill_volume / max_volume * 100)}%)'
+            if fill_volume == 0:
+                bot_text = f'<i>Заполни все 4 раздела анкеты для того, чтобы коллеги могли по достоинству оценить ' \
+                           f'твою работу. Подсказка: начни с раздела обязанности.</i>\n\n' \
+                           f'{filling}'
+            else:
+                bot_text = f'{filling}'
+
+            if fill_instance:
+                bot_text = f'{bot_text}\n\n' \
+                           f'❕  Состояние заполнения:' \
+                           f'{fill_instance}'
             self.build_message(title='▫️Информация об анкете',
-                               text=f' -  Опрос закончится: {form.review_period.end_date}\n'
-                                    f'{filling}')
+                               text=bot_text)
             if form.boss_review and form.boss_review.text:
                 self.build_message(title='▫ Необходимо исправить', text=f' -  {form.boss_review.text}')
             return self.MESSAGE
@@ -117,8 +141,10 @@ class ReviewForm(Template):
             if form.projects:
                 find_coworkers = lambda project: '\n •  '.join(
                     [f"@{review.coworker.username}" for review in project.reviews])
-                list_text = [f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}' for project in
-                             form.projects]
+                list_text = [
+                    f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}'
+                    for project in
+                    form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
             if review.text:
                 self.build_message(title='▫ Ваш крайний комментарий', text=f' -  {review.text}')
@@ -140,8 +166,10 @@ class ReviewForm(Template):
             if form.projects:
                 find_coworkers = lambda project: '\n •  '.join(
                     [f"@{review.coworker.username}" for review in project.reviews])
-                list_text = [f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}' for project in
-                             form.projects]
+                list_text = [
+                    f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}'
+                    for project in
+                    form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
             list_data = []
             for rating in ratings:
@@ -204,8 +232,10 @@ class ReviewForm(Template):
             if form.projects:
                 find_coworkers = lambda project: '\n •  '.join(
                     [f"@{review.coworker.username}" for review in project.reviews])
-                list_text = [f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}' for project in
-                             form.projects]
+                list_text = [
+                    f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}'
+                    for project in
+                    form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
             list_data = []
             for rating in ratings:
