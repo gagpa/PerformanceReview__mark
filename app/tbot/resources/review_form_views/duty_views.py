@@ -11,8 +11,11 @@ def list_view(request):
     form = request.form
     service = DutyService()
     duty = service.by(form=form)
-    can_edit = bool(duty)
-    template = DutyForm(model=duty, can_add=not can_edit, can_edit=can_edit)
+    if duty:
+        can_edit = bool(duty)
+        template = DutyForm(model=duty, can_add=not can_edit, can_edit=can_edit)
+    else:
+        template = add_view(request=request)
     return template
 
 

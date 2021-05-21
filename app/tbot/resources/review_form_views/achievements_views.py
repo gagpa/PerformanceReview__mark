@@ -7,7 +7,10 @@ def list_view(request):
     form = request.form
     achievement_service = AchievementServiceTBot(form=form)
     achievements = achievement_service.all
-    template = AchievementsForm(achievements=achievements, view='list')
+    if achievements:
+        template = AchievementsForm(achievements=achievements, view='list')
+    else:
+        template = add_view(request=request)
     return template
 
 

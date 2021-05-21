@@ -7,8 +7,11 @@ def list_view(request):
     form = request.form
     service = FailServiceTBot(form=form)
     fails = service.all
-    can_edit = bool(fails)
-    template = FailsForm(fails=fails, view='list')
+    if fails:
+        can_edit = bool(fails)
+        template = FailsForm(fails=fails, view='list')
+    else:
+        template = add_view(request=request)
     return template
 
 
