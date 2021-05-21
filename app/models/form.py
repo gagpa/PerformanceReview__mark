@@ -22,6 +22,10 @@ class Form(Base):
     review_period = relationship('ReviewPeriod', backref='forms')
     status = relationship('Status', backref='forms')
 
+    __mapper_args__ = {
+        'order_by': id
+    }
+
     def __repr__(self):
         return f'Form {self.user}'
 

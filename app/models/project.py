@@ -22,6 +22,10 @@ class Project(Base):
     form = relationship('Form', backref=backref('projects', cascade='all, delete'))
     reviews = relationship('CoworkerReview', secondary='coworker_project_ratings')
 
+    __mapper_args__ = {
+        'order_by': id
+    }
+
     def __repr__(self):
         return f'Project :{self.name}'
 

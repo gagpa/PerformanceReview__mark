@@ -22,5 +22,9 @@ class CoworkerReview(Base):
     projects = relationship('Project', secondary='coworker_project_ratings')
     projects_ratings = relationship('CoworkerProjectRating', backref=backref('review', uselist=False))
 
+    __mapper_args__ = {
+        'order_by': id
+    }
+
 
 __all__ = ['CoworkerReview']

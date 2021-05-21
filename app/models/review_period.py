@@ -12,6 +12,10 @@ class ReviewPeriod(Base):
     start_date = Column(TIMESTAMP, nullable=False)
     end_date = Column(TIMESTAMP, nullable=False)
 
+    __mapper_args__ = {
+        'order_by': start_date
+    }
+
     def __repr__(self):
         return f'Review period {self.start_date} - {self.end_date}'
 

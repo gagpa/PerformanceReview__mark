@@ -28,6 +28,10 @@ class User(Base):
     role = relationship('Role', backref='users')
     position = relationship('Position', backref='users')
 
+    __mapper_args__ = {
+        'order_by': id
+    }
+
     def __repr__(self):
         return f'User: {self.username} {self.chat_id}'
 

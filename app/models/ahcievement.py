@@ -20,6 +20,10 @@ class Achievement(Base):
 
     form = relationship('Form', backref=backref('achievements', cascade='all, delete'))
 
+    __mapper_args__ = {
+        'order_by': id
+    }
+
     def __repr__(self):
         return f'Achievement'
 

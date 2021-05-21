@@ -22,6 +22,10 @@ class Summary(Base):
     form = relationship('Form', backref=backref('summaries', cascade='all, delete'))
     users = relationship('User', backref=backref('summaries', cascade='all, delete'))
 
+    __mapper_args__ = {
+        'order_by': id
+    }
+
     def __repr__(self):
         return f'Summary :{self.text}'
 

@@ -26,6 +26,10 @@ class CoworkerProjectRating(Base):
                                    backref=backref('coworker_project_rating', cascade='all, delete'))
     rating = relationship('Rating', backref='projects_comments')
 
+    __mapper_args__ = {
+        'order_by': id
+    }
+
     def __repr__(self):
         return f'ProjectComment {self.text} {self.rating}'
 

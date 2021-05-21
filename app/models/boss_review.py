@@ -22,5 +22,9 @@ class BossReview(Base):
     form = relationship('Form', backref=backref('boss_review', uselist=False, cascade='all, delete'))
     boss = relationship('User', backref=backref('boss_reviews', cascade='all, delete'))
 
+    __mapper_args__ = {
+        'order_by': id
+    }
+
 
 __all__ = ['BossReview']

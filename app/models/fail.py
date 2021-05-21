@@ -20,6 +20,10 @@ class Fail(Base):
 
     form = relationship('Form', backref=backref('fails', cascade='all, delete'))
 
+    __mapper_args__ = {
+        'order_by': id
+    }
+
     def __repr__(self):
         return f'Fail'
 

@@ -21,6 +21,10 @@ class UserHistory(Base):
 
     user = relationship('User', backref=backref('history', cascade='all, delete'))
 
+    __mapper_args__ = {
+        'order_by': id
+    }
+
     def __repr__(self):
         return f'UserHistory {self.user} Previous {self.url_type} - {self.text}'
 
