@@ -40,6 +40,7 @@ class MessageManager:
                         message = self.bot.edit_message_text(chat_id=chat_id, message_id=message.id, text=text,
                                                              reply_markup=markup, parse_mode='html')
                     else:
+                        self.bot.delete_message(chat_id=chat_id, message_id=message.id)
                         message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup,
                                                         parse_mode='html')
 
