@@ -4,6 +4,7 @@ from telebot.types import InlineKeyboardMarkup
 
 from app.services.dictinary import StatusService
 from app.services.form_review.project_comments import ProjectCommentService
+from app.services.review import HrReviewService
 from app.tbot.extensions.template import Template
 from app.tbot.storages import BUTTONS_TEMPLATES
 
@@ -77,6 +78,8 @@ class CurrentReviewForm(Template):
             not_todo = not_todo if not_todo else "отсутствует"
             summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
             rating = self.args.get("rating") if self.args.get("rating") else "\n"
+            not_rated = HrReviewService().not_rated(self.args.get("form_id"))
+            usernames = '\n'.join(not_rated)
             text = f"ФИО: {self.args.get('model').user.fullname}\n" \
                    f"Статус: {self.args.get('model').status.name}\n" \
                    f"Оценка: {rating}\n" \
@@ -88,6 +91,7 @@ class CurrentReviewForm(Template):
                    f"\n{summary}"
 
             text += '\n\n❕ Доступна опция выгрузки анкеты' if self.args.get('summary') else ''
+            text += f'\n\n❕ Не оценили:\n{usernames}' if not_rated else ''
 
             message_text = self.message_builder.build_message(title, '', text)
         elif self.args.get('change_summary'):
