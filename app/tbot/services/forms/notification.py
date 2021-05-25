@@ -96,6 +96,9 @@ class Notification(Template):
                           f'вернул вам анкету для исправления ошибок'
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE
+        elif view == 'declined':
+            self.build_message(title='🔔 Отправлено на доработку')
+            return self.MESSAGE
         elif view == 'start_review':
             description = f"Необходимо заполнить анкету в разделе 'Моя анкета' до {self.args.get('date')}"
             self.build_message(title='🔔 Оповещение', description=description)
