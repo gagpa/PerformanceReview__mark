@@ -1,4 +1,5 @@
 from app.db import Session
+from app.models import Fail, Duty, Achievement
 from app.services.dictinary import StatusService
 from app.services.form_review import FormService, ProjectsService
 from app.services.user import EmployeeService
@@ -37,7 +38,6 @@ def send_to_boss_view(request):
 
 def copy_last_review(request):
     """ Скопировать анкету из предыдущего ревью """
-    user = request.user
     form = request.form
     last_form_id = request.args.get('last_form')[0]
 
@@ -52,6 +52,24 @@ def copy_last_review(request):
         service.name = last_project_service.name
         service.description = last_project_service.description
         service.contacts = [user.username for user in last_project_service.contacts]
+        Session.commit()
+
+    last_fails = Session().query(Fail).filter_by(form_id=last_form_id).all()
+    for last_fail in last_fails:
+        fail = Fail(text=last_fail.text, form_id=form.id)
+        Session().add(fail)
+        Session.commit()
+
+    last_duties = Session().query(Duty).filter_by(form_id=last_form_id).all()
+    for last_duty in last_duties:
+        duty = Duty(text=last_duty.text, form_id=form.id)
+        Session().add(duty)
+        Session.commit()
+
+    last_achievements = Session().query(Achievement).filter_by(form_id=last_form_id).all()
+    for last_achievement in last_achievements:
+        achievement = Achievement(text=last_achievement.text, form_id=form.id)
+        Session().add(achievement)
         Session.commit()
 
     write_in = form_service.is_current_status(status_service.write_in)
