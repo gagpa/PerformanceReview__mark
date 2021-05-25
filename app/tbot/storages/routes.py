@@ -67,6 +67,7 @@ from app.tbot.resources.review_form_views import \
     review_form_achievements_edit_choose_view, \
     review_form_achievement_delete_view, \
     review_form_achievements_delete_choose_view
+from app.tbot.resources.review_form_views.form_views import copy_last_review
 from app.tbot.resources.review_period_views.archive_views import old_forms_list, old_review_list
 
 from app.tbot.resources.review_period_views.current_review_views import employee_review, \
@@ -178,6 +179,7 @@ ROUTES = \
         'review_period_stop': review_period_stop,
         'first_date_period': calendar_handler,
         'date_period_2': calendar_handler,
+        'copy_last_form': copy_last_review,
 
         'forms_list': current_forms_list,
         'get_old_review': old_forms_list,

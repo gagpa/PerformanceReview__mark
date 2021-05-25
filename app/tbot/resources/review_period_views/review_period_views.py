@@ -1,7 +1,7 @@
 import datetime
 
 from app.db import Session
-from app.models import ReviewPeriod, User, Role
+from app.models import ReviewPeriod, User, Role, Form
 from app.services.review import ReviewPeriodService
 from app.tbot import notificator
 from app.tbot.services.forms import Notification
@@ -35,9 +35,24 @@ def second_date_period(request, date):
     Session.commit()
     users = Session().query(User).join(Role, User.role) \
         .filter(Role.name != 'Undefined').all()
-    notificator.notificate(Notification(view='start_review', date=second_date.strftime('%d-%m-%Y')),
+    notificator.notificate(Notification(view='start_review', review=service.current,
+                                        date=second_date.strftime('%d-%m-%Y')),
                            *[user.chat_id for user in users])
+    check_last_form(users)
     return ReviewPeriodForm(started=True)
+
+
+def check_last_form(users):
+    """ Посмотреть есть ли анкета в предыдущем ревью """
+    for user in users:
+        last_form = Session().query(Form) \
+            .filter_by(user_id=user.id) \
+            .order_by(Form.created_at.desc()).first()
+        if last_form:
+            notificator.notificate(Notification(view='copy_last_form',
+                                                review=ReviewPeriodService().current,
+                                                last_form=last_form),
+                                   user.chat_id)
 
 
 def review_period_stop(request):

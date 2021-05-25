@@ -53,6 +53,7 @@ BUTTONS_TEMPLATES = \
 
         'review_form': ButtonTemplate('review_form', '« К анкете'),
         'review_to_form': ButtonTemplate('review_form', 'Анкета'),
+        'copy_last_form': ButtonTemplate('copy_last_form', 'Скопировать предыдущую форму'),
         'review_form_duty': ButtonTemplate('review_form_duty', 'Обязанности'),
         'review_form_duty_add': ButtonTemplate('review_form_duty_add', 'Добавить'),
         'review_form_duty_edit': ButtonTemplate('review_form_duty_edit', 'Изменить'),

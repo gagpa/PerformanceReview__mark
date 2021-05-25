@@ -1,8 +1,9 @@
-from app.tbot.services.forms import ReviewForm, Notification
+from app.db import Session
 from app.services.dictinary import StatusService
+from app.services.form_review import FormService, ProjectsService
 from app.services.user import EmployeeService
-from app.services.form_review import FormService
 from app.tbot import notificator
+from app.tbot.services.forms import ReviewForm, Notification
 
 
 def form_view(request):
@@ -28,12 +29,37 @@ def send_to_boss_view(request):
     if form.user.boss:
         notificator.notificate(Notification(view='to_boss', form=form), form.user.boss.chat_id)
     form_service = FormService(form)
-    write_in = form_service.is_current_status(status_service.write_in)  # TODO не обновляется form в сессии
+    write_in = form_service.is_current_status(
+        status_service.write_in)  # TODO не обновляется form в сессии
     template = ReviewForm(form=form, review_type='write', write_in=write_in)
     return template
 
 
+def copy_last_review(request):
+    """ Скопировать анкету из предыдущего ревью """
+    user = request.user
+    form = request.form
+    last_form_id = request.args.get('last_form')[0]
+
+    form_service = FormService(form)
+    status_service = StatusService()
+
+    last_projects = ProjectsService().all_by(form_id=last_form_id)
+    for last_project in last_projects:
+        last_project_service = ProjectsService(last_project)
+        new_project = ProjectsService.create_empty(form=form)
+        service = ProjectsService(new_project)
+        service.name = last_project_service.name
+        service.description = last_project_service.description
+        service.contacts = [user.username for user in last_project_service.contacts]
+        Session.commit()
+
+    write_in = form_service.is_current_status(status_service.write_in)
+
+    return ReviewForm(form=form, review_type='write', have_markup=write_in)
+
+
 __all__ = [
-        'form_view',
-        'send_to_boss_view',
-    ]
+    'form_view',
+    'send_to_boss_view',
+]
