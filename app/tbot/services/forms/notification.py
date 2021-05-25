@@ -91,7 +91,7 @@ class Notification(Template):
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE
         elif view == 'start_review':
-            description = f"Необходимо заполнить анкету в разделе 'Заполнение анкеты' до {self.args.get('date')}"
+            description = f"Необходимо заполнить анкету в разделе 'Моя анкета' до {self.args.get('date')}"
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE
 
