@@ -22,10 +22,9 @@ def delete_user(request):
     pk = request.args['user'][0]
     service = UserServiceTBot()
     user = service.by_pk(pk=pk)
-    chat_id = user.chat_id
     user.boss = None
     service.delete(user)
-    bot.send_message(chat_id, 'Вы были удалены из системы.')
+    notificator.notificate(Notification(view='delete_user'), user.chat_id)
     return users_list_view(request=request)
 
 

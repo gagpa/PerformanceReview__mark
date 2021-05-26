@@ -26,7 +26,7 @@ def delete_request(request):
     form = form_service.by(user_id=pk)
     if form:
         form_service.delete(form)
-    bot.send_message(user.chat_id, 'Вы были удалены из системы.')
+    notificator.notificate(Notification(view='delete_user'), user.chat_id)
     service.delete(user)
     return request_list_view(request=request)
 

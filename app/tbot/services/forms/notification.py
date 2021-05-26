@@ -135,3 +135,8 @@ class Notification(Template):
                                            'Скопировать её для нового ревью? '
                                            'Её можно будет отредактировать.')
             return self.MESSAGE
+
+        elif view == 'delete_user':
+            self.build_message(title='🔔 Оповещение',
+                               description='Вы были удалены из системы.')
+            return self.MESSAGE
