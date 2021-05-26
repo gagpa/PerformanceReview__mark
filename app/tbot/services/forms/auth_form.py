@@ -42,7 +42,10 @@ class AuthForm(Template):
             title = 'Как называется твоя должность?'
 
         elif self.args.get('is_boss'):
-            name = self.args.get('fullname').split(' ')[1]
+            try:
+                name = self.args.get('fullname').split(' ')[1]
+            except IndexError:
+                name = self.args.get('fullname')
             description = f'Очень приятно, {name.capitalize()}! Кто твой руководитель? ' \
                           f'Напиши логин руководителя в формате @login. ' \
                           f'Если у тебя нет руководителя, напиши слово НЕТ'
