@@ -34,7 +34,6 @@ def send_rapport_to_boss(request):
     template_vars = update_data_for_boss_rapport(pk)
     form = FormService().by_pk(pk)
     boss_id = form.user.boss_id
-    print(boss_id)
     if boss_id:
         boss = UserService().by_pk(boss_id)
         create_and_send_pdf(boss.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
