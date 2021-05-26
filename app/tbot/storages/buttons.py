@@ -89,6 +89,7 @@ BUTTONS_TEMPLATES = \
         'get_department': ButtonTemplate('get_department'),
 
         'request_view': ButtonTemplate('request_view'),
+        'request_list_view': ButtonTemplate('request_list_view'),
         'request_delete_view': ButtonTemplate('request_delete_view', 'Удалить'),
         'request_accept_view': ButtonTemplate('request_accept_view', 'Принять'),
         'request_view_back': ButtonTemplate('request_view_back', 'Назад'),

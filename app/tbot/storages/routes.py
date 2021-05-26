@@ -151,6 +151,7 @@ ROUTES = \
         'get_department': add_position_user,
 
         'request_view': request_view,
+        'request_list_view': request_list_view,
         'request_delete_view': delete_request_view,
         'request_view_back': request_list_view,
         'request_accept_view': accept_request_view,
