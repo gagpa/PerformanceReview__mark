@@ -51,7 +51,8 @@ class InlineKeyboardBuilder:
 
     @staticmethod
     def build_list_up(button_template, unique_args: List[dict],
-                      general_args: Optional[dict] = None, *rows):
+                      general_args: Optional[dict] = None,
+                      prefix: Optional[str] = '', *rows):
         """ Построить клавиатуру списка """
         row_width = 5
         btns = []
@@ -59,9 +60,8 @@ class InlineKeyboardBuilder:
             button_template.add(**general_args)
         for i, args in enumerate(unique_args):
             button_template.add(**args)
-            btns.append(InlineKeyboardButton(text=i + 1,
-                                             callback_data=button_template.callback
-                                             ))
+            btns.append(InlineKeyboardButton(text=f'{prefix} {i + 1}',
+                                             callback_data=button_template.callback))
         markup = InlineKeyboardMarkup(row_width=row_width)
         markup.add(*btns)
 

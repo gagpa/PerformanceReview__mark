@@ -23,13 +23,13 @@ class ProjectsForm(Template):
                     main_template = BUTTONS_TEMPLATES['review_form_project_delete']
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'],
                                          BUTTONS_TEMPLATES['review_form'])
-                    return self.build_list(main_template, unique_args)
+                    return self.build_list(main_template, unique_args, prefix='Проект')
                 elif view == 'edit_choose':
                     unique_args = [{'project': project.id} for project in projects]
                     main_template = BUTTONS_TEMPLATES['review_form_project_edit']
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'],
                                          BUTTONS_TEMPLATES['review_form'])
-                    return self.build_list(main_template, unique_args)
+                    return self.build_list(main_template, unique_args, prefix='Проект')
                 elif view == 'list':
                     self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_project_add'])
                     if projects:
@@ -47,7 +47,7 @@ class ProjectsForm(Template):
                 back = BUTTONS_TEMPLATES['coworker_back_form'].add(review=review.id)
                 self.extend_keyboard(False, back)
                 self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
-                return self.build_list(main_template, unique_args)
+                return self.build_list(main_template, unique_args, prefix='Проект')
 
             elif review_type == 'hr':
                 count_obj = len(ratings)
@@ -58,7 +58,7 @@ class ProjectsForm(Template):
                 unique_args = [{'proj_rate': rating.id} for rating in ratings]
                 self.extend_keyboard(False, back)
                 self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
-                return self.build_list(main_template, unique_args)
+                return self.build_list(main_template, unique_args, prefix='Проект')
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
