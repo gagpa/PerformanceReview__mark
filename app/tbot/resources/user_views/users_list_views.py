@@ -7,7 +7,7 @@ from app.tbot.services.forms.user_form import UserForm
 
 def users_list_view(request):
     users = Session().query(User).filter(User.role != RoleService().undefined).all()
-    return UserForm(models=users, users_list=True)
+    return UserForm(models=users, page=request.page, users_list=True)
 
 
 def user_view(request):

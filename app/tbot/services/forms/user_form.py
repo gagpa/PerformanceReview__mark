@@ -35,9 +35,15 @@ class UserForm(Template):
             return markup
 
         elif self.args.get('models') and self.args.get('users_list'):
-            row = BUTTONS_TEMPLATES['user_view']
-            markup = self.markup_builder.build_list(self.args['models'], row)
-            return markup
+            users = self.args.get('models')
+            page = self.args.get('page')
+            count_obj = len(users)
+            users = self.cut_per_page(users, page)
+            unique_args = [{'pk': user.id} for user in users]
+            main_template = BUTTONS_TEMPLATES['user_view']
+            pagination_template = BUTTONS_TEMPLATES['user_list_view']
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
+            return self.build_list(main_template, unique_args)
 
         elif self.args.get('edit_step'):
             rows.append([BUTTONS_TEMPLATES['user_edit_fullname'],
@@ -86,6 +92,10 @@ class UserForm(Template):
         """ Вернуть преобразованное сообщение """
         title = ''
         description = ''
+        users = self.args.get('models')
+        page = self.args.get('page')
+        if page:
+            users = self.cut_per_page(users, page) if users else None
 
         if self.args.get('models') and self.args.get('requests'):
             title = 'Здесь отображаются все входящие запросы'
@@ -94,9 +104,9 @@ class UserForm(Template):
                                                                    description=description,
                                                                    list_data=list_data,
                                                                    )
-        elif self.args.get('models') and self.args.get('users_list'):
+        elif users and self.args.get('users_list'):
             title = 'Здесь отображаются все пользователи'
-            list_data = [f'{model.username} - {model.fullname}' for model in self.args["models"]]
+            list_data = [f'{user.username} - {user.fullname}' for user in users]
             message_text = self.message_builder.build_list_message(title=title,
                                                                    description=description,
                                                                    list_data=list_data,

@@ -159,6 +159,7 @@ ROUTES = \
         'to_request': request_view,
 
         'user_view': user_view,
+        'user_list_view': users_list_view,
         'user_delete_view': delete_user_view,
         'user_view_back': users_list_view,
         'user_edit_view': edit_user_view,
