@@ -174,6 +174,7 @@ ROUTES = \
         'user_edit_position': user_edit_position,
         'user_edit_boss': user_edit_boss,
         'user_edit_department': user_edit_department,
+        'back_to_edit': edit_user_view,
 
         'review_period_start': review_period_start,
         'review_period_stop': review_period_stop,

@@ -1,7 +1,5 @@
 from app.db import Session
-from app.models import Role, Position, Department, CoworkerAdvice, CoworkerProjectRating, \
-    CoworkerReview
-from app.services.form_review import FormService
+from app.models import Role, Position, Department
 from app.services.user import UserService
 from app.tbot import bot
 from app.tbot import notificator

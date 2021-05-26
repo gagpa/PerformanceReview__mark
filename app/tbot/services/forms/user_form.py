@@ -60,17 +60,25 @@ class UserForm(Template):
             return markup
         elif self.args.get('edit_position_step'):
             row = BUTTONS_TEMPLATES['edit_position']
-            markup = self.markup_builder.build_list_with_buttons(self.args['positions'], row,
+            rows.append(self.markup_builder.build_btns(BUTTONS_TEMPLATES['back_to_edit'],
+                                                       user=self.args.get('user_id')))
+            markup = self.markup_builder.build_list_with_buttons(self.args['positions'], row, 2,
+                                                                 *rows,
                                                                  user_id=self.args.get('user_id'))
             return markup
         elif self.args.get('edit_department_step'):
             row = BUTTONS_TEMPLATES['edit_department']
-            markup = self.markup_builder.build_list_with_buttons(self.args['departments'], row,
+            rows.append(self.markup_builder.build_btns(BUTTONS_TEMPLATES['back_to_edit'],
+                                                       user=self.args.get('user_id')))
+            markup = self.markup_builder.build_list_with_buttons(self.args['departments'], row, 2,
+                                                                 *rows,
                                                                  user_id=self.args.get('user_id'))
             return markup
         elif self.args.get('edit_role_step'):
             row = BUTTONS_TEMPLATES['edit_role']
-            markup = self.markup_builder.build_list_with_buttons(self.args['roles'], row,
+            rows.append(self.markup_builder.build_btns(BUTTONS_TEMPLATES['back_to_edit'],
+                                                       user=self.args.get('user_id')))
+            markup = self.markup_builder.build_list_with_buttons(self.args['roles'], row, 2, *rows,
                                                                  user_id=self.args.get('user_id'))
             return markup
 
