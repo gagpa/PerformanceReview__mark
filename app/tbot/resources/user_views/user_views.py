@@ -1,7 +1,6 @@
 from app.db import Session
 from app.models import Role, Position, Department
 from app.services.user import UserService
-from app.tbot import bot
 from app.tbot import notificator
 from app.tbot.resources.user_views.users_list_views import users_list_view
 from app.tbot.services.auth import UserServiceTBot

@@ -2,7 +2,7 @@ from app.db import Session
 from app.models import Role
 from app.services.form_review import FormService
 from app.services.user import UserService
-from app.tbot import bot, notificator
+from app.tbot import notificator
 from app.tbot.resources.request_views import request_list_view
 from app.tbot.services.auth import UserServiceTBot
 from app.tbot.services.forms import Notification

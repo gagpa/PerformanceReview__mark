@@ -20,4 +20,4 @@ OrderMiddlewares(bot, ORDER_MESSAGE_MIDDLEWARES, ORDER_CALLBACK_QUERY_MIDDLEWARE
 #  Активация маршрутов обработчиков
 from app.tbot import routes
 
-__all__ = ['bot']
+__all__ = ['bot', 'notificator']
