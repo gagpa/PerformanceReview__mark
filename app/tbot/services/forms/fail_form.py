@@ -1,8 +1,6 @@
 from telebot.types import InlineKeyboardMarkup
 
-from app.tbot.extensions import InlineKeyboardBuilder
 from app.tbot.extensions.template import Template
-from app.tbot.storages import BUTTONS_TEMPLATES
 
 
 class FailForm(Template):
@@ -20,7 +18,7 @@ class FailForm(Template):
 
         if view == 'edit':
             self.build_message(title='▪ Провал',
-                               description='\nОтправьте в сообщении свой провал или перечислите их через ;',
+                               description='\nОтправьте в сообщении свои провалы.',
                                text=f' -  {fail.text}')
             return self.MESSAGE
 

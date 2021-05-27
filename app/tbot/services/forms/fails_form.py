@@ -1,6 +1,5 @@
 from telebot.types import InlineKeyboardMarkup
 
-from app.tbot.extensions import InlineKeyboardBuilder
 from app.tbot.extensions.template import Template
 from app.tbot.storages import BUTTONS_TEMPLATES
 
@@ -42,29 +41,29 @@ class FailsForm(Template):
         if view == 'list':
 
             if fails:
-                self.build_list_message(title=title,
+                self.build_message(title=title,
+                                   description='Факты, которые ты считаешь своими основными провалами. ' \
+                                               '\nЧем вы сами недовольны, и что хотели бы исправить и' \
+                                               ' улучшить в будущем.')
+                description = '\n❕ Нажми кнопку “добавить” и перечисли свои провалы – через «;». Если что-то забудешь, можно будет исправить это позже.'
+                self.build_list_message(description=description,
                                         list_text=[f'{fail.text}' for fail in fails])
-            else:
-                description = '❕  Факты, которые ты считаешь своими основными провалами, ' \
-                              'то, чем вы сами недовольны и что хотели бы исправить и' \
-                              ' улучшить в будущем'
-                self.build_message(title=title, description=description)
             return self.MESSAGE
 
         elif view == 'delete_choose':
             self.build_list_message(title=title,
-                                    description='\n❕  Выберите провал, которое вы хотите удалить',
+                                    description='\n❕ Выберите провал, которое вы хотите удалить.',
                                     list_text=[f'{fail.text}' for fail in fails])
             return self.MESSAGE
 
         elif view == 'edit_choose':
             self.build_list_message(title=title,
-                                    description='\n❕  Выберите провал, которое вы хотите изменить',
+                                    description='\n❕ Выберите провал, которое вы хотите изменить.',
                                     list_text=[f'{fail.text}' for fail in fails])
             return self.MESSAGE
 
         elif view == 'add':
-            description = '❕  Отправьте в сообщении свои основные провалы'
+            description = '❕ Отправьте в сообщении свои основные провалы.'
             if fails:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',

@@ -63,9 +63,12 @@ class MessageBuilder(MessageDecorator):
         if not title:
             template = template.replace('{title}\n', '')
         if not description:
-            template = template.replace('\n{description}', '')
+            template = template.replace('{description}\n', '')
+
         if not list_data:
-            template = template.replace('\n{text}', '')
+            template = template.replace('{list_data}\n', '')
+            template = template.replace('{list_data}', '')
+            template = template.replace('\n\n', '\n')
         message = template.format(title=title, description=description, list_data=list_data)
         return message
 
@@ -76,11 +79,13 @@ class MessageBuilder(MessageDecorator):
         description = self.do_description(description)
         data = self.do_text(text)
         if not title:
-            template = template.replace('{title}', '')
+            template = template.replace('{title}\n', '')
         if not description:
-            template = template.replace('\n{description}', '')
+            template = template.replace('{description}\n', '')
         if not data:
-            template = template.replace('\n{text}', '')
+            template = template.replace('{text}\n', '')
+            template = template.replace('{text}', '')
+            template = template.replace('\n\n', '\n')
         message = template.format(title=title, description=description, text=data)
         return message
 

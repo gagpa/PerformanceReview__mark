@@ -19,7 +19,7 @@ class AchievementForm(Template):
 
         if view == 'edit':
             self.build_message(title='▪️Достижение',
-                               description='\n❕  Отправьте в сообщении свои основные достижения и успехи',
+                               description='\n❕ Отправьте в сообщении свои основные достижения и успехи.',
                                text=f' -  {achievement.text}')
             return self.MESSAGE
 

@@ -40,27 +40,27 @@ class AchievementsForm(Template):
 
         if view == 'list':
             if achievements:
-                self.build_list_message(title=title,
-                                        list_text=[f'{achievement.text}' for achievement in achievements])
-            else:
-                description = '❕  Факты, которые ты считаешь своими основными достижениями и успехами'
-                self.build_message(title=title, description=description)
+                self.build_message(title=title,
+                                   description='Факты, которые ты считаешь своими основными достижениями и успехами.')
+                description = '\n❕ Нажми кнопку “добавить” и перечисли свои достижения – через «;». Если что-то забудешь, можно будет исправить это позже.'
+                self.build_list_message(list_text=[f'{achievement.text}' for achievement in achievements],
+                                        description=description)
             return self.MESSAGE
 
         elif view == 'delete_choose':
             self.build_list_message(title=title,
-                                    description='\n❕  Выберите достижение, которое вы хотите удалить',
+                                    description='\n❕ Выберите достижение, которое вы хотите удалить.',
                                     list_text=[f'{achievement.text}' for achievement in achievements])
             return self.MESSAGE
 
         elif view == 'edit_choose':
             self.build_list_message(title=title,
-                                    description='\n❕  Выберите достижение, которое вы хотите изменить',
+                                    description='\n❕ Выберите достижение, которое вы хотите изменить.',
                                     list_text=[f'{achievement.text}' for achievement in achievements])
             return self.MESSAGE
 
         elif view == 'add':
-            description = '❕  Отправьте в сообщении свои основные достижения и успехи'
+            description = '❕ Отправьте в сообщении свои основные достижения и успехи.'
             if achievements:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',

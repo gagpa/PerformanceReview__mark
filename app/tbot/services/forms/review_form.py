@@ -151,7 +151,7 @@ class ReviewForm(Template):
             if review.text:
                 self.build_message(title='▫ Ваш крайний комментарий', text=f' -  {review.text}')
             if view == 'decline':
-                self.build_message(description='❕  Напишите, что исправить или добавить в анкету')
+                self.build_message(description='❕ Напишите, что исправить или добавить в анкету.')
             return self.MESSAGE
 
         elif review_type == 'coworker':
@@ -197,9 +197,9 @@ class ReviewForm(Template):
                     text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
                 self.build_message(title='▫ Ваши советы', text=text)
             if view == 'todo':
-                self.build_message(description='❕  Введите "Что стоит изменить вашему коллеге"')
+                self.build_message(description='❕ Введите "Что стоит изменить вашему коллеге".')
             elif view == 'not todo':
-                self.build_message(description='❕  Введите "Что стоит перестать делать вашему коллеге"')
+                self.build_message(description='❕ Введите "Что стоит перестать делать вашему коллеге".')
             elif not review.advice.hr_comment and not any(rating.hr_comment for rating in ratings):
                 count_comment = 0
                 count_rate = 0
@@ -264,11 +264,11 @@ class ReviewForm(Template):
                     text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
                 self.build_message(title='▫ Ваши советы', text=text)
             if view == 'todo':
-                self.build_message(description='❕  Введите ,что исправить в разделе "Ваши советы"')
+                self.build_message(description='❕ Введите ,что исправить в разделе "Ваши советы".')
             return self.MESSAGE
 
         elif review_type == 'not_active':
-            self.build_message(description='❕  В данный момент анкетирование не проходит.')
+            self.build_message(description='❕ В данный момент анкетирование не проходит.')
             return self.MESSAGE
 
 

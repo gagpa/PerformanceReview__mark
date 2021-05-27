@@ -34,6 +34,30 @@ def edit_contacts_view(request):
     return template, next_view
 
 
+def delete_choose_contact_view(request):
+    """ Выбрать контакт под удаление """
+    pk = request.args['project'][0]
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.by_pk(pk=pk)
+    template = ProjectForm(project=project, view='delete_choose_contact', review_type='write')
+    return template
+
+
+def delete_contact_view(request):
+    """ Удалить контакт """
+
+
+def edit_choose_contact_view(request):
+    """ Выбрать контакт для изменения """
+    pass
+
+
+def edit_contact_view(request):
+    """ Изменить контакт """
+    pass
+
+
 def edit_description_view(request):
     """ Измнить описание проекта """
     pk = request.args['project'][0]

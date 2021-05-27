@@ -40,27 +40,26 @@ class DutiesForm(Template):
 
         if view == 'list':
             if duties:
+                description = '\n❕ Внеси изменения или вернись к анкете.'
                 self.build_list_message(title=title,
-                                        list_text=[f'{duty.text}' for duty in duties])
-            else:
-                description = '❕ Функционал, который ты выполняешь в ходе своей работы'
-                self.build_message(title=title, description=description)
+                                        list_text=[f'{duty.text}' for duty in duties],
+                                        description=description)
             return self.MESSAGE
 
         elif view == 'delete_choose':
             self.build_list_message(title=title,
-                                    description='\n❕  Выберите обязанность, которую вы хотите удалить',
+                                    description='\n❕ Выберите обязанность, которую вы хотите удалить.',
                                     list_text=[f'{duty.text}' for duty in duties])
             return self.MESSAGE
 
         elif view == 'edit_choose':
             self.build_list_message(title=title,
-                                    description='\n❕  Выберите обязанность, которую вы хотите изменить',
+                                    description='\n❕ Выберите обязанность, которую вы хотите изменить.',
                                     list_text=[f'{duty.text}' for duty in duties])
             return self.MESSAGE
 
         elif view == 'add':
-            description = '❕ Отправьте в сообщении свои обязанности'
+            description = '❕ Отправьте в сообщении свои обязанности.'
             if duties:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',

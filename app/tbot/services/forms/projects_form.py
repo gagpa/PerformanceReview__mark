@@ -75,15 +75,18 @@ class ProjectsForm(Template):
         form = self.args.get('form')
         view = self.args.get('view')
         example = self.args.get('example')
+        find_coworkers = lambda project: ''.join(
+            [f"• {review.coworker.fullname} (@{review.coworker.username})\n" for review in project.reviews])
+        project_list_text = [
+            f'<b>{project.name}</b>\n<i>{project.description}</i>\nОценивающие:\n{find_coworkers(project)}'
+            for project in projects]
         if page:
             ratings = self.cut_per_page(ratings, page)
             projects = self.cut_per_page(projects, page)
-        find_coworkers = lambda project: '\n •  '.join(
-            [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
 
         if review_type == 'hr':
             self.build_list_message(title='▪️Проверка оценок проектов',
-                                    list_text=[f'{project.name}\n -  {project.description}' for project in projects])
+                                    list_text=project_list_text)
             list_data = []
             for rating in ratings:
                 if rating.text or rating.rating:
@@ -97,13 +100,13 @@ class ProjectsForm(Template):
             if list_data:
                 self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
             self.build_message(description=f'Автор: @{form.user.username}\n'
-                                           f'Юценивающий: @{review.coworker.username}')
-            self.build_message(description='❕  Выберите проект, у которго необходимо исправить оценку или комментарий')
+                                           f'Оценивающий: @{review.coworker.username}')
+            self.build_message(description='❕ Выберите проект, у которго необходимо исправить оценку или комментарий.')
             return self.MESSAGE
 
         elif review_type == 'coworker':
             self.build_list_message(title='▪️Проекты на оценку',
-                                    list_text=[f'{project.name}\n -  {project.description}' for project in projects])
+                                    list_text=project_list_text)
             list_data = []
             for rating in ratings:
                 if rating.text or rating.rating:
@@ -116,51 +119,45 @@ class ProjectsForm(Template):
                     list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
             if list_data:
                 self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
-            self.build_message(description='❕  Выберите проект ,который вы хотите оценить и прокомментировать')
+            self.build_message(description='❕ Выберите проект, который вы хотите оценить и прокомментировать.')
             return self.MESSAGE
 
         elif review_type == 'write':
-            title = '▪️Проекты'
+            title = '▪️Проекты\n'
 
             if view == 'list':
                 if projects:
-                    list_text = [f'{project.name}\n -  {project.description}\n Оценивающие:  {find_coworkers(project)}'
-                                 for project
-                                 in projects]
                     self.build_list_message(title=title,
-                                            list_text=list_text)
+                                            list_text=project_list_text)
                 elif example:
-                    self.build_message(title=title, text='“Проект: Оценка персонала за 1 полугодие 2021\n'
-                                                         'Описание: Зарегистрировала сотрудников ИЦ в количестве 70 человек\n'
-                                                         '\nПроект: Коммуникация\n'
-                                                         'Описание: Опубликовала 15 новостей о работе отделов ИЦ\n'
-                                                         '\nПроект: Обучение\n'
-                                                         'Описание: Сходила на тренинг для ботов”\n',
-                                       description='❕  Нажми кнопку “Добавить проект” и опиши каждый проект отдельно:')
+                    self.build_message(title=title,
+                                       text='“Проект: Оценка персонала за 1 полугодие 2021\n'
+                                            'Описание: Зарегистрировала сотрудников ИЦ в количестве 70 человек\n'
+                                            '\nПроект: Коммуникация\n'
+                                            'Описание: Опубликовала 15 новостей о работе отделов ИЦ\n'
+                                            '\nПроект: Обучение\n'
+                                            'Описание: Сходила на тренинг для ботов”\n',
+                                       description='❕ Нажми кнопку “Добавить проект” и опиши каждый проект отдельно:')
 
                 else:
-                    self.build_message(title='▪️Проекты',
+                    self.build_message(title=title,
                                        text='Добавь проекты, которые ты делал последние полгода. Это могут быть:\n'
                                             '– цели твоей команды, на которые ты фактически повлиял(-а),\n'
                                             '– проекты, над которыми ты работал(-а), \n'
                                             '– детали выполнения твоих базовых функциональных обязанностей,\n'
                                             '– планы по росту и развитию.\n',
-                                       description='❕  Нажми кнопку “Добавить проект” и опиши каждый проект отдельно:')
+                                       description='❕ Нажми кнопку “Добавить проект” и опиши каждый проект отдельно:')
                 return self.MESSAGE
 
             elif view == 'edit_choose':
-                list_text = [f'{project.name}\n -  {project.description}\n •  {find_coworkers(project)}' for project in
-                             projects]
                 self.build_list_message(title=title,
-                                        description='\n❕  Выберите проект, который хотите изменить',
-                                        list_text=list_text)
+                                        description='❕ Выберите проект, который хотите изменить.',
+                                        list_text=project_list_text)
 
             elif view == 'delete_choose':
-                list_text = [f'{project.name}\n -  {project.description}\n •  {find_coworkers(project)}' for project in
-                             projects]
                 self.build_list_message(title=title,
-                                        description='\n❕  Выберите проект, который хотите удалить',
-                                        list_text=list_text)
+                                        description='❕ Выберите проект, который хотите удалить.',
+                                        list_text=project_list_text)
             return self.MESSAGE
 
 
