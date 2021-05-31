@@ -1,5 +1,7 @@
+from typing import List
+
 from app.db import Session
-from app.models import Form, Project, User, CoworkerReview, CoworkerAdvice, CoworkerProjectRating
+from app.models import Project, User, CoworkerReview, CoworkerAdvice, CoworkerProjectRating
 from app.services.abc_entity import Entity
 from app.services.dictinary import HrReviewStatusService
 
@@ -10,11 +12,6 @@ class ProjectsService(Entity):
     model = None
     form = None
     REQUIREMENTS = {}
-
-    @classmethod
-    def create_empty(cls, form: Form):
-        """ """
-        return cls.Model(form=form)
 
     @property
     def all_text(self) -> list:
@@ -49,9 +46,8 @@ class ProjectsService(Entity):
     def contacts(self):
         return [review.coworker for review in self.model.reviews]
 
-    @contacts.setter
-    def contacts(self, contacts):  # TODO Обдумать .merge()
-        contacts = [contact.replace('@', '') for contact in contacts]
+    def add_contacts(self, contacts: List[str]):
+        """ Добавить контакты """
         if not Session.object_session(self.model):
             self.model = Session().merge(self.model)
         self.save_all(self.model)
@@ -60,11 +56,10 @@ class ProjectsService(Entity):
         hr_status = HrReviewStatusService().coworker
         for user in users:
             reviews = user.coworker_reviews
-            print([review.id for review in reviews if review.advice is None])
             if form not in [review.advice.form for review in reviews]:
                 review = CoworkerReview(coworker=user, hr_status=hr_status)
                 advice = CoworkerAdvice(coworker_review=review, form=form)
-                proj_rating = CoworkerProjectRating(review=review, project=self.model)
+                proj_rating = CoworkerProjectRating(coworker_review=review, project=self.model)
                 self.save_all(review, advice, proj_rating)
             else:
                 is_exist = Session().query(CoworkerProjectRating).\
@@ -74,6 +69,42 @@ class ProjectsService(Entity):
                 if not is_exist:
                     review = Session().query(CoworkerReview).join(CoworkerAdvice). \
                         filter(CoworkerReview.coworker == user, CoworkerAdvice.form == form).first()
-                    proj_rating = CoworkerProjectRating(review=review, project=self.model)
+                    proj_rating = CoworkerProjectRating(coworker_review=review, project=self.model)
                     self.save_all(proj_rating)
         Session().commit()
+
+    def del_contact(self, contact: User):
+        """ Удалить контакт из проекта """
+        if not Session.object_session(self.model):
+            self.model = Session().merge(self.model)
+        ratings = Session().query(CoworkerProjectRating). \
+            join(CoworkerReview). \
+            filter(CoworkerReview.coworker == contact).all()
+        if len(ratings) == 1:
+            Session().delete(ratings[0])
+            Session().delete(ratings[0].coworker_review)
+            Session.commit()
+        elif len(ratings) > 1:
+            for rate in ratings:
+                if rate.project == self.model:
+                    Session().delete(rate)
+                    Session.commit()
+
+    def update_contacts(self, old_contact: User, new_contact: User):
+        """ Изменить контакт в проекте """
+        if not Session.object_session(self.model):
+            self.model = Session().merge(self.model)
+        is_exist = Session().query(CoworkerReview).\
+            join(CoworkerProjectRating).\
+            filter(CoworkerProjectRating.project == self.model,
+                   CoworkerReview.coworker == new_contact).\
+            first()
+        if not is_exist:
+            review = Session().query(CoworkerReview).\
+                join(CoworkerProjectRating).\
+                filter(CoworkerProjectRating.project == self.model,
+                       CoworkerReview.coworker == old_contact).\
+                first()
+            review.coworker = new_contact
+            Session().add(review)
+            Session.commit()

@@ -84,7 +84,7 @@ class RequestSerializer:
     def split_text(self):
         """ """
         split_text = self.__message.text.split(';')
-        split_text = [text.strip() for text in split_text]
+        split_text = [text.strip().replace('@', '') for text in split_text]
         return split_text
 
     @property

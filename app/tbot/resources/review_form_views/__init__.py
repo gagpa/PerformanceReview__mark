@@ -35,13 +35,18 @@ from app.tbot.resources.review_form_views.form_views import \
 from app.tbot.resources.review_form_views.project_views import \
     edit_view as review_form_project_edit_view, \
     delete_view as review_form_project_delete_view, \
-    edit_contacts_view as review_form_project_edit_contacts_view, \
+    contacts_view as review_form_project_contacts_view, \
     edit_name_view as review_form_project_edit_name_view, \
     edit_description_view as review_form_project_edit_description_view, \
     add_name_view as review_form_project_add_name_view, \
     add_view as review_form_project_add_view, \
     add_contacts_view as review_form_project_add_contacts_view, \
-    add_description_view as review_form_project_add_description_view
+    add_description_view as review_form_project_add_description_view, \
+    delete_contact_view as review_form_project_delete_contact_view, \
+    delete_choose_contact_view as review_form_project_delete_choose_contact_view, \
+    add_contact_in_current_project_view as review_form_add_contact_in_current_project_view, \
+    edit_choose_contact_view as review_form_project_edit_choose_contact_view, \
+    change_contact_view as review_form_project_change_contact_view
 
 from app.tbot.resources.review_form_views.projects_views import \
     list_view as review_form_projects_list_view, \

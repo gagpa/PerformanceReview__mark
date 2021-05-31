@@ -20,7 +20,7 @@ class BossService(UserService):
             service = ProjectsService(project)
             contacts = [contact.username for contact in service.contacts]
             contacts.append(self.model.username)
-            service.contacts = contacts
+            service.add_contacts(contacts)
 
     def decline(self, form: Form, text: str) -> BossReview:
         """ Отклонить """

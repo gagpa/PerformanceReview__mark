@@ -1,3 +1,4 @@
+from app.services.user import UserService
 from app.tbot.resources.review_form_views.projects_views import list_view
 from app.tbot.services import ProjectsServiceTBot
 from app.tbot.services.forms import ProjectForm
@@ -23,39 +24,69 @@ def edit_name_view(request):
     return template, next_view
 
 
-def edit_contacts_view(request):
-    """ Изменить контакты к проекту """
-    pk = request.args['project'][0]
-    form = request.form
-    service = ProjectsServiceTBot(form=form)
-    project = service.by_pk(pk=pk)
-    template = ProjectForm(project=project, view='edit_coworkers', review_type='write')
-    next_view = service.update_contacts_before(edit_view)
-    return template, next_view
-
-
 def delete_choose_contact_view(request):
     """ Выбрать контакт под удаление """
     pk = request.args['project'][0]
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    template = ProjectForm(project=project, view='delete_choose_contact', review_type='write')
+    template = ProjectForm(project=project, view='delete_choose_contact', review_type='write', have_markup=True)
     return template
+
+
+def add_contact_in_current_project_view(request):
+    """ Добавить контакт в существующий проект """
+    pk = request.args['project'][0]
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.by_pk(pk=pk)
+    template = ProjectForm(project=project, view='edit_coworkers', review_type='write')
+    next_view = service.add_contacts_before(edit_view)
+    return template, next_view
 
 
 def delete_contact_view(request):
     """ Удалить контакт """
+    pk = request.args['contact'][0]
+    project_pk = request.args['project'][0]
+    form = request.form
+    user = UserService().by_pk(pk=pk)
+    service = ProjectsServiceTBot(form=form)
+    service.by_pk(project_pk)
+    service.del_contact(user)
+    return edit_view(request)
 
 
 def edit_choose_contact_view(request):
     """ Выбрать контакт для изменения """
-    pass
+    pk = request.args['project'][0]
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.by_pk(pk=pk)
+    template = ProjectForm(project=project, view='edit_choose_contact', review_type='write', have_markup=True)
+    return template
 
 
-def edit_contact_view(request):
-    """ Изменить контакт """
-    pass
+def change_contact_view(request):
+    """ Поменять контакт на другой """
+    pk = request.args['project'][0]
+    pk_contact = request.args['contact'][0]
+    old_contact = UserService().by_pk(pk_contact)
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.by_pk(pk=pk)
+    template = ProjectForm(project=project, view='edit_coworkers', review_type='write')
+    next_view = service.update_contacts_before(edit_view, old_contact)
+    return template, next_view
+
+
+def contacts_view(request):
+    """ Коллеги проекта """
+    pk = request.args['project'][0]
+    form = request.form
+    service = ProjectsServiceTBot(form=form)
+    project = service.by_pk(pk=pk)
+    return ProjectForm(project=project, have_markup=True, view='contacts', review_type='write')
 
 
 def edit_description_view(request):
@@ -117,7 +148,7 @@ def add_contacts_view(request):
     usernames = request.split_text
     form = request.form
     service = ProjectsServiceTBot(project)
-    service.contacts = usernames
+    service.add_contacts(usernames)
     return list_view(request=request)
 
 
@@ -125,7 +156,6 @@ __all__ = \
     [
         'edit_view',
         'edit_name_view',
-        'edit_contacts_view',
         'edit_description_view',
         'delete_view',
         'add_view',

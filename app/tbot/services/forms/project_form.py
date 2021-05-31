@@ -20,16 +20,27 @@ class ProjectForm(Template):
             if review_type == 'write':
                 if view == 'delete_choose_contact':
                     main_template = BUTTONS_TEMPLATES['review_form_project_delete_contact']
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_project_contacts_back'])
                     return self.build_list(main_template,
-                                           unique_args=[review.coworker.id for review in project.reviews],
+                                           unique_args=[{'contact': review.coworker.id} for review in project.reviews],
+                                           project=project.id)
+                elif view == 'edit_choose_contact':
+                    main_template = BUTTONS_TEMPLATES['review_form_project_edit_contact']
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_project_contacts_back'])
+                    return self.build_list(main_template,
+                                           unique_args=[{'contact': review.coworker.id} for review in project.reviews],
                                            project=project.id)
                 elif view == 'contacts':
-                    return self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_project_add_contact'],
-                                                BUTTONS_TEMPLATES['review_form_project_delete_choose_contact'])
+                    self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_add_contact_in_current_project'])
+                    if project.reviews:
+                        self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_project_delete_choose_contact'],
+                                             BUTTONS_TEMPLATES['review_form_project_edit_choose_contact'])
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_project_edit_back'])
+                    return self.build(project=project.id)
                 else:
                     self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_project_edit_name'],
                                          BUTTONS_TEMPLATES['review_form_project_edit_description'],
-                                         BUTTONS_TEMPLATES['review_form_project_edit_contacts'])
+                                         BUTTONS_TEMPLATES['review_form_project_contacts'])
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'])
                     return self.build(project=project.id)
 
@@ -100,13 +111,20 @@ class ProjectForm(Template):
                 self.build_message(description='❕ Выберите, что именно вы хотите изменить в проекте:')
 
             elif view == 'edit_name':
+                self.add_project(project)
                 self.build_message(description='❕ Напишите название проекта.')
 
             elif view == 'edit_description':
+                self.add_project(project)
                 self.build_message(description='❕ Опишите цель проекта и свои обязанности.')
 
             elif view == 'edit_coworkers':
+                self.add_project(project)
                 self.build_message(description='❕ Введите username коллеги, который может оценить ваш вклад в проект.')
+
+            elif view == 'contacts':
+                self.add_project(project)
+                self.build_message(description='❕ Внеси изменения или вернись к списку проектов.')
 
             elif not project.name:
                 self.build_message(title='Заполнение проекта',

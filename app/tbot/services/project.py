@@ -1,6 +1,7 @@
 from app.db import Session
 from app.services.form_review import ProjectsService
 from app.services.validator import Validator
+from app.models import User
 
 
 class ProjectsServiceTBot(ProjectsService):
@@ -58,13 +59,25 @@ class ProjectsServiceTBot(ProjectsService):
 
         return wrapper
 
-    def update_contacts_before(self, func):
-        """ Декоратор для обновления проекта за текущее review """
+    def update_contacts_before(self, func, old_contact: User):
+        """ Декоратор для обновления контактов в проекте """
+        def wrapper(request):
+            new_contact = Session().query(User).filter(User.username == request.text).first()
+            if new_contact:
+                self.update_contacts(old_contact, new_contact)
+            request.add('project', [self.model.id])
+            Session.commit()
+            Session.remove()
+            return func(request=request)
 
+        return wrapper
+
+    def add_contacts_before(self, func):
+        """ Декортаор для добавления контакта в проект """
         def wrapper(request):
             for text in request.split_text:
                 Validator().validate_text(text, 'form')
-            self.contacts = request.split_text
+            self.add_contacts(request.split_text)
             request.add('project', [self.model.id])
             Session.commit()
             Session.remove()
