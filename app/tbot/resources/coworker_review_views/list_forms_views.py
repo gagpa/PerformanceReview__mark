@@ -8,7 +8,7 @@ def list_forms_view(request):
     is_asc = request.is_asc
     page = request.page
     reviews = CoworkerService(coworker).reviews
-    forms = [review.advice.form for review in reviews]
+    forms = [review.form for review in reviews]
     return ListFormReview(forms=forms, reviews=reviews, review='coworker', page=page, is_asc=is_asc)
 
 

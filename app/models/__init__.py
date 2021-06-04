@@ -3,6 +3,7 @@
 """
 
 from app.models.ahcievement import Achievement
+from app.models.advice_type import AdviceType
 from app.models.boss_review import BossReview
 from app.models.coworker_advice import CoworkerAdvice
 from app.models.coworker_project_rating import CoworkerProjectRating

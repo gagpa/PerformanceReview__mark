@@ -7,7 +7,7 @@ def projects_view(request):
     review_pk = request.args['review'][0]
     review = CoworkerReviewService().by_pk(review_pk)
     page = request.page
-    return ProjectsForm(form=review.advice.form,
+    return ProjectsForm(form=review.form,
                         ratings=review.projects_ratings,
                         review=review,
                         projects=review.projects,

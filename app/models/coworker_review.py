@@ -16,15 +16,20 @@ class CoworkerReview(Base):
 
     hr_status_id = Column(SmallInteger, ForeignKey('hr_review_statuses.id'), nullable=True)
     coworker_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
 
     hr_status = relationship('HrReviewStatus', backref='coworker_reviews')
     coworker = relationship('User', backref=backref('coworker_reviews', cascade='all, delete'))
     projects = relationship('Project', secondary='coworker_project_ratings')
     projects_ratings = relationship('CoworkerProjectRating', backref=backref('review', uselist=False))
+    form = relationship('Form', backref=backref('coworker_reviews', cascade='all, delete'))
 
     __mapper_args__ = {
         'order_by': id
     }
+
+    def __repr__(self):
+        return f'CoworkerReview {self.coworker} - {self.form.user}'
 
 
 __all__ = ['CoworkerReview']

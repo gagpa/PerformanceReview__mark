@@ -12,7 +12,7 @@ def form_view(request):
     review = service.by_pk(pk)
     ratings = review.projects_ratings
     on_review = service.is_on_review
-    template = ReviewForm(form=review.advice.form, advice=review.advice, have_markup=on_review, ratings=ratings,
+    template = ReviewForm(form=review.form, have_markup=on_review, ratings=ratings,
                           review_type='coworker', review=review)
     return template
 
@@ -23,7 +23,7 @@ def send_to_hr(request):
     CoworkerService(request.user).send_hr(pk)
     review = CoworkerReviewService().by_pk(pk)
     if HRService().all():
-        notificator.notificate(Notification(view='to_hr', form=review.advice.form, review=review),
+        notificator.notificate(Notification(view='to_hr', form=review.form, review=review),
                                *[hr.chat_id for hr in HRService().all()])
     return list_forms_view(request=request)
 

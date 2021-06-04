@@ -56,21 +56,14 @@ class ProjectsService(Entity):
         hr_status = HrReviewStatusService().coworker
         for user in users:
             reviews = user.coworker_reviews
-            if form not in [review.advice.form for review in reviews]:
-                review = CoworkerReview(coworker=user, hr_status=hr_status)
-                advice = CoworkerAdvice(coworker_review=review, form=form)
-                proj_rating = CoworkerProjectRating(coworker_review=review, project=self.model)
-                self.save_all(review, advice, proj_rating)
+            review = list(filter(lambda coworker_review: coworker_review.form == form, reviews))
+            if review:
+                proj_rating = CoworkerProjectRating(coworker_review=review[0], project=self.model)
+                self.save_all(proj_rating)
             else:
-                is_exist = Session().query(CoworkerProjectRating).\
-                                           join(CoworkerReview).\
-                                           filter(CoworkerReview.coworker == user,
-                                                  CoworkerProjectRating.project == self.model).all()
-                if not is_exist:
-                    review = Session().query(CoworkerReview).join(CoworkerAdvice). \
-                        filter(CoworkerReview.coworker == user, CoworkerAdvice.form == form).first()
-                    proj_rating = CoworkerProjectRating(coworker_review=review, project=self.model)
-                    self.save_all(proj_rating)
+                review = CoworkerReview(coworker=user, hr_status=hr_status, form=form)
+                proj_rating = CoworkerProjectRating(coworker_review=review, project=self.model)
+                self.save_all(review, proj_rating)
         Session().commit()
 
     def del_contact(self, contact: User):
@@ -81,14 +74,14 @@ class ProjectsService(Entity):
             join(CoworkerReview). \
             filter(CoworkerReview.coworker == contact).all()
         if len(ratings) == 1:
-            Session().delete(ratings[0])
-            Session().delete(ratings[0].coworker_review)
-            Session.commit()
+            ratings = ratings[0]
+            Session().delete(ratings)
+            Session().delete(ratings.coworker_review)
         elif len(ratings) > 1:
             for rate in ratings:
                 if rate.project == self.model:
                     Session().delete(rate)
-                    Session.commit()
+        Session.commit()
 
     def update_contacts(self, old_contact: User, new_contact: User):
         """ Изменить контакт в проекте """

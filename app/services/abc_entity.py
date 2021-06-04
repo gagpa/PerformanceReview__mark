@@ -23,6 +23,7 @@ class Entity(ABC):
 
         for arg in self.REQUIREMENTS:
             if arg not in kwargs.keys():
+                print(arg)
                 raise ArgumentNotFounded
 
     def create(self, **kwargs):

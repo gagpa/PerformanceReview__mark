@@ -79,6 +79,16 @@ BUTTONS_TEMPLATES = \
         'coworker_review_update_list': ButtonTemplate('coworker_review_list', 'Обновить список'),
         'coworkers_review_to_form': ButtonTemplate('coworker_review_form', 'Анкета коллеги'),
         'coworkers_review_to_list': ButtonTemplate('coworker_review_list', 'Список анкет на проверку'),
+        'coworker_review_advices': ButtonTemplate('coworker_review_advices', 'Советы'),
+        'coworker_review_advices_todo': ButtonTemplate('coworker_advices', 'Что делать?'),
+        'coworker_review_advices_not_todo': ButtonTemplate('coworker_advices', 'Что перестать делать?'),
+        'coworker_review_back_advices': ButtonTemplate('coworker_advices', '« К советам'),
+        'coworker_review_advices_add': ButtonTemplate('coworker_advices_add', 'Добавить'),
+        'coworker_review_advices_delete': ButtonTemplate('coworker_advices_delete'),
+        'coworker_review_advices_edit': ButtonTemplate('coworker_advices_edit'),
+        'coworker_review_advices_delete_choose': ButtonTemplate('coworker_advices_delete_choose', 'Удалить'),
+        'coworker_review_advices_edit_choose': ButtonTemplate('coworker_advices_edit_choose', 'Изменить'),
+
 
         'hr_review_list': ButtonTemplate('hr_review_list', '« К списку'),
         'hr_review_form': ButtonTemplate('hr_review_form'),

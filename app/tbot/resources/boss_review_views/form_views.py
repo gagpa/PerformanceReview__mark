@@ -22,14 +22,14 @@ def accept_form_view(request):
         review = BossReviewService().by_pk(pk)
         BossService(boss).accept(review.form)
         BossReviewService()
-        for advice in review.form.advices:
-            notificator.notificate(Notification(view='to_coworkers', form=review.form, review=advice.coworker_review), advice.coworker_review.coworker.chat_id)
+        for review in review.form.coworker_reviews:
+            notificator.notificate(Notification(view='to_coworkers', form=review.form, review=review), review.coworker.chat_id)
     elif request.args.get('form'):
         pk_form = request.args['form'][0]
         form = FormService().by_pk(pk_form)
         StatusService().change_to_coworker_review(form)
-        for advice in form.advices:
-            notificator.notificate(Notification(view='to_coworkers', form=form, review=advice.coworker_review), advice.coworker_review.coworker.chat_id)
+        for review in form.coworker_reviews:
+            notificator.notificate(Notification(view='to_coworkers', form=form, review=review), review.coworker.chat_id)
     return list_forms_view(request)
 
 

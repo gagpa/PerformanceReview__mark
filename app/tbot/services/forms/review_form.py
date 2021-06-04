@@ -35,10 +35,11 @@ class ReviewForm(Template):
 
             elif review_type == 'coworker':
                 self.extend_keyboard(False, BUTTONS_TEMPLATES['coworker_projects'])
-                self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_review_todo'],
-                                     BUTTONS_TEMPLATES['coworker_review_not_todo'])
-                if advice.todo and advice.not_todo and all(
-                    rating.text and rating.rating for rating in review.projects_ratings):
+                self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_review_advices_todo'].add(type='todo'),
+                                     BUTTONS_TEMPLATES['coworker_review_advices_not_todo'].add(type='not todo'))
+                if review.advices and any(advice.advice_type.name == 'todo' for advice in review.advices) \
+                    and any(advice.advice_type.name == 'not todo' for advice in review.advices) \
+                    and all(rating.text and rating.rating for rating in review.projects_ratings):
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_review_form_send_to_hr'])
                 self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_review_list'])
                 markup = self.build(review=review.id)
@@ -187,20 +188,24 @@ class ReviewForm(Template):
             if list_data:
                 self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
 
-            if advice.todo or advice.not_todo:
+            if review.advices:
                 text = ''
-                if advice.todo:
-                    text += f'- Что делать: {advice.todo}\n'
-                if advice.not_todo:
-                    text += f'- Что перестать делать:{advice.not_todo}'
-                if advice.hr_comment:
-                    text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
+                for advice in review.advices:
+                    if advice.advice_type.name == 'todo':
+                        text += f'- Что делать: {advice.text}\n'
+                        if advice.hr_comment:
+                            text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
+                    else:
+                        text += f'- Что перестать делать:{advice.text}'
+                        if advice.hr_comment:
+                            text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
                 self.build_message(title='▫ Ваши советы', text=text)
             if view == 'todo':
                 self.build_message(description='❕ Введите "Что стоит изменить вашему коллеге".')
             elif view == 'not todo':
                 self.build_message(description='❕ Введите "Что стоит перестать делать вашему коллеге".')
-            elif not review.advice.hr_comment and not any(rating.hr_comment for rating in ratings):
+            elif not any(advice.hr_comment for advice in review.advices) and not any(
+                rating.hr_comment for rating in ratings):
                 count_comment = 0
                 count_rate = 0
                 max_rates = len(review.projects_ratings)
@@ -217,8 +222,8 @@ class ReviewForm(Template):
                 self.build_message(description=f'❕ Состояние заполнения\n'
                                                f' {rating_mark}  Вы оценили {int(count_rate / max_rates * 100)}% проектов\n'
                                                f' {comments_mark}  Вы прокомментировали {int(count_comment / max_rates * 100)}% проектов\n'
-                                               f' {"✅" if review.advice.todo else "❌"}  "Что делать?"\n'
-                                               f' {"✅" if review.advice.not_todo else "❌"}  "Что перестать делать?"\n')
+                                               f' {"✅" if review.advices and any(advice.advice_type.name == "todo" for advice in review.advices) else "❌"}  "Что делать?"\n'
+                                               f' {"✅" if review.advices and any(advice.advice_type.name == "not todo" for advice in review.advices) else "❌"}  "Что перестать делать?"\n')
             return self.MESSAGE
 
         elif review_type == 'hr':

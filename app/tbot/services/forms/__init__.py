@@ -1,5 +1,7 @@
 from app.tbot.services.forms.achievement_form import AchievementForm
 from app.tbot.services.forms.achievements_form import AchievementsForm
+from app.tbot.services.forms.coworker_advice_form import CoworkerAdviceForm
+from app.tbot.services.forms.coworker_advices_form import CoworkerAdvicesForm
 from app.tbot.services.forms.duties_form import DutiesForm
 from app.tbot.services.forms.duty_form import DutyForm
 from app.tbot.services.forms.fail_form import FailForm
