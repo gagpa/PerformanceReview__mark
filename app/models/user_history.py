@@ -13,7 +13,8 @@ class UserHistory(Base):
 
     text = Column(VARCHAR(50), nullable=False)
     url_type = Column(VARCHAR(25), nullable=False)
-
+    args = Column(VARCHAR(100), nullable=True)
+    message_id = Column(VARCHAR(50), nullable=False)
     created_at = Column(TIMESTAMP, default=datetime.now(), nullable=False)
     updated_at = Column(TIMESTAMP, onupdate=datetime.now(), nullable=True)
 

@@ -24,11 +24,11 @@ class MessageManager:
         if isinstance(response, tuple):
             self.ask_user(message=message, template=response[0], next_view=response[1])
         else:
-            self.send_message(message=message, template=response)
+            message = self.send_message(message=message, template=response)
             if request.user and url and url_type:
-                save_user_step(request, url, url_type)
+                save_user_step(request, url, url_type, message)
 
-    def send_message(self, message, template, general_markup=None) -> None:
+    def send_message(self, message, template, general_markup=None):
         """ Отправить новое сообщение пользователю """
         if template:
             text, markup = template.dump()
