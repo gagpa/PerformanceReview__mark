@@ -1,7 +1,8 @@
-from app.services.review import CoworkerReviewService
+from app.services.form_review import CoworkerAdviceService
 from app.tbot.resources.coworker_review_views.advices_views import list_view
 from app.tbot.services import CoworkerAdviceServiceTBot
 from app.tbot.services.forms import CoworkerAdviceForm
+from app.services.review import CoworkerReviewService
 
 
 def delete_view(request):

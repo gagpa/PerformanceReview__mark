@@ -41,30 +41,31 @@ def get_hr_rapport(request):
     final_rating = ProjectCommentService().final_rating(pk)
     template_vars.update(rating=final_rating if final_rating else 'Нет')
 
-    projects_comments = ProjectCommentService.project_comments(pk)
+    reviews = ProjectCommentService.project_comments(pk)
     template_vars.update(reviews=[])
 
     form = FormService().by_pk(pk)
 
-    for comment in projects_comments:
-        fullname = comment.coworker.fullname
-        if comment.coworker.id == form.user.boss_id:
+    for review in reviews:
+        fullname = review.coworker.fullname
+        if review.coworker.id == form.user.boss_id:
             role = 'Руководитель'
-        elif comment.coworker.boss_id == form.user.id:
+        elif review.coworker.boss_id == form.user.id:
             role = 'Подчиненный'
         else:
             role = 'Коллега'
-        ratings = [project_rating.rating.value for project_rating in comment.projects_ratings if
+        ratings = [project_rating.rating.value for project_rating in review.projects_ratings if
                    project_rating.rating]
         mark = ' + '.join(map(str, ratings))
-        mark += f' = {round(mean(ratings), 2)}' if len(ratings) > 1 else ''
+        if len(ratings) > 1:
+            mark = f'{mark} = {round(mean(ratings), 2)}'
 
-        comments = '<br>• '.join(
-            [project_rating.text for project_rating in comment.projects_ratings if
-             project_rating.rating])
-        comments = f'Комментарии по проектам:<br>•{comments}<br>'
-        todo = f'Что делать:<br>{comment.advice.todo}<br>'
-        not_todo = f'Что перестать делать:<br>{comment.advice.not_todo}'
+        comments = '<br>• '.join([project_rating.text for project_rating in review.projects_ratings if project_rating.rating])
+        comments = f'Комментарии по проектам:<br>• {comments}<br>'
+        todo = '<br>• '.join([advice.text for advice in review.advices if advice.advice_type.name == 'todo'])
+        todo = f'Что делать:<br>• {todo}<br>'
+        not_todo = '<br>• '.join([advice.text for advice in review.advices if advice.advice_type.name == 'not todo'])
+        not_todo = f'Что перестать делать:<br>• {not_todo}'
         template_vars['reviews'].append([fullname, role, mark, comments, todo, not_todo])
 
     create_and_send_pdf(request.user.chat_id, HR_REPORT_TEMPLATE, template_vars)
@@ -96,27 +97,27 @@ def get_data_for_rapport(pk):
     achievements = Session().query(Achievement).filter(Achievement.form == review)
     fails = Session().query(Fail).filter(Fail.form == review)
     summary = SummaryService().by_form_id(pk)
-    template_vars = {"start": review.review_period.start_date.date(),
-                     "end": review.review_period.end_date.date(),
-                     "fullname": review.user.fullname,
-                     "username": review.user.username,
-                     "boss": review.user.boss.fullname if review.user.boss else 'Нет',
-                     "duties": duties,
-                     "projects": projects,
-                     "achievements": achievements,
-                     "fails": fails,
-                     "summary": summary.text if summary else 'Отсутствует'}
+    template_vars = {'start': review.review_period.start_date.date(),
+                     'end': review.review_period.end_date.date(),
+                     'fullname': review.user.fullname,
+                     'username': review.user.username,
+                     'boss': review.user.boss.fullname if review.user.boss else 'Нет',
+                     'duties': duties,
+                     'projects': projects,
+                     'achievements': achievements,
+                     'fails': fails,
+                     'summary': summary.text if summary else 'Отсутствует'}
 
     return template_vars
 
 
 def create_and_send_pdf(chat_id, template_name, template_vars):
-    filename = f"report_{datetime.datetime.now()}.pdf"
+    filename = f'report_{datetime.datetime.now()}.pdf'
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template(template_name)
     html_out = template.render(template_vars)
     HTML(string=html_out).write_pdf(filename)
-    with open(filename, "rb") as f:
+    with open(filename, 'rb') as f:
         bot.send_document(chat_id, f)
 
     os.remove(filename)

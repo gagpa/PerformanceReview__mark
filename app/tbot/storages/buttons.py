@@ -94,7 +94,7 @@ BUTTONS_TEMPLATES = \
         'hr_review_form': ButtonTemplate('hr_review_form'),
         'hr_review_accept': ButtonTemplate('hr_review_accept', 'Принять'),
         'hr_review_decline': ButtonTemplate('hr_review_decline', 'Отклонить'),
-        'hr_review_todo': ButtonTemplate('hr_review_todo', 'TODO'),
+        'hr_review_todo': ButtonTemplate('hr_review_todo', 'Советы'),
         'hr_review_ratings': ButtonTemplate('hr_review_ratings', 'Оценки'),
         'hr_review_back_to_form': ButtonTemplate('hr_review_form', '« Назад'),
         'hr_review_comment_rating': ButtonTemplate('hr_review_comment_rating'),
@@ -105,6 +105,9 @@ BUTTONS_TEMPLATES = \
         'hr_review_sort_desc': ButtonTemplate('hr_review_list', '🔻').add(asc=False),
         'hr_review_to_form': ButtonTemplate('hr_review_form', 'Анкета с оценками'),
         'hr_review_to_list': ButtonTemplate('hr_review_list', 'Список анкет на проверку'),
+        'hr_advices_edit': ButtonTemplate('hr_advices_edit'),
+
+
         'get_position': ButtonTemplate('get_position'),
         'get_department': ButtonTemplate('get_department'),
 

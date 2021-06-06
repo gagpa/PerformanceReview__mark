@@ -14,7 +14,7 @@ def list_forms_view(request):
     else:
         is_asc = True
     reviews = HRService(hr).reviews()
-    forms = [review.advice.form for review in reviews]
+    forms = [review.form for review in reviews]
     page = int(request.args['pg'][0]) if request.args.get('pg') else 1
     template = ListFormReview(forms=forms, reviews=reviews, review='hr', page=page, is_asc=is_asc)
     return template

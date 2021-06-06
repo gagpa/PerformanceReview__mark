@@ -22,6 +22,11 @@ class CoworkerAdviceForm(Template):
                                description='\n❕ Отправьте в сообщении свой совет.',
                                text=f'{coworker_advice.text}')
             return self.MESSAGE
+        elif view == 'hr':
+            self.build_message(title='▪️Совет',
+                               description='\n❕ Отправьте в сообщении, что нужно исправить или "+" чтобы убрать свой комментарий.',
+                               text=f'{coworker_advice.text}')
+            return self.MESSAGE
 
 
 __all__ = ['CoworkerAdviceForm']

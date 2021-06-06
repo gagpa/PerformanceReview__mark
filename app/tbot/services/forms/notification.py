@@ -81,7 +81,7 @@ class Notification(Template):
 
         elif view == 'to_hr':
             description = f'Сотрудник {review.coworker.fullname} (@{review.coworker.username}) оценил анкету ' \
-                          f'{review.advice.form.user.fullname} (@{review.advice.form.user.username})'
+                          f'{review.form.user.fullname} (@{review.form.user.username})'
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE
 

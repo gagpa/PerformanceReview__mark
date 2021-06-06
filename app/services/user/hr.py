@@ -27,7 +27,7 @@ class HRService(UserService):
         form_status = StatusService().accepted
         self.save_all(review)
         if service.is_last_review(review):
-            review.advice.form.status = form_status
+            review.form.status = form_status
         self.save_all(review)
         Session.commit()
 
@@ -42,13 +42,13 @@ class HRService(UserService):
     def reviews(self):
         form_status = StatusService().coworker_review
         hr_status = HrReviewStatusService().hr
-        query = Session.query(CoworkerReview).join(CoworkerAdvice, Form)
+        query = Session.query(CoworkerReview).join(Form)
         query = query.filter(CoworkerReview.hr_status == hr_status,
                              Form.status == form_status
                              )
         reviews = query.all()
         return reviews
-    
+
     def all(self):
         return self.all_by(role=RoleService().hr)
 

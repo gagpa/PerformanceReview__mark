@@ -1,5 +1,5 @@
 from app.db import Session
-from app.models import Form, ReviewPeriod, User, Status, CoworkerAdvice
+from app.models import Form, ReviewPeriod, User, Status, CoworkerAdvice, CoworkerReview
 from app.services.dictinary import StatusService
 from app.services.dictinary.summary import SummaryService
 from app.services.form_review import FormService
@@ -20,10 +20,10 @@ def employee_review(request):
     form_id = request.args['pk'][0]
     current_review = Session().query(Form).join(User, Form.user).join(Status, Form.status) \
         .filter(Form.id == form_id).one_or_none()
-    coworker_advices = Session().query(CoworkerAdvice).filter_by(form_id=form_id).all()
+    advices = Session().query(CoworkerAdvice).join(CoworkerReview, Form).filter(Form.id == form_id).all()
     summary = SummaryService().by_form_id(form_id)
     rating = ProjectCommentService().final_rating(form_id)
-    return CurrentReviewForm(model=current_review, advices=coworker_advices, summary=summary,
+    return CurrentReviewForm(model=current_review, advices=advices, summary=summary,
                              rating=rating)
 
 

@@ -13,7 +13,7 @@ def form_view(request):
     ratings = review.projects_ratings
     on_review = service.is_on_review
 
-    template = ReviewForm(form=review.advice.form, advice=review.advice, have_markup=on_review, ratings=ratings,
+    template = ReviewForm(form=review.form, have_markup=on_review, ratings=ratings,
                           review_type='hr', review=review)
     return template
 
@@ -36,5 +36,4 @@ def decline_view(request):
     service = HrReviewService()
     review = service.by_pk(pk)
     ratings = review.projects_ratings
-    return ReviewForm(form=review.advice.form, review_type='hr', ratings=ratings, review=review, advice=review.advice,
-                      have_markup=True, decline=True)
+    return ReviewForm(form=review.form, review_type='hr', ratings=ratings, review=review, have_markup=True, decline=True)

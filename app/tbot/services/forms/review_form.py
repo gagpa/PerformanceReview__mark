@@ -189,22 +189,37 @@ class ReviewForm(Template):
                 self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
 
             if review.advices:
-                text = ''
+                todo = []
+                not_todo = []
                 for advice in review.advices:
                     if advice.advice_type.name == 'todo':
-                        text += f'- Что делать: {advice.text}\n'
-                        if advice.hr_comment:
-                            text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
+                        todo.append(advice)
                     else:
-                        text += f'- Что перестать делать:{advice.text}'
+                        not_todo.append(advice)
+                self.build_message(title='▫ Ваши советы')
+                if todo:
+                    for i, advice in enumerate(todo):
+                        if i > 0:
+                            text = f'{text}\n• {advice.text}'
+                        else:
+                            text = f'• {advice.text}'
                         if advice.hr_comment:
-                            text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
-                self.build_message(title='▫ Ваши советы', text=text)
-            if view == 'todo':
-                self.build_message(description='❕ Введите "Что стоит изменить вашему коллеге".')
-            elif view == 'not todo':
-                self.build_message(description='❕ Введите "Что стоит перестать делать вашему коллеге".')
-            elif not any(advice.hr_comment for advice in review.advices) and not any(
+                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>"'
+                            text = f'{text}\n{sub_text}'
+                    self.build_message(title='Что начать делать:',
+                                       text=text)
+                if not_todo:
+                    for i, advice in enumerate(not_todo):
+                        if i > 0:
+                            text = f'{text}\n• {advice.text}'
+                        else:
+                            text = f'• {advice.text}'
+                        if advice.hr_comment:
+                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>"'
+                            text = f'{text}\n{sub_text}'
+                    self.build_message(title='Что перестать делать:',
+                                       text=text)
+            if not any(advice.hr_comment for advice in review.advices) and not any(
                 rating.hr_comment for rating in ratings):
                 count_comment = 0
                 count_rate = 0
@@ -251,25 +266,49 @@ class ReviewForm(Template):
                 if rating.text or rating.rating:
                     list_data.append(f'{rating.project.name}')
                 if rating.rating:
-                    list_data[-1] += f'\n -  Оценка: {rating.rating.name} {"🌟" * rating.rating.value}'
+                    list_data[-1] += f'\nОценка: {rating.rating.name} {"🌟" * rating.rating.value}'
                 if rating.text:
-                    list_data[-1] += f'\n -  Комментарий: {rating.text}'
+                    list_data[-1] += f'\nКомментарий: {rating.text}'
                 if rating.hr_comment:
                     list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
             if list_data:
                 self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
 
-            if advice.todo or advice.not_todo:
-                text = ''
-                if advice.todo:
-                    text += f'- Что делать: {advice.todo}\n'
-                if advice.not_todo:
-                    text += f'- Что перестать делать:{advice.not_todo}'
-                if advice.hr_comment:
-                    text += f'\n<i>❗ Исправить: {advice.hr_comment}</i>'
-                self.build_message(title='▫ Ваши советы', text=text)
+            if review.advices:
+                todo = []
+                not_todo = []
+                for advice in review.advices:
+                    if advice.advice_type.name == 'todo':
+                        todo.append(advice)
+
+                    else:
+                        not_todo.append(advice)
+
+                self.build_message(title='▫ Ваши советы')
+                if todo:
+                    for i, advice in enumerate(todo):
+                        if i > 0:
+                            text = f'{text}\n• {advice.text}'
+                        else:
+                            text = f'• {advice.text}'
+                        if advice.hr_comment:
+                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>"'
+                            text = f'{text}\n{sub_text}'
+                    self.build_message(title='Что начать делать:',
+                                       text=text)
+                if not_todo:
+                    for i, advice in enumerate(not_todo):
+                        if i > 0:
+                            text = f'{text}\n• {advice.text}'
+                        else:
+                            text = f'• {advice.text}'
+                        if advice.hr_comment:
+                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>"'
+                            text = f'{text}\n{sub_text}'
+                    self.build_message(title='Что перестать делать:',
+                                       text=text)
             if view == 'todo':
-                self.build_message(description='❕ Введите ,что исправить в разделе "Ваши советы".')
+                self.build_message(description='❕ Введите, что исправить в разделе "Ваши советы".')
             return self.MESSAGE
 
         elif review_type == 'not_active':

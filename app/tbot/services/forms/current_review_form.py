@@ -68,26 +68,29 @@ class CurrentReviewForm(Template):
                                                                    )
         elif self.args.get('model'):
             title = 'Review сотрудника'
-            to_do = ''
-            not_todo = ''
-            for advice in self.args.get('advices'):
-                to_do += f'{advice.todo}\n' if advice.todo else ''
-                not_todo += f'{advice.not_todo}\n' if advice.not_todo else ''
-            to_do = to_do if to_do else "отсутствует"
-            not_todo = not_todo if not_todo else "отсутствует"
-            summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
-            rating = self.args.get("rating") if self.args.get("rating") else "\n"
-            text = f"ФИО: {self.args.get('model').user.fullname}\n" \
-                   f"Статус: {self.args.get('model').status.name}\n" \
-                   f"Оценка: {rating}\n" \
-                   f"\nЧто делать:\n" \
-                   f"{to_do}" \
-                   f"\nЧто не делать:\n" \
-                   f"{not_todo}" \
-                   f"\n\nПодведение итогов:" \
-                   f"\n{summary}"
+            todo = []
+            not_todo = []
 
-            text += '\n\n❕ Доступна опция выгрузки анкеты' if self.args.get('summary') else ''
+            for advice in self.args.get('advices'):
+                if advice.advice_type.name == 'todo':
+                    todo.append(f'• {advice.text}')
+                else:
+                    not_todo.append(f'• {advice.text}')
+            todo = '\n'.join(todo)
+            not_todo = '\n'.join(not_todo)
+            summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
+            rating = self.args.get('rating') if self.args.get('rating') else '\nостутствует'
+            text = f"<i>ФИО:</i> {self.args.get('model').user.fullname}\n" \
+                   f"<i>Статус:</i> {self.args.get('model').status.name}\n\n" \
+                   f"<b>Оценка:</b> {rating}\n" \
+                   f"\n<b>Что делат:</b>\n" \
+                   f"{todo if todo else 'отсутствует'}" \
+                   f"\n\n<b>Что не делать:</b>\n" \
+                   f"{not_todo if not_todo else 'отсутствует'}" \
+                   f"\n\n<b>Подведение итогов:</b>" \
+                   f"\n{summary}"
+            if self.args.get('summary'):
+                text = f'{text}\n\n❕ Доступна опция выгрузки анкеты'
 
             message_text = self.message_builder.build_message(title, '', text)
         elif self.args.get('change_summary'):

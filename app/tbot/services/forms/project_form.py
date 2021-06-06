@@ -80,7 +80,7 @@ class ProjectForm(Template):
             self.add_project(project)
 
             if coworker_comment_rating.rating:
-                self.build_message(title='Текущая оценка:', text={"🌟" * coworker_comment_rating.rating.value})
+                self.build_message(title='Текущая оценка:', text=f'{"🌟" * coworker_comment_rating.rating.value}')
             if coworker_comment_rating.text:
                 self.build_message(title='Комментарий к проекту:', text=coworker_comment_rating.text)
             if coworker_comment_rating.hr_comment:
@@ -98,7 +98,7 @@ class ProjectForm(Template):
 
         elif review_type == 'hr':
             self.add_project(project)
-            self.build_message(title='Текущая оценка:', text={"🌟" * coworker_comment_rating.rating.value})
+            self.build_message(title='Текущая оценка:', text=f'{"🌟" * coworker_comment_rating.rating.value}')
             self.build_message(title='Комментарий к проекту:', text=coworker_comment_rating.text)
             if coworker_comment_rating.hr_comment:
                 self.build_message(description='❕ Введите, что исправить оценивающему в своей оценке и комментарие.')

@@ -34,6 +34,12 @@ class CoworkerAdvicesForm(Template):
             self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_review_back_advices'],
                                  BUTTONS_TEMPLATES['coworker_back_form'])
             return self.build_list(main, unique_args, review=review.id, type=advice_type)
+        elif view == 'hr':
+            unique_args = [{'coworker_advice': coworker_advice.id} for coworker_advice in coworker_advices]
+            main = BUTTONS_TEMPLATES['hr_advices_edit']
+            self.extend_keyboard(True, BUTTONS_TEMPLATES['hr_review_back_to_decline'],
+                                 BUTTONS_TEMPLATES['hr_review_back_to_form'])
+            return self.build_list(main, unique_args, review=review.id, type=advice_type)
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
@@ -46,6 +52,12 @@ class CoworkerAdvicesForm(Template):
             title = '▪️Что перестать делать?'
         else:
             title = '▪️Советы'
+        list_text = []
+        for advice in coworker_advices:
+            text = advice.text
+            if advice.hr_comment:
+                text = f'{advice.text}\n<i>❗ Исправить: {advice.hr_comment}</i>'
+            list_text.append(text)
         if view == 'list':
 
             if coworker_advices:
@@ -58,19 +70,20 @@ class CoworkerAdvicesForm(Template):
                 else:
                     description = '\n❕ Нажми кнопку “добавить” и перечисли свои советы – через «;». Если что-то забудешь, можно будет исправить это позже.'
                 self.build_list_message(description=description,
-                                        list_text=[f'{coworker_advice.text}' for coworker_advice in coworker_advices])
+                                        list_text=list_text)
             return self.MESSAGE
 
         elif view == 'delete_choose':
+
             self.build_list_message(title=title,
                                     description='\n❕ Выберите совет, который вы хотите удалить.',
-                                    list_text=[f'{coworker_advice.text}' for coworker_advice in coworker_advices])
+                                    list_text=list_text)
             return self.MESSAGE
 
         elif view == 'edit_choose':
             self.build_list_message(title=title,
                                     description='\n❕ Выберите совет, который вы хотите изменить.',
-                                    list_text=[f'{coworker_advice.text}' for coworker_advice in coworker_advices])
+                                    list_text=list_text)
             return self.MESSAGE
 
         elif view == 'add':
@@ -81,9 +94,31 @@ class CoworkerAdvicesForm(Template):
             if coworker_advices:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',
-                                        list_text=[f'{coworker_advice.text}' for coworker_advice in coworker_advices])
+                                        list_text=list_text)
             else:
                 self.build_message(title=title, description=description)
+            return self.MESSAGE
+
+        elif view == 'hr':
+            todo = []
+            not_todo = []
+            for advice in coworker_advices:
+
+                text = advice.text
+                if advice.hr_comment:
+                    text = f'{advice.text}\n<i>❗ Исправить: {advice.hr_comment}</i>'
+                if advice.advice_type.name == 'todo':
+                    if not todo:
+                        text = f'<b>Что делать</b>\n{text}'
+                    todo.append(text)
+                else:
+                    if not not_todo:
+                        text = f'<b>Что перестать делать</b>\n{text}'
+                    not_todo.append(text)
+
+            self.build_list_message(title=title,
+                                    description='\n❕ Выберите совет, который нужно исправить или у которго вы хотите убрать свой комментарий',
+                                    list_text=todo + not_todo)
             return self.MESSAGE
 
 
