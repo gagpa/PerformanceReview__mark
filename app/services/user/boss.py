@@ -15,12 +15,10 @@ class BossService(UserService):
         self.add_in_review(form)
         StatusService().change_to_coworker_review(form)
 
-    def add_in_review(self, form):
+    def add_in_review(self, form: Form):
         for project in form.projects:
             service = ProjectsService(project)
-            contacts = [contact.username for contact in service.contacts]
-            contacts.append(self.model.username)
-            service.add_contacts(contacts)
+            service.add_contacts([self.model.username])
 
     def decline(self, form: Form, text: str) -> BossReview:
         """ Отклонить """

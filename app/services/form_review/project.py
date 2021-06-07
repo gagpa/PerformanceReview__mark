@@ -62,6 +62,8 @@ class ProjectsService(Entity):
             reviews = user.coworker_reviews
             review = list(filter(lambda coworker_review: coworker_review.form == form, reviews))
             if review:
+                if self.model in review[0].projects:
+                    continue
                 proj_rating = CoworkerProjectRating(coworker_review=review[0], project=self.model)
                 self.save_all(proj_rating)
             else:

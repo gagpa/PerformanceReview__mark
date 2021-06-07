@@ -21,7 +21,6 @@ def accept_form_view(request):
         boss = request.user
         review = BossReviewService().by_pk(pk)
         BossService(boss).accept(review.form)
-        BossReviewService()
         for review in review.form.coworker_reviews:
             notificator.notificate(Notification(view='to_coworkers', form=review.form, review=review), review.coworker.chat_id)
     elif request.args.get('form'):
