@@ -62,7 +62,8 @@ class ProjectsServiceTBot(ProjectsService):
     def update_contacts_before(self, func, old_contact: User):
         """ Декоратор для обновления контактов в проекте """
         def wrapper(request):
-            new_contact = Session().query(User).filter(User.username == request.text).first()
+            text = request.text.replace('@', '')
+            new_contact = Session().query(User).filter(User.username == text).first()
             if new_contact:
                 self.update_contacts(old_contact, new_contact)
             request.add('project', [self.model.id])

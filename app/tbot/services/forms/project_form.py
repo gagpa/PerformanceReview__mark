@@ -126,6 +126,14 @@ class ProjectForm(Template):
                 self.add_project(project)
                 self.build_message(description='❕ Внеси изменения или вернись к списку проектов.')
 
+            elif view == 'delete_choose_contact':
+                self.add_project(project)
+                self.build_message(description='❕ Выберите коллегу, которого вы хотите убрать из проекта.')
+
+            elif view == 'edit_choose_contact':
+                self.add_project(project)
+                self.build_message(description='❕ Выберите коллегу, которого вы хотите поменять на другого.')
+
             elif not project.name:
                 self.build_message(title='Заполнение проекта',
                                    description='❕ Напишите название проекта')

@@ -73,7 +73,7 @@ class RequestSerializer:
     @property
     def text(self):
         """ Парсинг review_period из сообщения и вернуть сериализованные данные """
-        return self.__message.text
+        return self.__message.text.strip()
 
     @property
     def message(self):
