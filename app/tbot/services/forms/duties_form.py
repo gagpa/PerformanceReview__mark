@@ -59,13 +59,14 @@ class DutiesForm(Template):
             return self.MESSAGE
 
         elif view == 'add':
+            text = 'Напиши функционал, который ты выполняешь в ходе своей работы.\n\n <b>Например:</b>\n– оценка персонала;\n– налаживание коммуникации между отделами;'
             description = '❕ Отправьте в сообщении свои обязанности.'
             if duties:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',
                                         list_text=[f'{duty.text}' for duty in duties])
             else:
-                self.build_message(title=title, description=description)
+                self.build_message(title=title, text=text, description=f'\n{description}')
             return self.MESSAGE
 
 

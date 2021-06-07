@@ -60,7 +60,7 @@ class AchievementsForm(Template):
             return self.MESSAGE
 
         elif view == 'add':
-            description = '❕ Отправьте в сообщении свои основные достижения и успехи.'
+            description = '❕ Факты, которые ты считаешь своими основными достижениями и которыми ты доволен.'
             if achievements:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',
