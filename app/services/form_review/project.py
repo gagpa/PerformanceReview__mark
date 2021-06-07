@@ -13,6 +13,10 @@ class ProjectsService(Entity):
     form = None
     REQUIREMENTS = {}
 
+    @classmethod
+    def create_empty(cls, form):
+        return Project(form=form)
+
     @property
     def all_text(self) -> list:
         """ """

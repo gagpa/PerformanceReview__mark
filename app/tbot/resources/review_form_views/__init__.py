@@ -30,7 +30,8 @@ from app.tbot.resources.review_form_views.fails_views import \
 
 from app.tbot.resources.review_form_views.form_views import \
     form_view as review_form_view, \
-    send_to_boss_view as review_form_send_to_boss_view
+    send_to_boss_view as review_form_send_to_boss_view, \
+    copy_last_review
 
 from app.tbot.resources.review_form_views.project_views import \
     edit_view as review_form_project_edit_view, \

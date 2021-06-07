@@ -51,7 +51,7 @@ def copy_last_review(request):
         service = ProjectsService(new_project)
         service.name = last_project_service.name
         service.description = last_project_service.description
-        service.contacts = [user.username for user in last_project_service.contacts]
+        service.add_contacts([user.username for user in last_project_service.contacts])
         Session.commit()
 
     last_fails = Session().query(Fail).filter_by(form_id=last_form_id).all()

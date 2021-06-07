@@ -262,5 +262,13 @@
     {
       "name": "accept"
     }
+  ],
+  "advice_types": [
+    {
+      "name": "todo"
+    },
+    {
+      "name": "not todo"
+    }
   ]
 }

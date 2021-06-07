@@ -4,6 +4,8 @@ from sqlalchemy import desc, asc
 
 
 def save_user_step(request, url, url_type, message):
+    if not message or request.args.get('call') and request.args.get('calendar'):
+        return
     user = request.user
     history = UserHistory(user=user)
     history.text = url

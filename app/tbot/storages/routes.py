@@ -173,8 +173,8 @@ ROUTES = \
         'hr_review_comment_rating': hr_review_comment_rating_view,
         'hr_review_send_back': hr_review_send_back_view,
         'hr_advices_edit': hr_comment_advice_view,
-        'get_position': add_position_user,
-        'get_department': add_department_user,
+        'get_position': add_department_user,
+        'get_department': add_position_user,
 
         'request_view': request_view,
         'request_list_view': request_list_view,

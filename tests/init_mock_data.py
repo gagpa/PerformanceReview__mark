@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.db import Session as db_session
 from app.models import User, Role, Position, Department, Status, \
-    ReviewPeriod, Rating, Duty, Project, Achievement, Fail, Form, HrReviewStatus
+    ReviewPeriod, Rating, Duty, Project, Achievement, Fail, Form, HrReviewStatus, AdviceType
 
 
 def commit():
@@ -35,19 +35,14 @@ def add_all_mock_data_in_db():
     add_all_roles_in_db(mock_data['roles'])
     add_all_positions_in_db(mock_data['positions'])
     add_all_departments_in_db(mock_data['departments'])
-    add_all_users_in_db(mock_data['users'])
-
+    add_all_advice_types(mock_data['advice_types'])
+    #add_all_users_in_db(mock_data['users'])
+    add_all_hr_statuses_in_db(mock_data['hr_review_statuses'])
     add_all_statuses_in_db(mock_data['statuses'])
-    add_all_review_periods_in_db(mock_data['review_periods'])
+    #add_all_review_periods_in_db(mock_data['review_periods'])
     add_all_ratings_in_db(mock_data['ratings'])
 
-    add_all_forms_in_db()
-
-    # add_all_duties_in_db(mock_data['duties'])
-    add_all_projects_in_db(mock_data['projects'])
-    add_all_achievements_in_db(mock_data['achievements'])
-    add_all_fails_in_db(mock_data['fails'])
-    add_all_hr_statuses_in_db(mock_data['hr_review_statuses'])
+    #add_all_forms_in_db()
 
 
 def add_all_roles_in_db(roles_mock_data):
@@ -113,6 +108,14 @@ def add_all_statuses_in_db(statuses_mock_data):
         commit()
 
 
+def add_all_advice_types(types_mock_data):
+    """ Добавить все типы советов"""
+    for advice_type in types_mock_data:
+        advice_type = AdviceType(**advice_type)
+        db_session.add(advice_type)
+        commit()
+
+
 def add_all_review_periods_in_db(review_periods_mock_data):
     """
     Добавить тестовые периоды review в БД.
@@ -123,8 +126,7 @@ def add_all_review_periods_in_db(review_periods_mock_data):
         review_period.start_date = datetime.now()
         review_period.end_date = datetime.now()
         db_session.add(review_period)
-
-    db_session.commit()
+        commit()
 
 
 def add_all_ratings_in_db(ratings_mock_data):
@@ -164,7 +166,8 @@ def add_all_duties_in_db(duties_mock_data):
             duty = Duty(**duties_mock_data[i])
             duty.form = form
             db_session.add(duty)
-            commit()
+        commit()
+
 
 def add_all_projects_in_db(projects_mock_data):
     """
@@ -176,7 +179,7 @@ def add_all_projects_in_db(projects_mock_data):
             project = Project(**projects_mock_data[i])
             project.form = form
             db_session.add(project)
-            commit()
+        commit()
 
 
 def add_all_achievements_in_db(achievements_mock_data):
@@ -189,7 +192,7 @@ def add_all_achievements_in_db(achievements_mock_data):
             achievement = Achievement(**achievements_mock_data[i])
             achievement.form = form
             db_session.add(achievement)
-            commit()
+        commit()
 
 
 def add_all_fails_in_db(fails_mock_data):
@@ -202,7 +205,7 @@ def add_all_fails_in_db(fails_mock_data):
             fail = Fail(**fails_mock_data[i])
             fail.form = form
             db_session.add(fail)
-            commit()
+        commit()
 
 
 def add_all_hr_statuses_in_db(hr_statuses_mock_data):
