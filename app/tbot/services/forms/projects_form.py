@@ -75,6 +75,10 @@ class ProjectsForm(Template):
         form = self.args.get('form')
         view = self.args.get('view')
         example = self.args.get('example')
+        if page:
+            ratings = self.cut_per_page(ratings, page)
+            projects = self.cut_per_page(projects, page)
+
         find_coworkers = lambda project: ''.join(
             [f"• {review.coworker.fullname} (@{review.coworker.username})\n" for review in project.reviews])
         project_list_text = [

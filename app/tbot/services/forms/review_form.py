@@ -99,13 +99,13 @@ class ReviewForm(Template):
 
             if form.projects:
                 fill_volume += 1
-                find_coworkers = lambda project: '\n •  '.join(
-                    [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
-                list_text = [
-                    f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}'
-                    for project in
-                    form.projects]
-                self.build_list_message(title='▪️Проекты', list_text=list_text)
+                find_coworkers = lambda project: ''.join(
+                    [f"• {review.coworker.fullname} (@{review.coworker.username})\n" for review in project.reviews])
+                project_list_text = [
+                    f'<b>{project.name}</b>\n<i>{project.description}</i>\nОценивающие:\n{find_coworkers(project)}'
+                    for project in form.projects]
+                self.build_list_message(title='▪️Проекты', list_text=project_list_text)
+
             else:
                 fill_instance += '\n❌  Вы не заполнили раздел “Проекты”'
 
