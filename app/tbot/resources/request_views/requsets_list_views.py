@@ -5,7 +5,7 @@ from app.tbot.services.forms.user_form import UserForm
 
 def request_list_view(request):
     requests = UserService().all_by(role=RoleService().undefined)
-    return UserForm(models=requests, requests=True)
+    return UserForm(models=requests, page=request.page, requests=True)
 
 
 def request_view(request):

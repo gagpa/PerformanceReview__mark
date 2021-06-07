@@ -32,8 +32,27 @@ class InlineKeyboardBuilder:
         return markup
 
     @staticmethod
+    def build_list_with_buttons(models, button_template, row_width=2, *rows, **kwargs):
+        """ Построить клавиаутуру списка с помощью именованных кнопок"""
+        btns = []
+        button_template.add(**kwargs)
+        for i, model in enumerate(models):
+            button_template.add(pk=model.id)
+            btns.append(InlineKeyboardButton(text=model.name,
+                                             callback_data=button_template.callback
+                                             ))
+        markup = InlineKeyboardMarkup(row_width=row_width)
+        markup.add(*btns)
+
+        for row in rows:
+            markup.add(*row)
+
+        return markup
+
+    @staticmethod
     def build_list_up(button_template, unique_args: List[dict],
-                      general_args: Optional[dict] = None, *rows):
+                      general_args: Optional[dict] = None,
+                      prefix: Optional[str] = '', *rows):
         """ Построить клавиатуру списка """
         row_width = 5
         btns = []
@@ -41,9 +60,8 @@ class InlineKeyboardBuilder:
             button_template.add(**general_args)
         for i, args in enumerate(unique_args):
             button_template.add(**args)
-            btns.append(InlineKeyboardButton(text=i + 1,
-                                             callback_data=button_template.callback
-                                             ))
+            btns.append(InlineKeyboardButton(text=f'{prefix} {i + 1}',
+                                             callback_data=button_template.callback))
         markup = InlineKeyboardMarkup(row_width=row_width)
         markup.add(*btns)
 
@@ -64,10 +82,13 @@ class InlineKeyboardBuilder:
         max_page = ceil(count_obj / OBJECT_PER_PAGE)
         if count_obj > 0:
             if page != 1:
-                left_arw = InlineKeyboardButton(text='⬅', callback_data=button_template.add(pg=page - 1, **kwargs).callback)
+                left_arw = InlineKeyboardButton(text='⬅',
+                                                callback_data=button_template.add(pg=page - 1,
+                                                                                  **kwargs).callback)
             if page != max_page:
                 right_arw = InlineKeyboardButton(text='➡',
-                                                 callback_data=button_template.add(pg=page + 1, **kwargs).callback)
+                                                 callback_data=button_template.add(pg=page + 1,
+                                                                                   **kwargs).callback)
             btns = []
             if left_arw:
                 btns.append(left_arw)

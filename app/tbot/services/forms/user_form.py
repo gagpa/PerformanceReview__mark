@@ -30,14 +30,26 @@ class UserForm(Template):
             return markup
 
         elif self.args.get('models') and self.args.get('requests'):
-            row = BUTTONS_TEMPLATES['request_view']
-            markup = self.markup_builder.build_list(self.args['models'], row)
-            return markup
+            users = self.args.get('models')
+            page = self.args.get('page')
+            count_obj = len(users)
+            users = self.cut_per_page(users, page)
+            unique_args = [{'pk': user.id} for user in users]
+            main_template = BUTTONS_TEMPLATES['request_view']
+            pagination_template = BUTTONS_TEMPLATES['request_list_view']
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
+            return self.build_list(main_template, unique_args)
 
         elif self.args.get('models') and self.args.get('users_list'):
-            row = BUTTONS_TEMPLATES['user_view']
-            markup = self.markup_builder.build_list(self.args['models'], row)
-            return markup
+            users = self.args.get('models')
+            page = self.args.get('page')
+            count_obj = len(users)
+            users = self.cut_per_page(users, page)
+            unique_args = [{'pk': user.id} for user in users]
+            main_template = BUTTONS_TEMPLATES['user_view']
+            pagination_template = BUTTONS_TEMPLATES['user_list_view']
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
+            return self.build_list(main_template, unique_args)
 
         elif self.args.get('edit_step'):
             rows.append([BUTTONS_TEMPLATES['user_edit_fullname'],
@@ -60,35 +72,47 @@ class UserForm(Template):
             return markup
         elif self.args.get('edit_position_step'):
             row = BUTTONS_TEMPLATES['edit_position']
-            markup = self.markup_builder.build_list(self.args['positions'], row,
-                                                    user_id=self.args.get('user_id'))
+            rows.append(self.markup_builder.build_btns(BUTTONS_TEMPLATES['back_to_edit'],
+                                                       user=self.args.get('user_id')))
+            markup = self.markup_builder.build_list_with_buttons(self.args['positions'], row, 2,
+                                                                 *rows,
+                                                                 user_id=self.args.get('user_id'))
             return markup
         elif self.args.get('edit_department_step'):
             row = BUTTONS_TEMPLATES['edit_department']
-            markup = self.markup_builder.build_list(self.args['departments'], row,
-                                                    user_id=self.args.get('user_id'))
+            rows.append(self.markup_builder.build_btns(BUTTONS_TEMPLATES['back_to_edit'],
+                                                       user=self.args.get('user_id')))
+            markup = self.markup_builder.build_list_with_buttons(self.args['departments'], row, 2,
+                                                                 *rows,
+                                                                 user_id=self.args.get('user_id'))
             return markup
         elif self.args.get('edit_role_step'):
             row = BUTTONS_TEMPLATES['edit_role']
-            markup = self.markup_builder.build_list(self.args['roles'], row,
-                                                    user_id=self.args.get('user_id'))
+            rows.append(self.markup_builder.build_btns(BUTTONS_TEMPLATES['back_to_edit'],
+                                                       user=self.args.get('user_id')))
+            markup = self.markup_builder.build_list_with_buttons(self.args['roles'], row, 2, *rows,
+                                                                 user_id=self.args.get('user_id'))
             return markup
 
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
         title = ''
         description = ''
+        users = self.args.get('models')
+        page = self.args.get('page')
+        if page:
+            users = self.cut_per_page(users, page) if users else None
 
-        if self.args.get('models') and self.args.get('requests'):
+        if users and self.args.get('requests'):
             title = 'Здесь отображаются все входящие запросы'
-            list_data = [f'{model.username} - {model.fullname}' for model in self.args["models"]]
+            list_data = [f'{model.username} - {model.fullname}' for model in users]
             message_text = self.message_builder.build_list_message(title=title,
                                                                    description=description,
                                                                    list_data=list_data,
                                                                    )
-        elif self.args.get('models') and self.args.get('users_list'):
+        elif users and self.args.get('users_list'):
             title = 'Здесь отображаются все пользователи'
-            list_data = [f'{model.username} - {model.fullname}' for model in self.args["models"]]
+            list_data = [f'{user.username} - {user.fullname}' for user in users]
             message_text = self.message_builder.build_list_message(title=title,
                                                                    description=description,
                                                                    list_data=list_data,
@@ -118,19 +142,17 @@ class UserForm(Template):
                                                               text=text,
                                                               )
         elif self.args.get('edit_role_step'):
-            description = '\n❕ Выберите новую роль:'
-            list_data = [model.name for model in self.args.get('roles')]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
+            text = '❕ Выберите новую роль:'
+            message_text = self.message_builder.build_message(title=title,
+                                                              description=description,
+                                                              text=text,
+                                                              )
         elif self.args.get('edit_position_step'):
-            description = '\n❕ Выберите новую должность:'
-            list_data = [model.name for model in self.args.get('positions')]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
+            text = '❕ Выберите новую должность:'
+            message_text = self.message_builder.build_message(title=title,
+                                                              description=description,
+                                                              text=text,
+                                                              )
         elif self.args.get('edit_boss_step'):
             text = 'Введите логин нового руководителя:'
             message_text = self.message_builder.build_message(title=title,
@@ -138,12 +160,11 @@ class UserForm(Template):
                                                               text=text,
                                                               )
         elif self.args.get('edit_department_step'):
-            title = 'Введите новый отдел:'
-            list_data = [model.name for model in self.args.get('departments')]
-            message_text = self.message_builder.build_list_message(title=title,
-                                                                   description=description,
-                                                                   list_data=list_data,
-                                                                   )
+            text = 'Введите новый отдел:'
+            message_text = self.message_builder.build_message(title=title,
+                                                              description=description,
+                                                              text=text,
+                                                              )
         elif self.args.get('changed'):
             text = 'Данные изменены.'
             message_text = self.message_builder.build_message(title=title,

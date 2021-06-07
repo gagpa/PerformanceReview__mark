@@ -36,8 +36,14 @@ class Notification(Template):
             self.extend_keyboard(True, to_list)
             return self.build()
 
-        elif view == 'to_employee':
+        elif view in {'to_employee', 'start_review'}:
             to_form = BUTTONS_TEMPLATES['review_to_form'].add(review=review.id)
+            self.extend_keyboard(False, to_form)
+            return self.build()
+
+        elif view == 'copy_last_form':
+            last_form = self.args.get('last_form')
+            to_form = BUTTONS_TEMPLATES['copy_last_form'].add(last_form=last_form.id)
             self.extend_keyboard(False, to_form)
             return self.build()
 
@@ -90,8 +96,11 @@ class Notification(Template):
                           f'вернул вам анкету для исправления ошибок'
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE
+        elif view == 'declined':
+            self.build_message(title='🔔 Отправлено на доработку')
+            return self.MESSAGE
         elif view == 'start_review':
-            description = f"Необходимо заполнить анкету в разделе 'Заполнение анкеты' до {self.args.get('date')}"
+            description = f"Необходимо заполнить анкету в разделе 'Моя анкета' до {self.args.get('date')}"
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE
 
@@ -118,4 +127,16 @@ class Notification(Template):
         elif view == 'request_for_hr':
             self.build_message(title='🔔 Оповещение',
                                description='Новый запрос на доступ к системе')
+            return self.MESSAGE
+
+        elif view == 'copy_last_form':
+            self.build_message(title='🔔 Оповещение',
+                               description='В предыдущем ревью обнаружена ваша анкета. '
+                                           'Скопировать её для нового ревью? '
+                                           'Её можно будет отредактировать.')
+            return self.MESSAGE
+
+        elif view == 'delete_user':
+            self.build_message(title='🔔 Оповещение',
+                               description='Вы были удалены из системы.')
             return self.MESSAGE

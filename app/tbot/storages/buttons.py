@@ -88,7 +88,9 @@ BUTTONS_TEMPLATES = \
         'coworker_review_advices_edit': ButtonTemplate('coworker_advices_edit'),
         'coworker_review_advices_delete_choose': ButtonTemplate('coworker_advices_delete_choose', 'Удалить'),
         'coworker_review_advices_edit_choose': ButtonTemplate('coworker_advices_edit_choose', 'Изменить'),
-
+        'copy_last_form': ButtonTemplate('copy_last_form', 'Скопировать предыдущую форму'),
+        'review_form_duty': ButtonTemplate('review_form_duty', 'Обязанности'),
+        'review_form_project_edit_contacts': ButtonTemplate('review_form_project_edit_contacts', 'Контакты'),
 
         'hr_review_list': ButtonTemplate('hr_review_list', '« К списку'),
         'hr_review_form': ButtonTemplate('hr_review_form'),
@@ -112,6 +114,7 @@ BUTTONS_TEMPLATES = \
         'get_department': ButtonTemplate('get_department'),
 
         'request_view': ButtonTemplate('request_view'),
+        'request_list_view': ButtonTemplate('request_list_view'),
         'request_delete_view': ButtonTemplate('request_delete_view', 'Удалить'),
         'request_accept_view': ButtonTemplate('request_accept_view', 'Принять'),
         'request_view_back': ButtonTemplate('request_view_back', 'Назад'),
@@ -120,6 +123,7 @@ BUTTONS_TEMPLATES = \
         'to_request': ButtonTemplate('to_request', 'К заявке'),
 
         'user_view': ButtonTemplate('user_view'),
+        'user_list_view': ButtonTemplate('user_list_view'),
         'user_delete_view': ButtonTemplate('user_delete_view', 'Удалить'),
         'user_view_back': ButtonTemplate('user_view_back', 'Назад'),
         'user_edit_view': ButtonTemplate('user_edit_view', 'Редактировать'),
@@ -135,6 +139,7 @@ BUTTONS_TEMPLATES = \
         'edit_position': ButtonTemplate('edit_position'),
         'edit_department': ButtonTemplate('edit_department'),
         'edit_role': ButtonTemplate('edit_role'),
+        'back_to_edit': ButtonTemplate('back_to_edit', 'Назад'),
 
         'review_period_start': ButtonTemplate('review_period_start', 'Запуск'),
         'review_period_stop': ButtonTemplate('review_period_stop', 'Остановка'),

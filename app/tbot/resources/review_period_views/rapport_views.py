@@ -10,6 +10,7 @@ from app.models import Form, ReviewPeriod, User, Status, Duty, Project, Achievem
 from app.services.dictinary.summary import SummaryService
 from app.services.form_review import FormService
 from app.services.form_review.project_comments import ProjectCommentService
+from app.services.user import UserService
 from app.tbot import bot
 from app.tbot.services.forms.archive_form import ArchiveForm
 from configs.bot_config import HR_REPORT_TEMPLATE, BOSS_REPORT_TEMPLATE
@@ -30,9 +31,15 @@ def get_boss_rapport(request):
 
 def send_rapport_to_boss(request):
     pk = request.args['form_id'][0]
-    user = request.user
     template_vars = update_data_for_boss_rapport(pk)
-    create_and_send_pdf(user.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
+    form = FormService().by_pk(pk)
+    boss_id = form.user.boss_id
+    if boss_id:
+        boss = UserService().by_pk(boss_id)
+        create_and_send_pdf(boss.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
+        return ArchiveForm(sent_to_boss=True)
+    else:
+        return ArchiveForm(no_boss=True)
 
 
 def get_hr_rapport(request):

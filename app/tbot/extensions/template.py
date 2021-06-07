@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from telebot.types import InlineKeyboardMarkup
 
@@ -29,7 +29,8 @@ class Template(ABC):
         """ Создать сообщение """
         pass
 
-    def add_sorting(self, asc: ButtonTemplate, desc: ButtonTemplate, is_asc: bool = True, is_next: bool = True):
+    def add_sorting(self, asc: ButtonTemplate, desc: ButtonTemplate, is_asc: bool = True,
+                    is_next: bool = True):
         """ """
         template = desc if is_asc else asc
         btns = self.markup_builder.build_btns(template)
@@ -38,7 +39,8 @@ class Template(ABC):
     def add_paginator(self, paginator, page: int, count_obj: int, is_next: bool = True):
         """ Добавить пагинатор """
         if count_obj > 0:
-            btns = self.markup_builder.build_paginator_arrows(paginator, page=page, count_obj=count_obj)
+            btns = self.markup_builder.build_paginator_arrows(paginator, page=page,
+                                                              count_obj=count_obj)
             self.extend_keyboard(is_next, *btns)
 
     def add_update(self, update: ButtonTemplate, is_next: bool = True):
@@ -46,19 +48,23 @@ class Template(ABC):
         btns = self.markup_builder.build_btns(update)
         self.extend_keyboard(is_next, *btns)
 
-    def build_list(self, main_template, unique_args: List[dict], **general_args):
+    def build_list(self, main_template, unique_args: List[dict],
+                   prefix: Optional[str] = '', **general_args):
         """ """
-        return self.markup_builder.build_list_up(main_template, unique_args, general_args, *self.ADDITIONAL)
+        return self.markup_builder.build_list_up(main_template, unique_args, general_args,
+                                                 prefix, *self.ADDITIONAL)
 
     def build(self, **kwargs):
         return self.markup_builder.build(*self.ADDITIONAL, **kwargs)
 
     def build_message(self, title=None, description=None, text=None):
-        additional_text = self.message_builder.build_message(title=title, description=description, text=text)
+        additional_text = self.message_builder.build_message(title=title, description=description,
+                                                             text=text)
         self.MESSAGE = f'{self.MESSAGE}\n{additional_text}'
 
     def build_list_message(self, title=None, description=None, list_text=None):
-        additional_text = self.message_builder.build_list_message(title=title, description=description,
+        additional_text = self.message_builder.build_list_message(title=title,
+                                                                  description=description,
                                                                   list_data=list_text)
         self.MESSAGE = f'{self.MESSAGE}\n{additional_text}'
 

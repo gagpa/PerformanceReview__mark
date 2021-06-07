@@ -2,10 +2,18 @@ import json
 from datetime import datetime
 
 from loguru import logger
+from sqlalchemy.exc import IntegrityError
 
 from app.db import Session as db_session
-from app.models import User, Role, Position, Department, Status,\
+from app.models import User, Role, Position, Department, Status, \
     ReviewPeriod, Rating, Duty, Project, Achievement, Fail, Form, HrReviewStatus
+
+
+def commit():
+    try:
+        db_session.commit()
+    except IntegrityError as err:
+        logger.error(err)
 
 
 def get_mock_data() -> dict:
@@ -49,8 +57,7 @@ def add_all_roles_in_db(roles_mock_data):
     for role_mock_data in roles_mock_data:
         role = Role(**role_mock_data)
         db_session.add(role)
-
-    db_session.commit()
+        commit()
 
 
 def add_all_positions_in_db(positions_mock_data):
@@ -60,8 +67,7 @@ def add_all_positions_in_db(positions_mock_data):
     for position_mock_data in positions_mock_data:
         position = Position(**position_mock_data)
         db_session.add(position)
-
-    db_session.commit()
+        commit()
 
 
 def add_all_departments_in_db(departments_mock_data):
@@ -69,10 +75,13 @@ def add_all_departments_in_db(departments_mock_data):
     Добавить тестовые отделы в БД.
     """
     for department_mock_data in departments_mock_data:
-        department = Department(**department_mock_data)
+        department = Department(name=department_mock_data['name'])
+        if department_mock_data.get('positions'):
+            for position in department_mock_data.get('positions'):
+                p = db_session().query(Position).filter_by(name=position).first()
+                department.positions.append(p) if p else None
         db_session.add(department)
-
-    db_session.commit()
+        commit()
 
 
 def add_all_users_in_db(users_mock_data):
@@ -81,8 +90,8 @@ def add_all_users_in_db(users_mock_data):
     """
     role = db_session.query(Role).filter_by(name='Employee').one()
     position = db_session.query(Position).filter_by(name='Разработчик').one()
-    department = db_session.query(Department)\
-        .filter_by(name='Разработка (Коммуникационная платформа, Афина, Цифровые сервисы)').one()
+    department = db_session.query(Department) \
+        .filter_by(name='Разработка').one()
 
     for user_mock_data in users_mock_data:
         user = User(**user_mock_data)
@@ -91,8 +100,7 @@ def add_all_users_in_db(users_mock_data):
         user.department = department
         logger.debug(user.role)
         db_session.add(user)
-
-    db_session.commit()
+        commit()
 
 
 def add_all_statuses_in_db(statuses_mock_data):
@@ -102,8 +110,7 @@ def add_all_statuses_in_db(statuses_mock_data):
     for status_mock_data in statuses_mock_data:
         status = Status(**status_mock_data)
         db_session.add(status)
-
-    db_session.commit()
+        commit()
 
 
 def add_all_review_periods_in_db(review_periods_mock_data):
@@ -127,8 +134,7 @@ def add_all_ratings_in_db(ratings_mock_data):
     for rating_mock_data in ratings_mock_data:
         ratings = Rating(**rating_mock_data)
         db_session.add(ratings)
-
-    db_session.commit()
+        commit()
 
 
 def add_all_forms_in_db():
@@ -145,8 +151,7 @@ def add_all_forms_in_db():
         form.status = status
         form.review_period = review_period
         db_session.add(form)
-
-    db_session.commit()
+        commit()
 
 
 def add_all_duties_in_db(duties_mock_data):
@@ -159,9 +164,7 @@ def add_all_duties_in_db(duties_mock_data):
             duty = Duty(**duties_mock_data[i])
             duty.form = form
             db_session.add(duty)
-
-    db_session.commit()
-
+            commit()
 
 def add_all_projects_in_db(projects_mock_data):
     """
@@ -173,8 +176,7 @@ def add_all_projects_in_db(projects_mock_data):
             project = Project(**projects_mock_data[i])
             project.form = form
             db_session.add(project)
-
-    db_session.commit()
+            commit()
 
 
 def add_all_achievements_in_db(achievements_mock_data):
@@ -187,8 +189,7 @@ def add_all_achievements_in_db(achievements_mock_data):
             achievement = Achievement(**achievements_mock_data[i])
             achievement.form = form
             db_session.add(achievement)
-
-    db_session.commit()
+            commit()
 
 
 def add_all_fails_in_db(fails_mock_data):
@@ -201,11 +202,10 @@ def add_all_fails_in_db(fails_mock_data):
             fail = Fail(**fails_mock_data[i])
             fail.form = form
             db_session.add(fail)
-
-    db_session.commit()
+            commit()
 
 
 def add_all_hr_statuses_in_db(hr_statuses_mock_data):
     for status in hr_statuses_mock_data:
         db_session.add(HrReviewStatus(**status))
-    db_session.commit()
+        commit()

@@ -17,8 +17,8 @@ def add_new_username(request):
     chat_id = request.message.chat.id
     if request.message.chat.username:
         if not UserService().is_exist(chat_id=str(chat_id)):
-            positions = Session().query(Position).all()
-            return AuthForm(models=positions, is_position=True)
+            departments = Session().query(Department).all()
+            return AuthForm(models=departments, is_department=True)
         else:
             return AuthForm(exist=True)
     else:
@@ -28,23 +28,23 @@ def add_new_username(request):
 def add_position_user(request):
     """ Добавить должность пользователя """
     pk = request.pk()
-    departments = Session().query(Department).all()
-    template = AuthForm(models=departments, is_department=True, position=pk)
-    return template
+    department = Session().query(Department).get(pk)
+    positions = department.positions
+    return AuthForm(models=positions, is_position=True, departament=pk)
 
 
 def add_department_user(request):
     """ Добавить отдел пользователя """
     pk = request.pk()
-    position_id = request.args['position']
+    departament_id = request.args['departament']
 
     service = UserServiceTBot()
     username = request.message.chat.username
     chat_id = request.message.chat.id
     user = service.create(username=username, chat_id=chat_id)
 
-    department = Session().query(Department).get(pk)
-    position = Session().query(Position).get(position_id)
+    department = Session().query(Department).get(departament_id)
+    position = Session().query(Position).get(pk)
     user.position = position
     user.department = department
     template = AuthForm(is_name=True)

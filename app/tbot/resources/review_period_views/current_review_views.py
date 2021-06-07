@@ -9,22 +9,22 @@ from app.tbot.services.forms.current_review_form import CurrentReviewForm
 
 def current_forms_list(request):
     """Получаем список форм в текущем ревью"""
-    current_reviews = Session().query(Form).join(ReviewPeriod, Form.review_period) \
+    current_forms = Session().query(Form).join(ReviewPeriod, Form.review_period) \
         .join(User, Form.user).join(Status, Form.status) \
         .filter(ReviewPeriod.is_active == True).all()
-    return CurrentReviewForm(models=current_reviews, page=request.page, forms_list=True)
+    return CurrentReviewForm(models=current_forms, page=request.page, forms_list=True)
 
 
 def employee_review(request):
     """Информация о пользователе за текущие Review"""
     form_id = request.args['pk'][0]
-    current_review = Session().query(Form).join(User, Form.user).join(Status, Form.status) \
+    current_form = Session().query(Form).join(User, Form.user).join(Status, Form.status) \
         .filter(Form.id == form_id).one_or_none()
     advices = Session().query(CoworkerAdvice).join(CoworkerReview, Form).filter(Form.id == form_id).all()
     summary = SummaryService().by_form_id(form_id)
     rating = ProjectCommentService().final_rating(form_id)
-    return CurrentReviewForm(model=current_review, advices=advices, summary=summary,
-                             rating=rating)
+    return CurrentReviewForm(model=current_form, advices=advices, summary=summary,
+                             rating=rating, form_id=form_id)
 
 
 def input_summary(request):

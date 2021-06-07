@@ -9,6 +9,7 @@ from app.models.coworker_advice import CoworkerAdvice
 from app.models.coworker_project_rating import CoworkerProjectRating
 from app.models.coworker_review import CoworkerReview
 from app.models.department import Department
+from app.models.department_position import DepartmentPosition
 from app.models.duty import Duty
 from app.models.fail import Fail
 from app.models.form import Form

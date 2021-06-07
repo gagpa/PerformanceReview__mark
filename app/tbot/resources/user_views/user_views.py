@@ -1,9 +1,6 @@
 from app.db import Session
-from app.models import Role, Position, Department, CoworkerAdvice, CoworkerProjectRating, \
-    CoworkerReview
-from app.services.form_review import FormService
+from app.models import Role, Position, Department
 from app.services.user import UserService
-from app.tbot import bot
 from app.tbot import notificator
 from app.tbot.resources.user_views.users_list_views import users_list_view
 from app.tbot.services.auth import UserServiceTBot
@@ -24,10 +21,9 @@ def delete_user(request):
     pk = request.args['user'][0]
     service = UserServiceTBot()
     user = service.by_pk(pk=pk)
-    chat_id = user.chat_id
     user.boss = None
     service.delete(user)
-    bot.send_message(chat_id, 'Вы были удалены из системы.')
+    notificator.notificate(Notification(view='delete_user'), user.chat_id)
     return users_list_view(request=request)
 
 
@@ -81,7 +77,8 @@ def change_user_role(request):
 
 def user_edit_position(request):
     pk = request.args['user'][0]
-    positions = Session().query(Position).all()
+    user = UserServiceTBot().by_pk(pk)
+    positions = user.department.positions
     return UserForm(user_id=pk, positions=positions, edit_position_step=True)
 
 

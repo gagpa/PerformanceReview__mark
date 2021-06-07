@@ -45,7 +45,7 @@ class MessageDecorator:
                 if is_not_last(item=i):
                     list_text += '\n'
         else:
-            list_text = 'Список пустой'
+            list_text = '\nСписок пустой'
         return list_text
 
 

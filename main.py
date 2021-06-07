@@ -2,6 +2,8 @@ import os
 
 from dotenv import load_dotenv
 
+from tests.init_mock_data import add_all_mock_data_in_db
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
     load_dotenv(dotenv_path)
@@ -13,7 +15,7 @@ from configs.logger_config import init_logger_config
 @logger.catch
 def main():
     """ Запустить приложение """
-    #add_all_mock_data_in_db()
+    # add_all_mock_data_in_db()
     init_logger_config()
     bot.polling()
 

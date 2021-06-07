@@ -72,6 +72,8 @@ from app.tbot.resources.review_form_views import \
     review_form_achievements_edit_choose_view, \
     review_form_achievement_delete_view, \
     review_form_achievements_delete_choose_view, \
+    copy_last_review, \
+    review_form_achievements_delete_choose_view, \
     review_form_duties_edit_choose_view, \
     review_form_duties_delete_choose_view,\
     review_form_duty_edit_view,\
@@ -175,6 +177,7 @@ ROUTES = \
         'get_department': add_department_user,
 
         'request_view': request_view,
+        'request_list_view': request_list_view,
         'request_delete_view': delete_request_view,
         'request_view_back': request_list_view,
         'request_accept_view': accept_request_view,
@@ -183,6 +186,7 @@ ROUTES = \
         'to_request': request_view,
 
         'user_view': user_view,
+        'user_list_view': users_list_view,
         'user_delete_view': delete_user_view,
         'user_view_back': users_list_view,
         'user_edit_view': edit_user_view,
@@ -198,11 +202,13 @@ ROUTES = \
         'user_edit_position': user_edit_position,
         'user_edit_boss': user_edit_boss,
         'user_edit_department': user_edit_department,
+        'back_to_edit': edit_user_view,
 
         'review_period_start': review_period_start,
         'review_period_stop': review_period_stop,
         'first_date_period': calendar_handler,
         'date_period_2': calendar_handler,
+        'copy_last_form': copy_last_review,
 
         'forms_list': current_forms_list,
         'get_old_review': old_forms_list,

@@ -46,6 +46,7 @@ def send_form_view(request):
     boss = request.user
     text = request.text
     review = BossReviewService().by_pk(pk)
+    notificator.notificate(Notification(view='declined'), boss.chat_id)
     notificator.notificate(Notification(view='to_employee', form=review.form, review=review),
                            review.form.user.chat_id)
     BossService(boss).decline(review.form, text)

@@ -90,6 +90,12 @@ class ArchiveForm(Template):
         elif self.args.get('pk') and self.args.get('choose_rapport'):
             text = 'Для кого предназначена выгрузка?'
             message_text = self.message_builder.build_message('', '', text=text)
+        elif self.args.get('sent_to_boss'):
+            text = 'Отчет отправлен руководителю.'
+            message_text = self.message_builder.build_message('', '', text=text)
+        elif self.args.get('no_boss'):
+            text = 'У пользователя нет руководителя.'
+            message_text = self.message_builder.build_message('', '', text=text)
         else:
             text = 'Нет завершенных Review. ' \
                    'Вы можете остановить его в разделе "Запуск/остановка Review"'
