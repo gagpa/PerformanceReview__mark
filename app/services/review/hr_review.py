@@ -40,7 +40,7 @@ class HrReviewService(Entity):
     def not_rated(form_id):
         """ Посмотреть всех, кто не оценил форму """
         status = HrReviewStatusService().accept
-        reviews = Session().query(CoworkerReview).join(CoworkerAdvice, CoworkerProjectRating). \
+        reviews = Session().query(CoworkerReview). \
             filter(CoworkerReview.hr_status != status,
                    CoworkerReview.form_id == form_id).\
             all()

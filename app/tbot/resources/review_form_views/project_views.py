@@ -86,7 +86,9 @@ def contacts_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    return ProjectForm(project=project, have_markup=True, view='contacts', review_type='write')
+    if project.reviews:
+        return ProjectForm(project=project, have_markup=True, view='contacts', review_type='write')
+    return add_contact_in_current_project_view(request)
 
 
 def edit_description_view(request):

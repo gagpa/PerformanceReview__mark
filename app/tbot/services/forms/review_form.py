@@ -204,7 +204,7 @@ class ReviewForm(Template):
                         else:
                             text = f'• {advice.text}'
                         if advice.hr_comment:
-                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>"'
+                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>'
                             text = f'{text}\n{sub_text}'
                     self.build_message(title='Что начать делать:',
                                        text=text)
@@ -215,7 +215,7 @@ class ReviewForm(Template):
                         else:
                             text = f'• {advice.text}'
                         if advice.hr_comment:
-                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>"'
+                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>'
                             text = f'{text}\n{sub_text}'
                     self.build_message(title='Что перестать делать:',
                                        text=text)

@@ -71,7 +71,7 @@ class CurrentReviewForm(Template):
             title = 'Review сотрудника'
             todo = []
             not_todo = []
-            not_rated = HrReviewService().not_rated(self.args.get("form_id"))
+            not_rated = HrReviewService().not_rated(self.args.get('form_id'))
             usernames = '\n'.join(not_rated)
             for advice in self.args.get('advices'):
                 if advice.advice_type.name == 'todo':
@@ -85,7 +85,7 @@ class CurrentReviewForm(Template):
             text = f"<i>ФИО:</i> {self.args.get('model').user.fullname}\n" \
                    f"<i>Статус:</i> {self.args.get('model').status.name}\n\n" \
                    f"<b>Оценка:</b> {rating}\n" \
-                   f"\n<b>Что делат:</b>\n" \
+                   f"\n<b>Что делать:</b>\n" \
                    f"{todo if todo else 'отсутствует'}" \
                    f"\n\n<b>Что не делать:</b>\n" \
                    f"{not_todo if not_todo else 'отсутствует'}" \
