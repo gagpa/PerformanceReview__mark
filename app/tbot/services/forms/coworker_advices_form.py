@@ -38,7 +38,7 @@ class CoworkerAdvicesForm(Template):
             unique_args = [{'coworker_advice': coworker_advice.id} for coworker_advice in coworker_advices]
             main = BUTTONS_TEMPLATES['hr_advices_edit']
             self.extend_keyboard(True, BUTTONS_TEMPLATES['hr_review_back_to_decline'],
-                                 BUTTONS_TEMPLATES['hr_review_back_to_form'])
+                                 BUTTONS_TEMPLATES['hr_review_back_to_form_name'])
             return self.build_list(main, unique_args, review=review.id, type=advice_type)
 
     def create_message(self) -> str:
