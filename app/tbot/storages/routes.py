@@ -23,7 +23,8 @@ from app.tbot.resources.coworker_review_views import \
     coworker_review_delete_view, \
     coworker_review_edit_view, \
     coworker_review_advices_list_view, \
-    coworker_review_project_save_comment_view
+    coworker_review_project_save_comment_view, \
+    coworker_review_project_choose_rate_view
 
 from app.tbot.resources.hr_review_views import \
     hr_review_list_forms_view, \
@@ -155,6 +156,8 @@ ROUTES = \
         'coworker_projects': coworker_review_projects_view,
         'coworker_project': coworker_review_project_view,
         'coworker_rate': coworker_review_project_rate_view,
+        'coworker_choose_rate': coworker_review_project_choose_rate_view,
+
         'coworker_comment': coworker_review_project_comment_view,
 
         'coworker_advices': coworker_review_advices_list_view,

@@ -88,9 +88,9 @@ class CoworkerAdvicesForm(Template):
 
         elif view == 'add':
             if advice_type == 'todo':
-                description = '\n❕ Введите "Что стоит изменить вашему коллеге".'
+                description = '\n❕ Напиши, что стоит <b>начать</b> делать твоему коллеге, чтобы улучшить свою работу. Перечили через “;” все пункты:'
             else:
-                description = '\n❕ Введите "Что стоит перестать делать вашему коллеге".'
+                description = '\n❕ Напиши, что стоит <b>перестать</b> делать твоему коллеге, чтобы улучшить свою работу. Перечили через “;” все пункты:'
             if coworker_advices:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',

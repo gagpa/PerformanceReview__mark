@@ -13,6 +13,7 @@ from app.tbot.resources.coworker_review_views.list_forms_views import \
     list_forms_view as coworker_review_list_forms_view
 from app.tbot.resources.coworker_review_views.project_review_views import \
     project_view as coworker_review_project_view, \
+    choose_rate_view as coworker_review_project_choose_rate_view, \
     rate_view as coworker_review_project_rate_view, \
     comment_view as coworker_review_project_comment_view, \
     save_comment_view as coworker_review_project_save_comment_view

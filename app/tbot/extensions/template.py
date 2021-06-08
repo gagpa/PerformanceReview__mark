@@ -49,10 +49,10 @@ class Template(ABC):
         self.extend_keyboard(is_next, *btns)
 
     def build_list(self, main_template, unique_args: List[dict],
-                   prefix: Optional[str] = '', **general_args):
+                   prefix: Optional[str] = None, target: Optional[int] = None, **general_args):
         """ """
         return self.markup_builder.build_list_up(main_template, unique_args, general_args,
-                                                 prefix, *self.ADDITIONAL)
+                                                 prefix, target, *self.ADDITIONAL)
 
     def build(self, **kwargs):
         return self.markup_builder.build(*self.ADDITIONAL, **kwargs)

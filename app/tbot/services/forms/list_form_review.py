@@ -57,7 +57,7 @@ class ListFormReview(Template):
         reviews = self.cut_per_page(reviews, page)
 
         if review == 'boss':
-            list_data = [f'@{review.form.user.username} - @{review.coworker.username}' for review in reviews]
+            list_data = [f'@{review.form.user.username} - {review.form.user.fullname}' for review in reviews]
             description = '\n❕ Можете выбрать форму подчинённого на проверку' if list_data else ''
             self.build_list_message(title='📑 Список подчинённых на проверку',
                                     description=description,

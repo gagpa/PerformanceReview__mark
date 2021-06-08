@@ -45,14 +45,19 @@ class ProjectForm(Template):
                     return self.build(project=project.id)
 
             elif review_type == 'coworker':
-                unique_args = [{'rate': rating.id} for rating in RatingService().all]
-                rate = BUTTONS_TEMPLATES['coworker_rate']
-                comment = BUTTONS_TEMPLATES['coworker_comment']
-                back = BUTTONS_TEMPLATES['coworker_back_projects'].add(review=review.id)
-                self.extend_keyboard(False, comment)
-                self.extend_keyboard(True, back)
-                return self.build_list(rate, unique_args=unique_args, proj_rate=coworker_comment_rating.id,
-                                       review=review.id)
+                if view == 'rate':
+                    unique_args = [{'rate': rating.id} for rating in RatingService().all]
+                    rate = BUTTONS_TEMPLATES['coworker_rate']
+                    back = BUTTONS_TEMPLATES['coworker_back_project']
+                    back_to_projects = BUTTONS_TEMPLATES['coworker_back_projects'].add(review=review.id)
+                    target = coworker_comment_rating.rating.value if coworker_comment_rating.rating else None
+                    self.extend_keyboard(True, back, back_to_projects)
+                    return self.build_list(rate, unique_args=unique_args, target=target, proj_rate=coworker_comment_rating.id,
+                                           review=review.id)
+                elif view == 'project':
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_choose_rate'], BUTTONS_TEMPLATES['coworker_comment'])
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_back_projects'].add(review=review.id))
+                    return self.build(proj_rate=coworker_comment_rating.id, review=review.id)
 
     def add_project(self, project: Project):
         """ Добавить проект в сообщение """
@@ -87,13 +92,12 @@ class ProjectForm(Template):
                 self.build_message(description=f'Замечания от HR: {coworker_comment_rating.hr_comment}')
             if view == 'comment':
                 self.build_message(description='❕ Напишите свой комментарий к проекту.')
-            else:
-                if not coworker_comment_rating.text and not coworker_comment_rating.rating:
-                    self.build_message(description='❕ Поставьте оценку проекту и не забудьте оставить комментарий.')
-                elif not coworker_comment_rating.text:
-                    self.build_message(description='❕ Оставьте свой комментарий.')
-                elif not coworker_comment_rating.rating:
-                    self.build_message(description='❕ Поставьте оценку проекту.')
+            elif view == 'rate':
+                text = ''
+                for i, rating in enumerate(RatingService().all):
+                    text = f'{text}{"🌟" * rating.value} - {rating.name}\n'
+                self.build_message(description='❕ Поставьте оценку проекту',
+                                   text=text)
             return self.MESSAGE
 
         elif review_type == 'hr':
@@ -155,7 +159,7 @@ class ProjectForm(Template):
                                         f'он автоматически оценит все твои проекты.')
             else:
                 coworkers = ' '.join(
-                    [f"{review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
+                    [f'{review.coworker.fullname} (@{review.coworker.username})' for review in project.reviews])
                 self.build_message(title=f'Проект - {project.name}', text=f'Цели и обязанности: {project.description}\n'
                                                                           f'Коллеги: {coworkers}')
             return self.MESSAGE

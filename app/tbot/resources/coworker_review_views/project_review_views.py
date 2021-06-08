@@ -8,15 +8,27 @@ def project_view(request):
     proj_rate_pk = request.args['proj_rate'][0]
     rating = CoworkerReviewService().rating_by_pk(proj_rate_pk)
     review = rating.review
-    return ProjectForm(have_markup=True, rating=rating, review=review, project=rating.project, review_type='coworker')
+    if rating.rating:
+        return ProjectForm(have_markup=True, rating=rating, review=review, project=rating.project, review_type='coworker', view='project')
+    return choose_rate_view(request)
+
+
+def choose_rate_view(request):
+    """ Оценить проект """
+    proj_rate_pk = request.args['proj_rate'][0]
+    rating = CoworkerReviewService().rating_by_pk(proj_rate_pk)
+    review = rating.review
+    return ProjectForm(have_markup=True, rating=rating, review=review, project=rating.project, review_type='coworker', view='rate')
 
 
 def rate_view(request):
-    """ Оценить проект """
     proj_rate_pk = request.args['proj_rate'][0]
     rate_pk = request.args['rate'][0]
     CoworkerService().rate(proj_rate_pk=proj_rate_pk, rate_pk=rate_pk)
-    return project_view(request=request)
+    rating = CoworkerReviewService().rating_by_pk(proj_rate_pk)
+    if rating.text:
+        return project_view(request=request)
+    return comment_view(request)
 
 
 def comment_view(request):

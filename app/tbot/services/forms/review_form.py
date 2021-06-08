@@ -223,7 +223,7 @@ class ReviewForm(Template):
                 rating.hr_comment for rating in ratings):
                 count_comment = 0
                 count_rate = 0
-                max_rates = len(review.projects_ratings)
+                max_rates = len(review.projects_ratings) or 1
                 for rating in review.projects_ratings:
                     if rating.text:
                         count_comment += 1
