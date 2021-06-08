@@ -36,13 +36,9 @@ def add_all_mock_data_in_db():
     add_all_positions_in_db(mock_data['positions'])
     add_all_departments_in_db(mock_data['departments'])
     add_all_advice_types(mock_data['advice_types'])
-    #add_all_users_in_db(mock_data['users'])
     add_all_hr_statuses_in_db(mock_data['hr_review_statuses'])
     add_all_statuses_in_db(mock_data['statuses'])
-    #add_all_review_periods_in_db(mock_data['review_periods'])
     add_all_ratings_in_db(mock_data['ratings'])
-
-    #add_all_forms_in_db()
 
 
 def add_all_roles_in_db(roles_mock_data):
