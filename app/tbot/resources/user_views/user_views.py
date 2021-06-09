@@ -22,6 +22,9 @@ def delete_user(request):
     service = UserServiceTBot()
     user = service.by_pk(pk=pk)
     user.boss = None
+    for form in user.forms:
+        for project in form.projects:
+            service.delete(project.reviews)
     service.delete(user)
     notificator.notificate(Notification(view='delete_user'), user.chat_id)
     return users_list_view(request=request)
