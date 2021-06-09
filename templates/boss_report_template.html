@@ -1,93 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Review по сотруднику за период {{start}} - {{end}}</title>
-    <style>
-        * {
-            font-family: Arial;
-        }
-        h4 {
-            text-align: center;
-        }
+  <meta charset="UTF-8">
+  <title>Review по сотруднику за период {{start}} - {{end}}</title>
+  <style>
+    * {
+      font-family: Arial;
+    }
 
-        table {
-            width: 100%;
-        }
+    h4 {
+      text-align: center;
+    }
 
-        td {
-            vertical-align: top;
-            text-align: left;
-            font-size: 12px;
-            padding:5px 15px;
-        }
+    table {
+      width: 100%;
+    }
 
-        th {
-            text-align: left;
-            font-size: 14px;
-            font-style: italic;
-            padding:10px 15px;
-        }
-    </style>
+    td {
+      vertical-align: top;
+      text-align: left;
+      font-size: 12px;
+      padding: 5px 15px;
+    }
+
+    th {
+      text-align: left;
+      font-size: 14px;
+      font-style: italic;
+      padding: 10px 15px;
+    }
+
+    p {
+      vertical-align: top;
+      text-align: left;
+      font-size: 12px;
+      padding: 5px 15px;
+    }
+  </style>
 </head>
 <body>
 <h4>Review по сотруднику за период {{start}} - {{end}}</h4>
 <br>
 <table>
-    <tr>
-        <td><b>Сотрудник: </b>{{fullname}}</td>
-        <td><b>Средняя оценка: {{rating}}</b></td>
-    </tr>
-    <tr>
-        <td><b>Ник в Telegram: </b>@{{username}}</td>
-        <td>
-            {% if boss_rating %}
-                от руководителя: {{boss_rating}}<br>
-            {% endif %}
-            {% if coworkers_rating %}
-                от коллег: {{coworkers_rating}}
-            {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <td><b>Руководитель: </b>{{boss}}</td>
-        {% if subordinate_rating %}
-            <td>от подчиненных: {{subordinate_rating}}<br></td>
-        {% endif %}
-    </tr>
+  <tr>
+    <td><b>Сотрудник: </b>{{fullname}}</td>
+    <td><b>Средняя оценка: {{rating}}</b></td>
+  </tr>
+  <tr>
+    <td><b>Ник в Telegram: </b>@{{username}}</td>
+    <td>
+      {% if boss_rating %}
+      от руководителя: {{boss_rating}}<br>
+      {% endif %}
+      {% if coworkers_rating %}
+      от коллег: {{coworkers_rating}}
+      {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td><b>Руководитель: </b>{{boss}}</td>
+    {% if subordinate_rating %}
+    <td>от подчиненных: {{subordinate_rating}}<br></td>
+    {% endif %}
+  </tr>
 </table>
 <br>
 <h4>Обязанности</h4>
 <table>
-    {% for duty in duties %}
-    <tr>
-        <td>{{duty.text}}</td>
-    </tr>
-    {% endfor %}
+  {% for duty in duties %}
+  <tr>
+    <td>• {{duty.text}}</td>
+  </tr>
+  {% endfor %}
 </table>
 <h4>Проекты</h4>
 <table>
-    {% for project in projects %}
-    <tr>
-        <td>{{project.name}}</td>
-    </tr>
-    {% endfor %}
+  {% for project in projects %}
+  <tr>
+    <td>{{ loop.index0 + 1}}) {{project.name}}</td>
+  </tr>
+  {% endfor %}
 </table>
 <h4>Достижения</h4>
 <table>
-    {% for achievement in achievements %}
-    <tr>
-        <td>{{achievement.text}}</td>
-    </tr>
-    {% endfor %}
+  {% for achievement in achievements %}
+  <tr>
+    <td>• {{achievement.text}}</td>
+  </tr>
+  {% endfor %}
 </table>
 <h4>Фейлы</h4>
 <table>
-    {% for fail in fails %}
-    <tr>
-        <td>{{fail.text}}</td>
-    </tr>
-    {% endfor %}
+  {% for fail in fails %}
+  <tr>
+    <td>• {{fail.text}}</td>
+  </tr>
+  {% endfor %}
 </table>
 <h4>Итоги ревью</h4>
 <p>{{summary}}</p>
