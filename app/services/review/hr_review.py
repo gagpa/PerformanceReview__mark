@@ -26,9 +26,9 @@ class HrReviewService(Entity):
 
     def is_last_review(self, review):
         """ Посмотреть все закончили комментирвоать форму """
-        status = HrReviewStatusService().coworker
-        reviews = Session().query(CoworkerReview).join(Form). \
-            filter(CoworkerReview.hr_status == status,
+        status = HrReviewStatusService().accept
+        reviews = Session().query(CoworkerReview). \
+            filter(CoworkerReview.hr_status != status,
                    CoworkerReview.form == review.form
                    ).all()
 

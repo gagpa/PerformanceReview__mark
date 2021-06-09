@@ -110,7 +110,7 @@ class Notification(Template):
             return self.MESSAGE
 
         elif view == 'accept_to_hr':
-            description = f'Форма пользователя {review.advice.form.user.fullname} (@{review.advice.form.user.username})' \
+            description = f'Форма пользователя {review.form.user.fullname} (@{review.form.user.username})' \
                           f'полностью заполнена'
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE

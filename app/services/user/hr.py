@@ -28,8 +28,7 @@ class HRService(UserService):
         self.save_all(review)
         if service.is_last_review(review):
             review.form.status = form_status
-        self.save_all(review)
-        Session.commit()
+            self.save_all(review)
 
     def decline_coworker_review(self, review_pk: int):
         """ Отклонить комменатрии коллеги """

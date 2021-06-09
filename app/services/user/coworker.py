@@ -86,7 +86,7 @@ class CoworkerService(UserService):
         form_status = StatusService().coworker_review
         hr_status = HrReviewStatusService().coworker
         review_period = ReviewPeriodService().current
-        query = Session.query(CoworkerReview).join(Form, User)
+        query = Session.query(CoworkerReview).join(Form)
         query = query.filter(CoworkerReview.coworker == self.model,
                              CoworkerReview.hr_status == hr_status,
                              Form.status == form_status,
