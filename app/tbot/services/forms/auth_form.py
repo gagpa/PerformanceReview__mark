@@ -46,7 +46,7 @@ class AuthForm(Template):
                 name = self.args.get('fullname').split(' ')[1]
             except IndexError:
                 name = self.args.get('fullname')
-            description = f'Очень приятно, {name.capitalize()}! Кто твой руководитель? ' \
+            description = f'Очень приятно, {name.capitalize()}! Кто твой руководитель?\n' \
                           f'❕ Напиши логин руководителя в формате @login. ' \
                           f'Если у тебя нет руководителя, напиши слово НЕТ'
 

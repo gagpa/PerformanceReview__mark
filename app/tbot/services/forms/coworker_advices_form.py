@@ -117,7 +117,7 @@ class CoworkerAdvicesForm(Template):
                     not_todo.append(text)
 
             self.build_list_message(title=title,
-                                    description='\n❕ Выберите совет, который нужно исправить или у которго вы хотите убрать свой комментарий',
+                                    description='\n❕ Выберите совет, который нужно исправить, или у которого вы хотите убрать свой комментарий',
                                     list_text=todo + not_todo)
             return self.MESSAGE
 

@@ -60,7 +60,7 @@ class ReviewPeriodForm(Template):
                                                               text=text,
                                                               )
         elif self.args.get('stopped'):
-            title = 'Текущие Review остановлено'
+            title = 'Текущее Review остановлено'
             message_text = self.message_builder.build_message(title=title,
                                                               description=description,
                                                               text=text,
