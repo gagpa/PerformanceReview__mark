@@ -18,7 +18,7 @@ class DutyForm(Template):
         duty = self.args.get('duty')
 
         if view == 'edit':
-            self.build_message(title='▪️Достижение',
+            self.build_message(title='▪️Обязанность',
                                description='\n❕ Отправьте в сообщении свои обязанности.',
                                text=f' -  {duty.text}')
             return self.MESSAGE

@@ -1,7 +1,7 @@
 from app.db import Session
 from app.models import CoworkerAdvice, CoworkerProjectRating, CoworkerReview, Form
 from app.services.dictinary import HrReviewStatusService, StatusService, RoleService
-from app.services.review import HrReviewService, CoworkerReviewService
+from app.services.review import HrReviewService, CoworkerReviewService, ReviewPeriodService
 from app.services.user.user import UserService
 
 
@@ -29,6 +29,7 @@ class HRService(UserService):
         if service.is_last_review(review):
             review.form.status = form_status
             self.save_all(review)
+        return review
 
     def decline_coworker_review(self, review_pk: int):
         """ Отклонить комменатрии коллеги """
@@ -41,10 +42,11 @@ class HRService(UserService):
     def reviews(self):
         form_status = StatusService().coworker_review
         hr_status = HrReviewStatusService().hr
+        period = ReviewPeriodService().current
         query = Session.query(CoworkerReview).join(Form)
         query = query.filter(CoworkerReview.hr_status == hr_status,
-                             Form.status == form_status
-                             )
+                             Form.status == form_status,
+                             Form.review_period == period)
         reviews = query.all()
         return reviews
 

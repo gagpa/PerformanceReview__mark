@@ -163,7 +163,8 @@ BUTTONS_TEMPLATES = \
         'input_summary': ButtonTemplate('input_summary', 'Написать отчет'),
         'change_summary': ButtonTemplate('input_summary', 'Изменить отчет'),
         'get_current_rapport': ButtonTemplate('get_current_rapport', 'Выгрузить анкету'),
-        'current_forms_list': ButtonTemplate('current_forms_list', 'Назад'),
+        'current_forms_list': ButtonTemplate('current_forms_list', 'Список анкет'),
+        'current_forms_list_back': ButtonTemplate('current_forms_list', 'Назад'),
 
     }
 

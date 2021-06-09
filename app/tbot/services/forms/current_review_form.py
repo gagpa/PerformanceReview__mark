@@ -29,7 +29,7 @@ class CurrentReviewForm(Template):
             if self.args.get('model').status.name == 'Анкета заполена':
                 rows.append(
                     [BUTTONS_TEMPLATES['input_summary'].add(form_id=self.args.get('model').id),
-                     BUTTONS_TEMPLATES['current_forms_list']])
+                     BUTTONS_TEMPLATES['current_forms_list_back']])
             else:
                 rows.append([BUTTONS_TEMPLATES['current_forms_list']])
             markup = self.markup_builder.build(*rows)

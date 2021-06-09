@@ -11,8 +11,9 @@ from app.services.dictinary.summary import SummaryService
 from app.services.form_review import FormService
 from app.services.form_review.project_comments import ProjectCommentService
 from app.services.user import UserService
-from app.tbot import bot
+from app.tbot import bot, notificator
 from app.tbot.services.forms.archive_form import ArchiveForm
+from app.tbot.services.forms.notification import Notification
 from configs.bot_config import HR_REPORT_TEMPLATE, BOSS_REPORT_TEMPLATE
 
 
@@ -36,6 +37,7 @@ def send_rapport_to_boss(request):
     boss_id = form.user.boss_id
     if boss_id:
         boss = UserService().by_pk(boss_id)
+        notificator.notificate(Notification(view='rapport_to_boss', form=form), boss.chat_id)
         create_and_send_pdf(boss.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
         return ArchiveForm(sent_to_boss=True)
     else:
@@ -88,10 +90,9 @@ def update_data_for_boss_rapport(pk):
     subordinate_rating = [comment.rating.value for comment in subordinate_comments]
     final_rating = ProjectCommentService().final_rating(pk)
     template_vars.update(rating=final_rating if final_rating else 'Нет',
-                         boss_rating=mean(boss_rating) if boss_rating else 'Нет',
-                         coworkers_rating=mean(coworkers_rating) if coworkers_rating else 'Нет',
-                         subordinate_rating=mean(
-                             subordinate_rating) if subordinate_rating else 'Нет')
+                         boss_rating=round(mean(boss_rating), 2) if boss_rating else 'Нет',
+                         coworkers_rating=round(mean(coworkers_rating), 2) if coworkers_rating else 'Нет',
+                         subordinate_rating=round(mean(subordinate_rating), 2) if subordinate_rating else 'Нет')
     return template_vars
 
 

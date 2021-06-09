@@ -66,7 +66,7 @@ class ListFormReview(Template):
 
         elif review == 'coworker':
             reviews = self.cut_per_page(reviews, page)
-            list_data = [f'@{review.form.user.username} - @{review.coworker.username}' for review in reviews]
+            list_data = [f'@{review.form.user.username} - {review.form.user.fullname}' for review in reviews]
             description = '\n❕ Можете выбрать форму коллеги на оценку' if list_data else ''
             self.build_list_message(title='📑 Список коллег на оценку',
                                     description=description,

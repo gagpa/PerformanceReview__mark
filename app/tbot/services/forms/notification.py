@@ -65,6 +65,11 @@ class Notification(Template):
         elif view == 'add_role':
             return self.markup_builder.build_reply_keyboard(PERMISSIONS[role])
 
+        elif view == 'accept_to_hr':
+            self.extend_keyboard(True, BUTTONS_TEMPLATES['input_summary'].add(form_id=form.id),
+                                 BUTTONS_TEMPLATES['current_forms_list'])
+            return self.build()
+
     def create_message(self) -> str:
         view = self.args.get('view')
         form = self.args.get('form')
@@ -96,9 +101,11 @@ class Notification(Template):
                           f'вернул вам анкету для исправления ошибок'
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE
+
         elif view == 'declined':
             self.build_message(title='🔔 Отправлено на доработку')
             return self.MESSAGE
+
         elif view == 'start_review':
             description = f"Запущено новое Review.\n" \
                           f"Необходимо заполнить анкету в разделе 'Моя анкета' до{self.args.get('date')}"
@@ -111,8 +118,7 @@ class Notification(Template):
             return self.MESSAGE
 
         elif view == 'accept_to_hr':
-            description = f'Форма пользователя {review.form.user.fullname} (@{review.form.user.username})' \
-                          f'полностью заполнена'
+            description = f'Для пользователя {form.user.fullname} (@{form.user.username}) анкетирование завершено. Доступна опция написания кратких итогов'
             self.build_message(title='🔔 Оповещение', description=description)
             return self.MESSAGE
 
@@ -140,4 +146,9 @@ class Notification(Template):
         elif view == 'delete_user':
             self.build_message(title='🔔 Оповещение',
                                description='Вы были удалены из системы.')
+            return self.MESSAGE
+
+        elif view == 'rapport_to_boss':
+            self.build_message(title='🔔 Оповещение',
+                               description=f'В рамках текущего Review вам направлен отчёт о вашем подчинённом @{form.user.username} ({form.user.fullname}):')
             return self.MESSAGE

@@ -22,7 +22,7 @@ class ReviewForm(Template):
                 if form.achievements and form.fails and form.projects and form.duties:
                     if form.user.boss:
                         self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_send_to_boss'])
-                    else:
+                    elif form.coworker_reviews:
                         self.extend_keyboard(True, BUTTONS_TEMPLATES['review_send_coworkers'].add(form=form.id))
                 return self.build(form=form.id)
 
@@ -157,7 +157,8 @@ class ReviewForm(Template):
 
         elif review_type == 'coworker':
             self.build_message(title='📝 Анкета коллеги',
-                               text=f'Сотрудник: @{form.user.username} - {form.user.fullname}')
+                               text=f'Сотрудник: @{form.user.username} - {form.user.fullname}\n'
+                                    f'Оценивающий: @{review.coworker.username} – {review.coworker.fullname}')
             if form.duties:
                 list_text = [f'{duty.text}' for duty in form.duties]
                 self.build_list_message(title='▪️Обязанности', list_text=list_text)
@@ -186,7 +187,7 @@ class ReviewForm(Template):
                 if rating.hr_comment:
                     list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
             if list_data:
-                self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
+                self.build_list_message(title='▫ Оценки коллеги', list_text=list_data)
 
             if review.advices:
                 todo = []
@@ -196,7 +197,7 @@ class ReviewForm(Template):
                         todo.append(advice)
                     else:
                         not_todo.append(advice)
-                self.build_message(title='▫ Ваши советы')
+                self.build_message(title='▫ Советы коллеги')
                 if todo:
                     for i, advice in enumerate(todo):
                         if i > 0:

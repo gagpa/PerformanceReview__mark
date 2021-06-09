@@ -59,6 +59,8 @@ class ProjectsService(Entity):
         form = self.model.form
         hr_status = HrReviewStatusService().coworker
         for user in users:
+            if user == form.user:
+                continue
             reviews = user.coworker_reviews
             review = list(filter(lambda coworker_review: coworker_review.form == form, reviews))
             if review:
@@ -78,7 +80,8 @@ class ProjectsService(Entity):
             self.model = Session().merge(self.model)
         ratings = Session().query(CoworkerProjectRating). \
             join(CoworkerReview). \
-            filter(CoworkerReview.coworker == contact).all()
+            filter(CoworkerReview.coworker == contact,
+                   CoworkerReview.form == self.model.form).all()
         if len(ratings) == 1:
             ratings = ratings[0]
             Session().delete(ratings)
