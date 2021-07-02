@@ -40,7 +40,7 @@ class DutiesForm(Template):
 
         if view == 'list':
             if duties:
-                description = '\n❕ Сначала нажми кнопку «Добавить» и напиши все обязанности одним текстом через «;». Если что-то забудешь, позже можно это исправить.'
+                description = '\n❕ Внеси изменения или вернись к анкете.'
                 self.build_list_message(title=title,
                                         list_text=[f'{duty.text}' for duty in duties],
                                         description=description)
@@ -59,8 +59,9 @@ class DutiesForm(Template):
             return self.MESSAGE
 
         elif view == 'add':
-            text = 'Напиши функционал, который ты выполняешь в ходе своей работы.\n\n <b>Например, я занимаюсь::</b>\nоценкой персонала;\nналаживаю коммуникацию между отделами'
-            description = '❕ Отправьте в сообщении свои обязанности.'
+
+            text = 'Функционал, который ты выполняешь в ходе своей работы.\n\n <b>Например, я занимаюсь::</b>\nоценкой персонала;\nналаживаю коммуникацию между отделами'
+            description = '❕ Напиши все обязанности/.../... одним текстом через «;». Если что-то забудешь, позже можно это исправить:'
             if duties:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',
