@@ -97,8 +97,30 @@ class CurrentReviewForm(Template):
                 text = f'{text}\n\n❕ Не оценили:\n{usernames}'
             message_text = self.message_builder.build_message(title, '', text)
         elif self.args.get('change_summary'):
-            text = 'Введите краткие итоги на основе полученных советов:'
-            message_text = self.message_builder.build_message('', '', text=text)
+            title = 'Review сотрудника'
+            todo = []
+            not_todo = []
+            for advice in self.args.get('advices'):
+                if advice.advice_type.name == 'todo':
+                    todo.append(f'• {advice.text}')
+                else:
+                    not_todo.append(f'• {advice.text}')
+            todo = '\n'.join(todo)
+            not_todo = '\n'.join(not_todo)
+            summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
+            rating = self.args.get('rating') if self.args.get('rating') else '\nостутствует'
+            text = f"<i>ФИО:</i> {self.args.get('model').user.fullname}\n" \
+                   f"<i>Статус:</i> {self.args.get('model').status.name}\n\n" \
+                   f"<b>Оценка:</b> {rating}\n" \
+                   f"\n<b>Что делать:</b>\n" \
+                   f"{todo if todo else 'отсутствует'}" \
+                   f"\n\n<b>Что не делать:</b>\n" \
+                   f"{not_todo if not_todo else 'отсутствует'}" \
+                   f"\n\n<b>Подведение итогов:</b>" \
+                   f"\n{summary}"
+
+            text += '\n\n❕ Введите краткие итоги на основе полученных советов:'
+            message_text = self.message_builder.build_message(title, '', text=text)
         elif self.args.get('changed'):
             text = 'Итоги сформированы. Доступна опция выгрузки анкеты.'
             message_text = self.message_builder.build_message('', '', text=text)
