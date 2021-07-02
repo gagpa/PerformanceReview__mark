@@ -67,7 +67,7 @@ class CurrentReviewForm(Template):
                                                                    description=description,
                                                                    list_data=list_data,
                                                                    )
-        elif self.args.get('model'):
+        elif self.args.get('model') and not self.args.get('change_summary'):
             title = 'Review сотрудника'
             todo = []
             not_todo = []
