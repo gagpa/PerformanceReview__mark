@@ -42,7 +42,7 @@ class AchievementsForm(Template):
             if achievements:
                 self.build_message(title=title,
                                    description='Факты, которые ты считаешь своими основными достижениями и успехами.')
-                description = '\n❕ Нажми кнопку “добавить” и перечисли свои достижения – через «;». Если что-то забудешь, можно будет исправить это позже.'
+                description = '\n❕ Сначала нажми кнопку «Добавить» и напиши все достижения одним текстом через «;». Если что-то забудешь, позже можно это исправить.'
                 self.build_list_message(list_text=[f'{achievement.text}' for achievement in achievements],
                                         description=description)
             return self.MESSAGE
