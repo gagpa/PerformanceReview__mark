@@ -3,6 +3,7 @@ import os
 from statistics import mean
 
 from jinja2 import FileSystemLoader, Environment
+from pdf2docx import Converter
 from weasyprint import HTML
 
 from app.db import Session
@@ -102,11 +103,16 @@ def get_data_for_rapport(pk):
 
 def create_and_send_pdf(chat_id, template_name, template_vars):
     filename = f"report_{datetime.datetime.now()}.pdf"
+    filename_docx = filename.replace('.pdf', '.docx')
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template(template_name)
     html_out = template.render(template_vars)
     HTML(string=html_out).write_pdf(filename)
-    with open(filename, "rb") as f:
+    cv = Converter(filename)
+    cv.convert(filename_docx)
+    cv.close()
+    with open(filename_docx, "rb") as f:
         bot.send_document(chat_id, f)
 
     os.remove(filename)
+    os.remove(filename_docx)
