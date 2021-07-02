@@ -83,6 +83,18 @@ class ReviewForm(Template):
             else:
                 fill_instance += '\n❌  Вы не заполнили раздел “Обязанности”'
 
+            if form.projects:
+                fill_volume += 1
+                find_coworkers = lambda project: ''.join(
+                    [f"• {review.coworker.fullname} (@{review.coworker.username})\n" for review in project.reviews])
+                project_list_text = [
+                    f'<b>{project.name}</b>\n<i>{project.description}</i>\nОценивающие:\n{find_coworkers(project)}'
+                    for project in form.projects]
+                self.build_list_message(title='▪️Проекты', list_text=project_list_text)
+
+            else:
+                fill_instance += '\n❌  Вы не заполнили раздел “Проекты”'
+
             if form.achievements:
                 fill_volume += 1
                 list_text = [f'{achievement.text}' for achievement in form.achievements]
@@ -96,18 +108,6 @@ class ReviewForm(Template):
                 self.build_list_message(title='▪️Провалы', list_text=list_text)
             else:
                 fill_instance += '\n❌  Вы не заполнили раздел “Провалы”'
-
-            if form.projects:
-                fill_volume += 1
-                find_coworkers = lambda project: ''.join(
-                    [f"• {review.coworker.fullname} (@{review.coworker.username})\n" for review in project.reviews])
-                project_list_text = [
-                    f'<b>{project.name}</b>\n<i>{project.description}</i>\nОценивающие:\n{find_coworkers(project)}'
-                    for project in form.projects]
-                self.build_list_message(title='▪️Проекты', list_text=project_list_text)
-
-            else:
-                fill_instance += '\n❌  Вы не заполнили раздел “Проекты”'
 
             if fill_volume == max_volume:
                 filling = f' - Статус: {form.status.name} ✔'
