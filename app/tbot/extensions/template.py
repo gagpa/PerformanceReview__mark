@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
-
 from telebot.types import InlineKeyboardMarkup
+from typing import List, Optional
 
 from app.tbot.extensions.button_templates import ButtonTemplate
 from app.tbot.extensions.keyboard_builder import InlineKeyboardBuilder

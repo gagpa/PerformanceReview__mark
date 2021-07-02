@@ -135,12 +135,6 @@ class ReviewForm(Template):
             if form.duties:
                 list_text = [f'{duty.text}' for duty in form.duties]
                 self.build_list_message(title='▪️Обязанности', list_text=list_text)
-            if form.achievements:
-                list_text = [f'{achievement.text}' for achievement in form.achievements]
-                self.build_list_message(title='▪️Достижения', list_text=list_text)
-            if form.fails:
-                list_text = [f'{fail.text}' for fail in form.fails]
-                self.build_list_message(title='▪️Провалы', list_text=list_text)
             if form.projects:
                 find_coworkers = lambda project: '\n •  '.join(
                     [f"@{review.coworker.username}" for review in project.reviews])
@@ -149,6 +143,13 @@ class ReviewForm(Template):
                     for project in
                     form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
+            if form.achievements:
+                list_text = [f'{achievement.text}' for achievement in form.achievements]
+                self.build_list_message(title='▪️Достижения', list_text=list_text)
+            if form.fails:
+                list_text = [f'{fail.text}' for fail in form.fails]
+                self.build_list_message(title='▪️Провалы', list_text=list_text)
+
             if review.text:
                 self.build_message(title='▫ Ваш крайний комментарий', text=f' -  {review.text}')
             if view == 'decline':
@@ -162,12 +163,6 @@ class ReviewForm(Template):
             if form.duties:
                 list_text = [f'{duty.text}' for duty in form.duties]
                 self.build_list_message(title='▪️Обязанности', list_text=list_text)
-            if form.achievements:
-                list_text = [f'{achievement.text}' for achievement in form.achievements]
-                self.build_list_message(title='▪️Достижения', list_text=list_text)
-            if form.fails:
-                list_text = [f'{fail.text}' for fail in form.fails]
-                self.build_list_message(title='▪️Провалы', list_text=list_text)
             if form.projects:
                 find_coworkers = lambda project: '\n •  '.join(
                     [f"@{review.coworker.username}" for review in project.reviews])
@@ -176,6 +171,13 @@ class ReviewForm(Template):
                     for project in
                     form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
+            if form.achievements:
+                list_text = [f'{achievement.text}' for achievement in form.achievements]
+                self.build_list_message(title='▪️Достижения', list_text=list_text)
+            if form.fails:
+                list_text = [f'{fail.text}' for fail in form.fails]
+                self.build_list_message(title='▪️Провалы', list_text=list_text)
+
             list_data = []
             for rating in ratings:
                 if rating.text or rating.rating:
@@ -248,12 +250,6 @@ class ReviewForm(Template):
             if form.duties:
                 list_text = [f'{duty.text}' for duty in form.duties]
                 self.build_list_message(title='▪️Обязанности', list_text=list_text)
-            if form.achievements:
-                list_text = [f'{achievement.text}' for achievement in form.achievements]
-                self.build_list_message(title='▪️Достижения', list_text=list_text)
-            if form.fails:
-                list_text = [f'{fail.text}' for fail in form.fails]
-                self.build_list_message(title='▪️Провалы', list_text=list_text)
             if form.projects:
                 find_coworkers = lambda project: '\n •  '.join(
                     [f"@{review.coworker.username}" for review in project.reviews])
@@ -262,6 +258,13 @@ class ReviewForm(Template):
                     for project in
                     form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=list_text)
+            if form.achievements:
+                list_text = [f'{achievement.text}' for achievement in form.achievements]
+                self.build_list_message(title='▪️Достижения', list_text=list_text)
+            if form.fails:
+                list_text = [f'{fail.text}' for fail in form.fails]
+                self.build_list_message(title='▪️Провалы', list_text=list_text)
+
             list_data = []
             for rating in ratings:
                 if rating.text or rating.rating:
