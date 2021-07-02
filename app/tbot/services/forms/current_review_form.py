@@ -66,7 +66,7 @@ class CurrentReviewForm(Template):
                                                                    description=description,
                                                                    list_data=list_data,
                                                                    )
-        elif self.args.get('model'):
+        elif self.args.get('model') and not self.args.get('change_summary'):
             title = 'Review сотрудника'
             to_do = ''
             not_todo = ''
@@ -91,8 +91,29 @@ class CurrentReviewForm(Template):
 
             message_text = self.message_builder.build_message(title, '', text)
         elif self.args.get('change_summary'):
-            text = 'Введите summaries на основе полученных советов:'
-            message_text = self.message_builder.build_message('', '', text=text)
+            title = 'Review сотрудника'
+            to_do = ''
+            not_todo = ''
+            for advice in self.args.get('advices'):
+                to_do += f'{advice.todo}\n' if advice.todo else ''
+                not_todo += f'{advice.not_todo}\n' if advice.not_todo else ''
+            to_do = to_do if to_do else "отсутствует"
+            not_todo = not_todo if not_todo else "отсутствует"
+            summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
+            rating = self.args.get("rating") if self.args.get("rating") else "\n"
+            text = f"ФИО: {self.args.get('model').user.fullname}\n" \
+                   f"Статус: {self.args.get('model').status.name}\n" \
+                   f"Оценка: {rating}\n" \
+                   f"\nЧто делать:\n" \
+                   f"{to_do}" \
+                   f"\nЧто не делать:\n" \
+                   f"{not_todo}" \
+                   f"\n\nSummary:" \
+                   f"\n{summary}"
+
+            text += '\n\n❕ Введите summaries на основе полученных советов:'
+
+            message_text = self.message_builder.build_message(title, '', text)
         elif self.args.get('changed'):
             text = 'Summaries сформировано. Доступна опция выгрузки анкеты.'
             message_text = self.message_builder.build_message('', '', text=text)

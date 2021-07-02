@@ -30,8 +30,14 @@ def employee_review(request):
 def input_summary(request):
     """Предлагаем HR ввести summary"""
     form_id = request.args['form_id'][0]
-    return CurrentReviewForm(change_summary=True), request.send_args(change_summary,
-                                                                     form_id=form_id)
+    current_review = Session().query(Form).join(User, Form.user).join(Status, Form.status) \
+        .filter(Form.id == form_id).one_or_none()
+    coworker_advices = Session().query(CoworkerAdvice).filter_by(form_id=form_id).all()
+    summary = SummaryService().by_form_id(form_id)
+    rating = ProjectCommentService().final_rating(form_id)
+    return CurrentReviewForm(model=current_review, advices=coworker_advices, summary=summary,
+                             rating=rating, change_summary=True), request.send_args(change_summary,
+                                                                                    form_id=form_id)
 
 
 def change_summary(request):
