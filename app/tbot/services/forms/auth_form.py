@@ -74,7 +74,7 @@ class AuthForm(Template):
                           'и нажмите «Готово»'
 
         elif self.args.get('wrong'):
-            description = '❕ У вас недостаточно прав.'
+            description = '❕ Выберите раздел.'
 
         else:
             description = ''
