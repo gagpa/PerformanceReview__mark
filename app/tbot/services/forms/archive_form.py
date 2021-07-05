@@ -78,9 +78,9 @@ class ArchiveForm(Template):
             description = 'Выберите номер анкеты, чтобы сформировать отчет:'
             list_data = list()
             for model in old_forms:
-                string = f'{model.user.fullname},\n{model.status.name}'
+                string = f'{model.user.fullname}\n{model.status.name}'
                 rating = ProjectCommentService().final_rating(model.id)
-                string += f",\nОценка: {rating}\n" if rating else "\n"
+                string += f"\nОценка: {rating}\n" if rating else "\n"
                 list_data.append(string)
 
             message_text = self.message_builder.build_list_message(title=title,

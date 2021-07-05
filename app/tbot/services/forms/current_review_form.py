@@ -55,10 +55,10 @@ class CurrentReviewForm(Template):
             title = 'Текущий Review'
             list_data = list()
             for model in forms:
-                string = f'{model.user.fullname},\n{model.status.name}'
+                string = f'{model.user.fullname}\n{model.status.name}'
                 rating = ProjectCommentService().final_rating(model.id)
                 if model.status in [StatusService().accepted, StatusService().review_done]:
-                    string += f",\nОценка: {rating}\n" if rating else "\n"
+                    string += f"\nОценка: {rating}\n" if rating else "\n"
                 else:
                     string += '\n'
                 list_data.append(string)
