@@ -28,7 +28,7 @@ def get_boss_rapport(request):
     pk = request.args['form_id'][0]
     user = request.user
     template_vars = update_data_for_boss_rapport(pk)
-    create_and_send_pdf(user.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
+    create_and_send_pdf(user, BOSS_REPORT_TEMPLATE, template_vars)
 
 
 def send_rapport_to_boss(request):
@@ -39,7 +39,7 @@ def send_rapport_to_boss(request):
     if boss_id:
         boss = UserService().by_pk(boss_id)
         notificator.notificate(Notification(view='rapport_to_boss', form=form), boss.chat_id)
-        create_and_send_pdf(boss.chat_id, BOSS_REPORT_TEMPLATE, template_vars)
+        create_and_send_pdf(boss, BOSS_REPORT_TEMPLATE, template_vars)
         return ArchiveForm(sent_to_boss=True)
     else:
         return ArchiveForm(no_boss=True)
@@ -78,7 +78,7 @@ def get_hr_rapport(request):
         not_todo = f'Что перестать делать:<br>• {not_todo}'
         template_vars['reviews'].append([fullname, role, mark, comments, todo, not_todo])
 
-    create_and_send_pdf(request.user.chat_id, HR_REPORT_TEMPLATE, template_vars)
+    create_and_send_pdf(request.user, HR_REPORT_TEMPLATE, template_vars)
 
 
 def update_data_for_boss_rapport(pk):
@@ -120,8 +120,10 @@ def get_data_for_rapport(pk):
     return template_vars
 
 
-def create_and_send_pdf(chat_id, template_name, template_vars):
-    filename = f"report_{datetime.datetime.now()}.pdf"
+def create_and_send_pdf(user, template_name, template_vars):
+    chat_id = user.chat_id
+    last_name = user.fullname.split(' ')[0]
+    filename = f"Review_{last_name}_{template_vars.get('start')}.pdf"
     filename_docx = filename.replace('.pdf', '.docx')
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template(template_name)
