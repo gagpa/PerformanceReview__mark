@@ -136,7 +136,7 @@ BUTTONS_TEMPLATES = \
         'cancel_user_delete': ButtonTemplate('cancel_user_delete', 'Отмена'),
         'back_to_user': ButtonTemplate('back_to_user', 'Назад'),
 
-        'user_edit_fullname': ButtonTemplate('user_edit_fullname', 'ФИО'),
+        'user_edit_fullname': ButtonTemplate('edit_fullname', 'ФИО'),
         'user_edit_role': ButtonTemplate('user_edit_role', 'Роль'),
         'user_edit_position': ButtonTemplate('user_edit_position', 'Должность'),
         'user_edit_boss': ButtonTemplate('user_edit_boss', 'Руководитель'),

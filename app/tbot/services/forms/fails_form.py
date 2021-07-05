@@ -46,7 +46,7 @@ class FailsForm(Template):
                                                '\nЧем вы сами недовольны, и что хотели бы исправить и' \
                                                ' улучшить в будущем.')
 
-                description = '\n❕ Нажми кнопку “добавить” и перечисли свои провалы – через «;». Если что-то забудешь, позже можно это исправить.'
+                description = '\n❕ Сначала нажми кнопку «Добавить» и напиши все провалы одним текстом через «;». Если что-то забудешь, позже можно это исправить.'
                 self.build_list_message(description=description,
                                         list_text=[f'{fail.text}' for fail in fails])
             return self.MESSAGE
@@ -64,14 +64,13 @@ class FailsForm(Template):
             return self.MESSAGE
 
         elif view == 'add':
-            description = '❕ Перечисли свои провалы – через «;». Если что-то забудешь, можно будет исправить это позже.'
-            self.build_message(title=title,
-                               description='Напиши все провалы одним текстом через «;». Если что-то забудешь, позже можно это исправить:')
+            description = '❕ Напиши все провалы одним текстом через «;». Если что-то забудешь, позже можно это исправить:'
             if fails:
-                self.build_list_message(description=f'\n{description}',
+                self.build_list_message(title=title,
+                                        description=f'\n{description}',
                                         list_text=[f'{fail.text}' for fail in fails])
             else:
-                self.build_message(description=description)
+                self.build_message(title=title, description=description)
             return self.MESSAGE
 
 

@@ -85,8 +85,8 @@ class ReviewForm(Template):
 
             if form.projects:
                 fill_volume += 1
-                find_coworkers = lambda project: ''.join(
-                    [f"• {review.coworker.fullname} (@{review.coworker.username})\n" for review in project.reviews])
+                find_coworkers = lambda project: '\n'.join(
+                    [f"• {review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
                 project_list_text = [
                     f'<b>{project.name}</b>\n<i>{project.description}</i>\nОценивающие:\n{find_coworkers(project)}'
                     for project in form.projects]

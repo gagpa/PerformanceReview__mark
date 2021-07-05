@@ -29,6 +29,8 @@ def add_position_user(request):
     """ Добавить должность пользователя """
     pk = request.pk()
     department = Session().query(Department).get(pk)
+    for p in department.positions:
+        print(p.id)
     positions = department.positions
     return AuthForm(models=positions, is_position=True, departament=pk)
 
