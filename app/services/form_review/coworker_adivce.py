@@ -2,6 +2,7 @@ from app.models import CoworkerAdvice, AdviceType
 from app.db import Session
 from app.services.abc_entity import Entity
 from sqlalchemy import asc
+from loguru import logger
 
 
 class CoworkerAdviceService(Entity):
@@ -25,5 +26,5 @@ class CoworkerAdviceService(Entity):
         models = Session.query(self.Model).\
             join(AdviceType).\
             filter(self.Model.coworker_review == self.review,
-                   AdviceType.name == self.advice_type).order_by(asc(self.Model.advice_type)).all()
+                   AdviceType.name == self.advice_type).all()
         return models

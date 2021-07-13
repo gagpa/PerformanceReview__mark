@@ -112,14 +112,15 @@ class CoworkerAdvicesForm(Template):
                 if advice.advice_type.name == 'todo':
                     if not todo:
                         self.build_message(title='Что делать?')
-                        self.MESSAGE.replace('<b>Что делать?</b>\n', '<b>Что делать?</b>')
+                        self.MESSAGE = self.MESSAGE.replace('<b>Что делать?</b>\n', '<b>Что делать?</b>')
                     todo.append(text)
                 else:
                     if not not_todo:
                         self.build_message(title='Что перестать делать?')
-                        self.MESSAGE.replace('<b>Что перестать делать?</b>\n', '<b>Что перестать делать?</b>')
+                        self.MESSAGE = self.MESSAGE.replace('<b>Что перестать делать?</b>\n', '\n<b>Что перестать делать?</b>')
                     not_todo.append(text)
                 self.build_message(text=f'{i + 1}. {text}')
+                self.MESSAGE = self.MESSAGE.replace(f'{text}\n', text)
             self.build_message(description='\n❕ Выберите совет, который нужно исправить, или у которого вы хотите убрать свой комментарий')
             return self.MESSAGE
 

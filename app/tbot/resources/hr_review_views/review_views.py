@@ -1,4 +1,5 @@
 from app.services.review import CoworkerReviewService
+from app.services.form_review import CoworkerAdviceService
 from app.services.user import HRService
 from app.tbot import notificator
 from app.tbot.resources.hr_review_views.list_forms_views import list_forms_view
@@ -11,8 +12,9 @@ def list_advice_view(request):
     """ Заполнение """
     pk_review = request.args['review'][0]
     review = CoworkerReviewService().by_pk(pk_review)
-    next_view = request.send_args(comment_advice_view, review=[review.id])
-    return CoworkerAdvicesForm(view='hr', review=review, coworker_advices=review.advices)
+    advices = CoworkerAdviceService(review=review, advice_type='todo').all
+    advices.extend(CoworkerAdviceService(review=review, advice_type='not todo').all)
+    return CoworkerAdvicesForm(view='hr', review=review, coworker_advices=advices)
 
 
 def comment_advice_view(request):
