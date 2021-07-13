@@ -12,13 +12,13 @@ from app.tbot.storages import BUTTONS_TEMPLATES
 def get_marks_info(marks, boss, coworkers, subordinate):
     text = '\n'
     if boss != 'Нет':
-        text += f'\n<b>Руководитель: {boss}</b>'
+        text += f'\n<b>Руководитель: {boss}</b>\n'
         text += ''.join(marks['Руководитель'][0])
     if coworkers != 'Нет':
-        text += f'\n\n<b>Коллеги: {coworkers}</b>'
+        text += f'\n<b>Коллеги: {coworkers}</b>\n'
         text += '\n'.join(marks['Коллеги'])
     if subordinate != 'Нет':
-        text += f'\n\n<b>Подчиненные: {subordinate}</b>'
+        text += f'\n<b>Подчиненные: {subordinate}</b>\n'
         text += '\n'.join(marks['Подчиненные'])
     return text
 
@@ -127,14 +127,18 @@ class CurrentReviewForm(Template):
             not_todo = '\n'.join(not_todo)
             summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
             rating = self.args.get('rating') if self.args.get('rating') else '\nостутствует'
+            marks = get_marks_info(self.args.get('marks'), self.args.get('boss_rating'),
+                                   self.args.get('coworkers_rating'),
+                                   self.args.get('subordinate_rating'))
             text = f"<i>ФИО:</i> {self.args.get('model').user.fullname}\n" \
                    f"<i>Статус:</i> {self.args.get('model').status.name}\n\n" \
-                   f"<b>Оценка:</b> {rating}\n" \
-                   f"\n<b>Что делать:</b>\n" \
+                   f"▪️<b>Оценка:</b> {rating}" \
+                   f"{marks}\n" \
+                   f"\n▪️<b>Что делать:</b>\n" \
                    f"{todo if todo else 'отсутствует'}" \
-                   f"\n\n<b>Что не делать:</b>\n" \
+                   f"\n\n▪️<b>Что не делать:</b>\n" \
                    f"{not_todo if not_todo else 'отсутствует'}" \
-                   f"\n\n<b>Подведение итогов:</b>" \
+                   f"\n\n▪️<b>Подведение итогов:</b>" \
                    f"\n{summary}"
 
             text += '\n\n❕ Введите краткие итоги на основе полученных советов:'

@@ -69,9 +69,38 @@ def input_summary(request):
         Form.id == form_id).all()
     summary = SummaryService().by_form_id(form_id)
     rating = ProjectCommentService().final_rating(form_id)
-    return CurrentReviewForm(model=current_review, advices=coworker_advices, summary=summary,
-                             rating=rating, change_summary=True), request.send_args(change_summary,
-                                                                                    form_id=form_id)
+
+    coworkers_comments = ProjectCommentService().coworkers_projects_comments(form_id)
+    coworkers_rating = [comment.rating.value for comment in coworkers_comments]
+    boss_comments = ProjectCommentService().boss_projects_comments(form_id)
+    boss_rating = [comment.rating.value for comment in boss_comments]
+    subordinate_comments = ProjectCommentService().subordinate_projects_comments(form_id)
+    subordinate_rating = [comment.rating.value for comment in subordinate_comments]
+
+    reviews = ProjectCommentService.project_comments(form_id)
+
+    marks = {'Руководитель': [], 'Коллеги': [], 'Подчиненные': []}
+    for review in reviews:
+        fullname = review.coworker.fullname
+        username = review.coworker.username
+        if review.coworker.id == current_review.user.boss_id:
+            role = 'Руководитель'
+        elif review.coworker.boss_id == current_review.user.id:
+            role = 'Подчиненные'
+        else:
+            role = 'Коллеги'
+        ratings = [project_rating.rating.value for project_rating in review.projects_ratings if
+                   project_rating.rating]
+        mean_rating = round(mean(ratings), 2) if ratings else 'Нет'
+        marks[role].append(f'{fullname} @{username}: {mean_rating}')
+
+    return CurrentReviewForm(
+        model=current_review, advices=coworker_advices, summary=summary,
+        rating=rating, change_summary=True, marks=marks,
+        boss_rating=round(mean(boss_rating), 2) if boss_rating else 'Нет',
+        coworkers_rating=round(mean(coworkers_rating), 2) if coworkers_rating else 'Нет',
+        subordinate_rating=round(mean(subordinate_rating), 2) if subordinate_rating else 'Нет'
+    ), request.send_args(change_summary, form_id=form_id)
 
 
 def change_summary(request):
