@@ -115,7 +115,7 @@ class CoworkerAdvicesForm(Template):
                     todo.append(text)
                 else:
                     if not not_todo:
-                        self.build_message(text='Что перестать делать?')
+                        self.build_message(title='Что перестать делать?')
                     not_todo.append(text)
                 self.build_message(text=f'{i + 1}. {text}')
             self.build_message(description='\n❕ Выберите совет, который нужно исправить, или у которого вы хотите убрать свой комментарий')
