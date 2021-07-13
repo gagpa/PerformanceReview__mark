@@ -48,8 +48,19 @@ def send_rapport_to_boss(request):
 def get_hr_rapport(request):
     pk = request.args['form_id'][0]
     template_vars = get_data_for_rapport(pk)
+    coworkers_comments = ProjectCommentService().coworkers_projects_comments(pk)
+    coworkers_rating = [comment.rating.value for comment in coworkers_comments]
+    boss_comments = ProjectCommentService().boss_projects_comments(pk)
+    boss_rating = [comment.rating.value for comment in boss_comments]
+    subordinate_comments = ProjectCommentService().subordinate_projects_comments(pk)
+    subordinate_rating = [comment.rating.value for comment in subordinate_comments]
     final_rating = ProjectCommentService().final_rating(pk)
-    template_vars.update(rating=final_rating if final_rating else 'Нет')
+    template_vars.update(rating=final_rating if final_rating else 'Нет',
+                         boss_rating=round(mean(boss_rating), 2) if boss_rating else 'Нет',
+                         coworkers_rating=round(mean(coworkers_rating),
+                                                2) if coworkers_rating else 'Нет',
+                         subordinate_rating=round(mean(subordinate_rating),
+                                                  2) if subordinate_rating else 'Нет')
 
     reviews = ProjectCommentService.project_comments(pk)
     template_vars.update(reviews=[])
@@ -129,6 +140,7 @@ def create_and_send_pdf(user, template_name, template_vars):
     template = env.get_template(template_name)
     html_out = template.render(template_vars)
     HTML(string=html_out).write_pdf(filename)
+
     cv = Converter(filename)
     cv.convert(filename_docx)
     cv.close()
