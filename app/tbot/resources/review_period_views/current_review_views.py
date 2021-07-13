@@ -49,7 +49,7 @@ def employee_review(request):
         ratings = [project_rating.rating.value for project_rating in review.projects_ratings if
                    project_rating.rating]
         mean_rating = round(mean(ratings), 2) if ratings else 'Нет'
-        marks[role].append([f'{fullname} @{username}: {mean_rating}'])
+        marks[role].append(f'{fullname} @{username}: {mean_rating}')
 
     return CurrentReviewForm(
         model=current_form, advices=advices, summary=summary,
