@@ -51,8 +51,8 @@ class MessageDecorator:
 
 class MessageBuilder(MessageDecorator):
     """ Строитель сообщений от телеграмм бота """
-    __LIST_TEMPLATE = '{title}\n{list_data}\n{description}'
-    __DEFAULT_TEMPLATE = '{title}\n{text}\n{description}'
+    __LIST_TEMPLATE = '{title}\n{list_data}\n{description}\n'
+    __DEFAULT_TEMPLATE = '{title}\n{text}\n{description}\n'
 
     def build_list_message(self, title: str = None, description: Optional[str] = None, list_data: Optional[list] = None):
         """ Построить сообщения списка данных """
@@ -64,7 +64,6 @@ class MessageBuilder(MessageDecorator):
             template = template.replace('{title}\n', '')
         if not description:
             template = template.replace('{description}\n', '')
-
         if not list_data:
             template = template.replace('{list_data}\n', '')
             template = template.replace('{list_data}', '')
@@ -81,7 +80,7 @@ class MessageBuilder(MessageDecorator):
         if not title:
             template = template.replace('{title}\n', '')
         if not description:
-            template = template.replace('{description}', '')
+            template = template.replace('{description}\n', '')
         if not data:
             template = template.replace('{text}\n', '')
             template = template.replace('{text}', '')
