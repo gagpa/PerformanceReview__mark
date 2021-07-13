@@ -102,23 +102,23 @@ class CoworkerAdvicesForm(Template):
         elif view == 'hr':
             todo = []
             not_todo = []
-            for advice in coworker_advices:
+            self.build_message(title=title)
+            for i, advice in enumerate(coworker_advices):
 
-                text = advice.text
                 if advice.hr_comment:
                     text = f'{advice.text}\n<i>❗ Исправить: {advice.hr_comment}</i>'
+                else:
+                    text = advice.text
                 if advice.advice_type.name == 'todo':
                     if not todo:
-                        text = f'<b>Что делать</b>\n{text}'
+                        self.build_message(title='Что делать?')
                     todo.append(text)
                 else:
                     if not not_todo:
-                        text = f'<b>Что перестать делать</b>\n{text}'
+                        self.build_message(text='Что перестать делать?')
                     not_todo.append(text)
-
-            self.build_list_message(title=title,
-                                    description='\n❕ Выберите совет, который нужно исправить, или у которого вы хотите убрать свой комментарий',
-                                    list_text=todo + not_todo)
+                self.build_message(text=f'{i + 1}. {text}')
+            self.build_message(description='\n❕ Выберите совет, который нужно исправить, или у которого вы хотите убрать свой комментарий')
             return self.MESSAGE
 
 
