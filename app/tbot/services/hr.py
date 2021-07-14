@@ -17,6 +17,7 @@ class HRServiceTBot(HRService):
             self.advice.hr_comment = comment
             Session().add(self.advice)
             request.add('review', [self.advice.coworker_review.id])
+            request.add('type', [self.advice.advice_type.name])
             Session.commit()
             Session.remove()
             return func(request=request)

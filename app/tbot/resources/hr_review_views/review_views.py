@@ -1,20 +1,20 @@
-from app.services.review import CoworkerReviewService
 from app.services.form_review import CoworkerAdviceService
+from app.services.review import CoworkerReviewService
 from app.services.user import HRService
 from app.tbot import notificator
 from app.tbot.resources.hr_review_views.list_forms_views import list_forms_view
+from app.tbot.services import CoworkerAdviceServiceTBot
 from app.tbot.services.forms import ProjectsForm, ProjectForm, Notification, CoworkerAdvicesForm, CoworkerAdviceForm
 from app.tbot.services.hr import HRServiceTBot
-from app.tbot.services import CoworkerAdviceServiceTBot
 
 
 def list_advice_view(request):
     """ Заполнение """
     pk_review = request.args['review'][0]
+    advice_type = request.args['type'][0]
     review = CoworkerReviewService().by_pk(pk_review)
-    advices = CoworkerAdviceService(review=review, advice_type='todo').all
-    advices.extend(CoworkerAdviceService(review=review, advice_type='not todo').all)
-    return CoworkerAdvicesForm(view='hr', review=review, coworker_advices=advices)
+    advices = CoworkerAdviceService(review=review, advice_type=advice_type).all
+    return CoworkerAdvicesForm(view='hr', review=review, coworker_advices=advices, advice_type=advice_type)
 
 
 def comment_advice_view(request):
@@ -24,7 +24,7 @@ def comment_advice_view(request):
     review = CoworkerReviewService().by_pk(pk_review)
     coworker_advice = CoworkerAdviceServiceTBot(review=review, advice_type='todo').by_pk(pk_advice)
     service = HRServiceTBot(user, advice=coworker_advice)
-    return CoworkerAdviceForm(coworker_advice=coworker_advice, view='hr'),\
+    return CoworkerAdviceForm(coworker_advice=coworker_advice, view='hr'), \
            service.comment_before(list_advice_view)
 
 

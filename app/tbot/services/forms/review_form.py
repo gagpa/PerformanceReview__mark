@@ -51,12 +51,12 @@ class ReviewForm(Template):
                     pass
 
                 elif self.args.get('decline'):
-                    self.extend_keyboard(False, BUTTONS_TEMPLATES['hr_review_todo'],
+                    self.extend_keyboard(False, BUTTONS_TEMPLATES['hr_review_todo'].add(type='todo'),
+                                         BUTTONS_TEMPLATES['hr_review_not_todo'].add(type='not todo'),
                                          BUTTONS_TEMPLATES['hr_review_ratings'])
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['hr_review_send_back'])
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['hr_review_back_to_form'])
                     return self.build(review=review.id)
-
                 else:
                     self.extend_keyboard(False, BUTTONS_TEMPLATES['hr_review_accept'],
                                          BUTTONS_TEMPLATES['hr_review_decline'])
