@@ -75,7 +75,7 @@ def change_contact_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
-    template = ProjectForm(project=project, view='edit_coworkers', review_type='write')
+    template = ProjectForm(project=project, view='change_coworker', review_type='write')
     next_view = service.update_contacts_before(edit_view, old_contact)
     return template, next_view
 

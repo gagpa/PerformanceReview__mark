@@ -124,7 +124,10 @@ class ProjectForm(Template):
 
             elif view == 'edit_coworkers':
                 self.add_project(project)
-                self.build_message(description='❕ Введите username коллеги, который может оценить ваш вклад в проект.')
+                self.build_message(description='❕ Перечисли через “;” username коллег:')
+            elif view == 'change_coworker':
+                self.add_project(project)
+                self.build_message(description='❕ Введите username коллеги:')
 
             elif view == 'contacts':
                 self.add_project(project)
