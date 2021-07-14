@@ -79,7 +79,7 @@ class UserServiceTBot(UserService):
 
     @boss.setter
     def boss(self, text):  # TODO Обдумать .merge()
-        boss_login = text.lower().replace('@', '')
+        boss_login = text.replace('@', '')
         if boss_login != 'нет':
             boss = Session().query(User).filter_by(username=boss_login).one_or_none()
             if boss:
