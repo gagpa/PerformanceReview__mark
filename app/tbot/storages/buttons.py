@@ -132,6 +132,7 @@ BUTTONS_TEMPLATES = \
         'user_list_view': ButtonTemplate('user_list_view'),
         'user_delete_view': ButtonTemplate('user_delete_view', 'Удалить'),
         'user_view_back': ButtonTemplate('user_view_back', 'Назад'),
+        'choose_dep': ButtonTemplate('choose_dep', 'Назад'),
         'user_edit_view': ButtonTemplate('user_edit_view', 'Редактировать'),
         'user_delete': ButtonTemplate('user_delete', 'Удалить'),
         'cancel_user_delete': ButtonTemplate('cancel_user_delete', 'Отмена'),

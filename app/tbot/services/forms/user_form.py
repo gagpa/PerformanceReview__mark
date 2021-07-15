@@ -25,7 +25,7 @@ class UserForm(Template):
             rows.append([BUTTONS_TEMPLATES['user_edit_view'].add(user=self.args.get('model').id),
                          BUTTONS_TEMPLATES['user_delete_view'].add(
                              user=self.args.get('model').id)])
-            rows.append([BUTTONS_TEMPLATES['user_view_back']])
+            rows.append([BUTTONS_TEMPLATES['user_view_back'].add(dep=self.args['model'].department.id)])
             markup = self.markup_builder.build(*rows)
             return markup
 
@@ -49,6 +49,7 @@ class UserForm(Template):
             main_template = BUTTONS_TEMPLATES['user_view']
             pagination_template = BUTTONS_TEMPLATES['user_list_view']
             self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
+            self.extend_keyboard(True, BUTTONS_TEMPLATES['choose_dep'])
             return self.build_list(main_template, unique_args)
 
         elif self.args.get('edit_step'):
@@ -94,6 +95,10 @@ class UserForm(Template):
                                                                  user_id=self.args.get('user_id'))
             return markup
 
+        elif self.args.get('choose_dep'):
+            departments = [{'dep': department.id} for department in self.args['models']]
+            return self.build_list(BUTTONS_TEMPLATES['user_list_view'], departments)
+
     def create_message(self) -> str:
         """ Вернуть преобразованное сообщение """
         title = ''
@@ -111,8 +116,8 @@ class UserForm(Template):
                                                                    list_data=list_data,
                                                                    )
         elif users and self.args.get('users_list'):
-            title = 'Здесь отображаются все пользователи'
-            list_data = [f'{user.username} - {user.fullname}' for user in users]
+            title = f'Сотрудники отдела «{self.args["department"].name}»'
+            list_data = [f'@{user.username} - {user.fullname} - {user.position.name}' for user in users]
             message_text = self.message_builder.build_list_message(title=title,
                                                                    description=description,
                                                                    list_data=list_data,
@@ -177,6 +182,10 @@ class UserForm(Template):
                                                               description=description,
                                                               text=text,
                                                               )
+        elif self.args.get('choose_dep'):
+            self.build_list_message(title='Сотрудники\n', description='\nВыберите отдел.',
+                                    list_text=[department.name for department in self.args['models']])
+            return self.MESSAGE
         else:
             message_text = self.message_builder.build_message('', '', 'Нет входящих запросов')
 

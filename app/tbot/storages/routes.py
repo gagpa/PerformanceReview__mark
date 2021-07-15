@@ -108,7 +108,8 @@ from app.tbot.resources.user_views.user_views import \
 
 from app.tbot.resources.user_views.users_list_views import \
     user_view, \
-    users_list_view
+    users_list_view, \
+    choose_departments_view
 
 ROUTES = \
     {
@@ -192,6 +193,7 @@ ROUTES = \
         'user_list_view': users_list_view,
         'user_delete_view': delete_user_view,
         'user_view_back': users_list_view,
+        'choose_dep': choose_departments_view,
         'user_edit_view': edit_user_view,
         'user_delete': delete_user,
         'cancel_user_delete': users_list_view,

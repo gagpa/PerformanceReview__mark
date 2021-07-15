@@ -11,7 +11,7 @@ from app.tbot.resources.review_form_views import review_form_view
 from app.tbot.resources.review_period_views.archive_views import old_review_list
 from app.tbot.resources.review_period_views.current_review_views import current_forms_list
 from app.tbot.resources.review_period_views.review_period_views import review_period
-from app.tbot.resources.user_views.users_list_views import users_list_view
+from app.tbot.resources.user_views.users_list_views import choose_departments_view
 
 
 COMMANDS = \
@@ -23,7 +23,7 @@ COMMANDS = \
         'Проверить оценки': hr_review_list_forms_view,
 
         'Список запросов': request_list_view,
-        'Список сотрудников': users_list_view,
+        'Список сотрудников': choose_departments_view,
         'Запустить анкетирование': review_period,
         'Архив анкет': old_review_list,
         'Список анкет': current_forms_list,
