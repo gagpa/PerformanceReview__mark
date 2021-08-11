@@ -46,9 +46,10 @@ def add_all_roles_in_db(roles_mock_data):
     Добавить тестовые роли в БД.
     """
     for role_mock_data in roles_mock_data:
-        role = Role(**role_mock_data)
-        db_session.add(role)
-        commit()
+        if not db_session.query(db_session.query(Role).filter_by(**role_mock_data).exists()).scalar():
+            role = Role(**role_mock_data)
+            db_session.add(role)
+            commit()
 
 
 def add_all_positions_in_db(positions_mock_data):
@@ -56,9 +57,10 @@ def add_all_positions_in_db(positions_mock_data):
     Добавить тестовые роли в БД.
     """
     for position_mock_data in positions_mock_data:
-        position = Position(**position_mock_data)
-        db_session.add(position)
-        commit()
+        if not db_session.query(db_session.query(Position).filter_by(**position_mock_data).exists()).scalar():
+            position = Position(**position_mock_data)
+            db_session.add(position)
+            commit()
 
 
 def add_all_departments_in_db(departments_mock_data):
@@ -66,13 +68,16 @@ def add_all_departments_in_db(departments_mock_data):
     Добавить тестовые отделы в БД.
     """
     for department_mock_data in departments_mock_data:
-        department = Department(name=department_mock_data['name'])
-        if department_mock_data.get('positions'):
-            for position in department_mock_data.get('positions'):
-                p = db_session().query(Position).filter_by(name=position).first()
-                department.positions.append(p) if p else None
-        db_session.add(department)
-        commit()
+        if not db_session.query(db_session.query(Department).filter_by(name=department_mock_data['name']).exists()).scalar():
+            department = Department(name=department_mock_data['name'])
+            if department_mock_data.get('positions'):
+                for position in department_mock_data.get('positions'):
+                    if not db_session.query(db_session.query(Position).filter_by(
+                            name=position).exists()).scalar():
+                        p = db_session().query(Position).filter_by(name=position).first()
+                        department.positions.append(p) if p else None
+            db_session.add(department)
+            commit()
 
 
 def add_all_users_in_db(users_mock_data):
@@ -99,17 +104,19 @@ def add_all_statuses_in_db(statuses_mock_data):
     Добавить тестовые статусы в БД.
     """
     for status_mock_data in statuses_mock_data:
-        status = Status(**status_mock_data)
-        db_session.add(status)
-        commit()
+        if not db_session.query(db_session.query(Status).filter_by(**status_mock_data).exists()).scalar():
+            status = Status(**status_mock_data)
+            db_session.add(status)
+            commit()
 
 
 def add_all_advice_types(types_mock_data):
     """ Добавить все типы советов"""
     for advice_type in types_mock_data:
-        advice_type = AdviceType(**advice_type)
-        db_session.add(advice_type)
-        commit()
+        if not db_session.query(db_session.query(AdviceType).filter_by(**advice_type).exists()).scalar():
+            advice_type = AdviceType(**advice_type)
+            db_session.add(advice_type)
+            commit()
 
 
 def add_all_review_periods_in_db(review_periods_mock_data):
@@ -130,9 +137,10 @@ def add_all_ratings_in_db(ratings_mock_data):
     Добавить тестовые рейтинга в БД.
     """
     for rating_mock_data in ratings_mock_data:
-        ratings = Rating(**rating_mock_data)
-        db_session.add(ratings)
-        commit()
+        if not db_session.query(db_session.query(Rating).filter_by(**rating_mock_data).exists()).scalar():
+            ratings = Rating(**rating_mock_data)
+            db_session.add(ratings)
+            commit()
 
 
 def add_all_forms_in_db():
@@ -206,5 +214,6 @@ def add_all_fails_in_db(fails_mock_data):
 
 def add_all_hr_statuses_in_db(hr_statuses_mock_data):
     for status in hr_statuses_mock_data:
-        db_session.add(HrReviewStatus(**status))
-        commit()
+        if not db_session.query(db_session.query(HrReviewStatus).filter_by(**status).exists()).scalar():
+            db_session.add(HrReviewStatus(**status))
+            commit()
