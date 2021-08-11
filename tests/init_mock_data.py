@@ -72,10 +72,8 @@ def add_all_departments_in_db(departments_mock_data):
             department = Department(name=department_mock_data['name'])
             if department_mock_data.get('positions'):
                 for position in department_mock_data.get('positions'):
-                    if not db_session.query(db_session.query(Position).filter_by(
-                            name=position).exists()).scalar():
-                        p = db_session().query(Position).filter_by(name=position).first()
-                        department.positions.append(p) if p else None
+                    p = db_session().query(Position).filter_by(name=position).first()
+                    department.positions.append(p) if p else None
             db_session.add(department)
             commit()
 
