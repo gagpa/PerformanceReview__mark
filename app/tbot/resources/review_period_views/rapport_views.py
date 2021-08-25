@@ -133,7 +133,7 @@ def get_data_for_rapport(pk):
 
 def create_and_send_pdf(user, template_name, template_vars):
     chat_id = user.chat_id
-    last_name = user.fullname.split(' ')[0]
+    last_name = template_vars.get('fullname').split(' ')[0]
     filename = f"Review_{last_name}_{template_vars.get('start')}.pdf"
     filename_docx = filename.replace('.pdf', '.docx')
     env = Environment(loader=FileSystemLoader('.'))
