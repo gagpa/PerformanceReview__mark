@@ -133,8 +133,7 @@ def parse_url(bot_instance, call):
     """ Запарсить URL callback с аргумантами и поместить их в обзъект сообщения"""
     # if call.message.user['is_exist']:
     if ':' in call.data:  # TODO: решить проблему с сепаратором
-        args = dict()
-        args['calendar'] = call.data
+        args = {'calendar': call.data}
         if '|' in call.data:
             args['cb'], args['first_date'] = call.data.split(':')[0].split('|')
         else:

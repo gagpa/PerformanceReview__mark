@@ -89,8 +89,8 @@ from app.tbot.resources.review_period_views.archive_views import old_forms_list,
 
 from app.tbot.resources.review_period_views.current_review_views import employee_review, \
     current_forms_list, input_summary
-from app.tbot.resources.review_period_views.rapport_views import get_rapport, get_hr_rapport, \
-    get_boss_rapport, send_rapport_to_boss
+# from app.tbot.resources.review_period_views.rapport_views import get_rapport, get_hr_rapport, \
+#     get_boss_rapport, send_rapport_to_boss
 
 from app.tbot.resources.review_period_views.review_period_views import \
     review_period_start, \
@@ -219,17 +219,17 @@ ROUTES = \
         'get_old_review': old_forms_list,
         'old_review_list': old_review_list,
         'back_to_old_review_list': old_review_list,
-        'get_rapport': get_rapport,
-        'back_to_rapport': old_forms_list,
-        'back_to_form': employee_review,
-        'get_hr_rapport': get_hr_rapport,
-        'get_boss_rapport': get_boss_rapport,
-        'send_rapport_to_boss': send_rapport_to_boss,
-        'employee_review': employee_review,
-        'current_forms_list': current_forms_list,
-        'input_summary': input_summary,
-        'change_summary': input_summary,
-        'get_current_rapport': get_rapport,
+        # 'get_rapport': get_rapport,
+        # 'back_to_rapport': old_forms_list,
+        # 'back_to_form': employee_review,
+        # 'get_hr_rapport': get_hr_rapport,
+        # 'get_boss_rapport': get_boss_rapport,
+        # 'send_rapport_to_boss': send_rapport_to_boss,
+        # 'employee_review': employee_review,
+        # 'current_forms_list': current_forms_list,
+        # 'input_summary': input_summary,
+        # 'change_summary': input_summary,
+        # 'get_current_rapport': get_rapport,
     }
 
 __all__ = ['ROUTES']

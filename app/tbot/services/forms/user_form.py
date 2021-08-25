@@ -48,7 +48,7 @@ class UserForm(Template):
             unique_args = [{'pk': user.id} for user in users]
             main_template = BUTTONS_TEMPLATES['user_view']
             pagination_template = BUTTONS_TEMPLATES['user_list_view']
-            self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj, dep=self.args.get('department').id)
             self.extend_keyboard(True, BUTTONS_TEMPLATES['choose_dep'])
             return self.build_list(main_template, unique_args)
 
