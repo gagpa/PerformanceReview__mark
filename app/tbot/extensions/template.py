@@ -10,10 +10,10 @@ from configs.bot_config import OBJECT_PER_PAGE
 
 class Template(ABC):
     """ Шаблон для формирования ответа """
-    markup_builder = InlineKeyboardBuilder()
-    message_builder = MessageBuilder()
 
     def __init__(self, **kwargs):
+        self.markup_builder = InlineKeyboardBuilder()
+        self.message_builder = MessageBuilder()
         self.args = kwargs
         self.ADDITIONAL = []
         self.MESSAGE = ''

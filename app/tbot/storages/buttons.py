@@ -2,9 +2,11 @@
 Файл с кнопками для клавиатур.
 """
 
+from copy import deepcopy
+
 from app.tbot.extensions import ButtonTemplate
 
-BUTTONS_TEMPLATES = \
+TEMPLATES = \
     {
         'review_form_send_to_boss': ButtonTemplate('form_send_to_boss', 'Отправить руководителю 📨'),
         'review_form_achievements_list': ButtonTemplate('achievements', 'Достижения'),
@@ -170,6 +172,14 @@ BUTTONS_TEMPLATES = \
 
     }
 
+
+class AdapterTemplates:
+
+    def __getitem__(self, key):
+        return deepcopy(TEMPLATES[key])
+
+
+BUTTONS_TEMPLATES = AdapterTemplates()
 GENERAL_BUTTONS = \
     {
         ''
