@@ -33,10 +33,12 @@ class MessageManager:
         if template:
             text, markup = template.dump()
             another_messages = []
+            markup_in_the_end = None
             if len(text) > 4000:
                 for start in range(0, len(text), 4000):
                     another_messages.append(text[start:start+4000])
-                text = text[:4001]
+                text = another_messages.pop(0)
+                markup, markup_in_the_end = markup_in_the_end, markup
             markup = general_markup or markup
             chat_id = message.chat.id
             if message.from_user.is_bot:
@@ -47,10 +49,8 @@ class MessageManager:
                     else:
                         self.bot.delete_message(chat_id=chat_id, message_id=message.id)
                         message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup,
-                                                        parse_mode='html')
-                    if another_messages:
-                        for m in another_messages:
-                            self.bot.send_message(chat_id=chat_id, message_id=message.id, text=m)
+                                                        parse_mode='html'
+                                                        )
                 except Exception:
                     try:
                         self.bot.delete_message(chat_id=chat_id, message_id=message.id)
@@ -61,6 +61,13 @@ class MessageManager:
                                                         parse_mode='html')
             else:
                 message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
+            if another_messages:
+                count_messages = len(another_messages)
+                for m in another_messages:
+                    if another_messages.index(m) == count_messages - 1:
+                        self.bot.send_message(chat_id=chat_id, message_id=message.id, text=m, reply_markup=markup_in_the_end)
+                    else:
+                        self.bot.send_message(chat_id=chat_id, message_id=message.id, text=m)
             return message
 
     def ask_user(self, message, template, next_view: Callable) -> None:
