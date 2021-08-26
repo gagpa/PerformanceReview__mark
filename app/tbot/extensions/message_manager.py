@@ -1,3 +1,4 @@
+from copy import copy
 from typing import Callable
 
 from loguru import logger
@@ -34,9 +35,16 @@ class MessageManager:
             text, markup = template.dump()
             another_messages = []
             markup_in_the_end = None
+            tags = []
             if len(text) > 4000:
                 for start in range(0, len(text), 4000):
-                    another_messages.append(text[start:start+4000])
+                    new_text = text[start:start + 4000]
+                    if tags:
+                        new_text = f'{"".join([tag.replace("/", "") for tag in tags])}{new_text}'
+                    tags = check_tags(new_text)
+                    if tags:
+                        new_text = f'{new_text}{"".join(tags)}'
+                    another_messages.append(new_text)
                 text = another_messages.pop(0)
                 markup, markup_in_the_end = markup_in_the_end, markup
             markup = general_markup or markup
@@ -65,7 +73,8 @@ class MessageManager:
                 count_messages = len(another_messages)
                 for m in another_messages:
                     if another_messages.index(m) == count_messages - 1:
-                        self.bot.send_message(chat_id=chat_id, message_id=message.id, text=m, reply_markup=markup_in_the_end)
+                        self.bot.send_message(chat_id=chat_id, message_id=message.id, text=m,
+                                              reply_markup=markup_in_the_end)
                     else:
                         self.bot.send_message(chat_id=chat_id, message_id=message.id, text=m)
             return message
@@ -108,7 +117,8 @@ class MessageManager:
             except InvalidTypeValidationError as e:
                 step = get_previous(request)
                 markup = InlineKeyboardBuilder.build_reply_keyboard(self.permissions[user.role.name])
-                self.bot.send_message(chat_id=user.chat_id, text='‼️ Отправлять можно только текст', reply_markup=markup,
+                self.bot.send_message(chat_id=user.chat_id, text='‼️ Отправлять можно только текст',
+                                      reply_markup=markup,
                                       parse_mode='html')
                 if step.url_type == 'callback':
                     response = self.routes[step.text](request)
@@ -131,6 +141,35 @@ class MessageManager:
             self.handle_response(request, response)
 
         return wrapper
+
+
+def check_tags(string):
+    brackets_open = ['<i>', '<b>']
+    brackets_closed = ['</i>', '</b>']
+    stack = []
+    for i, char in enumerate(string):
+        if i + 3 > len(string):
+            break
+        sub = string[i: i + 3]
+        if sub in brackets_open:
+            stack.append(sub)
+        if sub in brackets_closed:
+            if len(stack) == 0:
+                return False
+            index = brackets_closed.index(sub)
+            open_bracket = brackets_open[index]
+            if stack[-1] == open_bracket:
+                stack = stack[:-1]
+            else:
+                return False
+    if stack:
+        new_stack = copy(stack)
+        for i, item in enumerate(new_stack):
+            if item in brackets_open:
+                stack[i] = brackets_closed[i]
+            else:
+                stack[i] = brackets_open[i]
+    return stack
 
 
 __all__ = ['MessageManager']
