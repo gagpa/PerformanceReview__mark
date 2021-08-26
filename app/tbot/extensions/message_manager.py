@@ -166,9 +166,9 @@ def check_tags(string):
         new_stack = []
         for i, item in enumerate(stack):
             if item in brackets_open:
-                new_stack.append(brackets_closed[i])
+                new_stack.append(brackets_closed[brackets_open.index(item)])
             else:
-                new_stack.append(brackets_open[i])
+                new_stack.append(brackets_open[brackets_closed.index(item)])
         stack = new_stack
     return stack
 
