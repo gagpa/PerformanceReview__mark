@@ -73,10 +73,10 @@ class MessageManager:
                 count_messages = len(another_messages)
                 for m in another_messages:
                     if another_messages.index(m) == count_messages - 1:
-                        self.bot.send_message(chat_id=chat_id, message_id=message.id, text=m,
-                                              reply_markup=markup_in_the_end)
+                        self.bot.send_message(chat_id=chat_id, text=m,
+                                              reply_markup=markup_in_the_end, parse_mode='html')
                     else:
-                        self.bot.send_message(chat_id=chat_id, message_id=message.id, text=m)
+                        self.bot.send_message(chat_id=chat_id, text=m, parse_mode='html')
             return message
 
     def ask_user(self, message, template, next_view: Callable) -> None:
