@@ -36,6 +36,7 @@ class MessageManager:
             if len(text) > 4000:
                 for start in range(0, len(text), 4000):
                     another_messages.append(text[start:start+4000])
+                text = text[:4001]
             markup = general_markup or markup
             chat_id = message.chat.id
             if message.from_user.is_bot:
