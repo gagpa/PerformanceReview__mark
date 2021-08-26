@@ -32,6 +32,10 @@ class MessageManager:
         """ Отправить новое сообщение пользователю """
         if template:
             text, markup = template.dump()
+            another_messages = []
+            if len(text) > 4000:
+                for start in range(0, len(text), 4000):
+                    another_messages.append(text[start:start+4000])
             markup = general_markup or markup
             chat_id = message.chat.id
             if message.from_user.is_bot:
@@ -43,7 +47,9 @@ class MessageManager:
                         self.bot.delete_message(chat_id=chat_id, message_id=message.id)
                         message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup,
                                                         parse_mode='html')
-
+                    if another_messages:
+                        for m in another_messages:
+                            self.bot.send_message(chat_id=chat_id, message_id=message.id, text=m)
                 except Exception:
                     try:
                         self.bot.delete_message(chat_id=chat_id, message_id=message.id)
