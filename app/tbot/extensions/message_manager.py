@@ -153,6 +153,8 @@ def check_tags(string):
         sub = string[i: i + 3]
         if sub in brackets_open:
             stack.append(sub)
+        sub = string[i: i + 4]
+
         if sub in brackets_closed:
             if len(stack) == 0:
                 return False
