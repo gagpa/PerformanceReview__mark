@@ -14,8 +14,7 @@ def current_forms_list(request):
     current_forms = Session().query(Form).join(ReviewPeriod, Form.review_period) \
         .join(User, Form.user).join(Status, Form.status) \
         .filter(ReviewPeriod.is_active == True).all()
-    page = int(request.args['pg'][0]) if request.args.get('pg') else 1
-    return CurrentReviewForm(models=current_forms, page=page, forms_list=True)
+    return CurrentReviewForm(models=current_forms, page=request.page, forms_list=True)
 
 
 def employee_review(request):
