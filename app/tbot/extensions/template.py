@@ -69,8 +69,11 @@ class Template(ABC):
         additional_text = self.message_builder.build_list_message(title=title,
                                                                   description=description,
                                                                   list_data=list_text)
-
-        if not self.MESSAGE or len(self.MESSAGE[-1]) + len(additional_text) > 4000:
+        if len(additional_text) > 4000:
+            for start in range(0, len(additional_text), 4000):
+                new_text = additional_text[start:start + 4000]
+                self.MESSAGE.append(new_text)
+        elif not self.MESSAGE or len(self.MESSAGE[-1]) + len(additional_text) > 4000:
             self.MESSAGE.append(additional_text)
         else:
             self.MESSAGE[-1] = f'{self.MESSAGE[-1]}\n{additional_text}'
