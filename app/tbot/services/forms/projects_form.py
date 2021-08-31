@@ -84,9 +84,6 @@ class ProjectsForm(Template):
         project_list_text = [
             f'<b>{project.name}</b>\n<i>{project.description}</i>\nОценивающие:\n{find_coworkers(project)}'
             for project in projects]
-        if page:
-            ratings = self.cut_per_page(ratings, page)
-            projects = self.cut_per_page(projects, page)
 
         if review_type == 'hr':
             self.build_list_message(title='▪️Проверка оценок проектов',
@@ -109,6 +106,9 @@ class ProjectsForm(Template):
             return self.MESSAGE
 
         elif review_type == 'coworker':
+            project_list_text = [
+                f'<b>{rate.project.name}</b>\n<i>{rate.project.description}</i>\nОценивающие:\n{find_coworkers(rate.project)}'
+                for rate in ratings]
             self.build_list_message(title='▪️Проекты на оценку',
                                     list_text=project_list_text)
             list_data = []
