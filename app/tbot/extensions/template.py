@@ -16,7 +16,7 @@ class Template(ABC):
         self.message_builder = MessageBuilder()
         self.args = kwargs
         self.ADDITIONAL = []
-        self.MESSAGE = ''
+        self.MESSAGE = []
 
     @abstractmethod
     def create_markup(self) -> InlineKeyboardMarkup:
@@ -60,13 +60,20 @@ class Template(ABC):
     def build_message(self, title=None, description=None, text=None):
         additional_text = self.message_builder.build_message(title=title, description=description,
                                                              text=text)
-        self.MESSAGE = f'{self.MESSAGE}\n{additional_text}'
+        if not self.MESSAGE or len(self.MESSAGE[-1]) + len(additional_text) > 4000:
+            self.MESSAGE.append(additional_text)
+        else:
+            self.MESSAGE[-1] = f'{self.MESSAGE[-1]}\n{additional_text}'
 
     def build_list_message(self, title=None, description=None, list_text=None):
         additional_text = self.message_builder.build_list_message(title=title,
                                                                   description=description,
                                                                   list_data=list_text)
-        self.MESSAGE = f'{self.MESSAGE}\n{additional_text}'
+
+        if not self.MESSAGE or len(self.MESSAGE[-1]) + len(additional_text) > 4000:
+            self.MESSAGE.append(additional_text)
+        else:
+            self.MESSAGE[-1] = f'{self.MESSAGE[-1]}\n{additional_text}'
 
     def current_row(self, btns):
         """ """

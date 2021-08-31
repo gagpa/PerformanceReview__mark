@@ -1,4 +1,3 @@
-from copy import copy
 from typing import Callable
 
 from loguru import logger
@@ -33,20 +32,6 @@ class MessageManager:
         """ Отправить новое сообщение пользователю """
         if template:
             text, markup = template.dump()
-            another_messages = []
-            markup_in_the_end = None
-            tags = []
-            if len(text) > 4000:
-                for start in range(0, len(text), 4000):
-                    new_text = text[start:start + 4000]
-                    if tags:
-                        new_text = f'{"".join([tag.replace("/", "") for tag in tags])}{new_text}'
-                    tags = check_tags(new_text)
-                    if tags:
-                        new_text = f'{new_text}{"".join(tags)}'
-                    another_messages.append(new_text)
-                text = another_messages.pop(0)
-                markup, markup_in_the_end = markup_in_the_end, markup
             markup = general_markup or markup
             chat_id = message.chat.id
             if message.from_user.is_bot:
@@ -56,27 +41,17 @@ class MessageManager:
                                                              reply_markup=markup, parse_mode='html')
                     else:
                         self.bot.delete_message(chat_id=chat_id, message_id=message.id)
-                        message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup,
-                                                        parse_mode='html'
-                                                        )
+                        message = self.__send(chat_id=chat_id, text=text, reply_markup=markup)
                 except Exception:
                     try:
                         self.bot.delete_message(chat_id=chat_id, message_id=message.id)
                     except Exception:
                         pass
                     finally:
-                        message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup,
-                                                        parse_mode='html')
+                        message = self.__send(chat_id=chat_id, text=text, reply_markup=markup)
+
             else:
-                message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=markup, parse_mode='html')
-            if another_messages:
-                count_messages = len(another_messages)
-                for m in another_messages:
-                    if another_messages.index(m) == count_messages - 1:
-                        self.bot.send_message(chat_id=chat_id, text=m,
-                                              reply_markup=markup_in_the_end, parse_mode='html')
-                    else:
-                        self.bot.send_message(chat_id=chat_id, text=m, parse_mode='html')
+                message = self.__send(chat_id=chat_id, text=text, reply_markup=markup)
             return message
 
     def ask_user(self, message, template, next_view: Callable) -> None:
@@ -90,6 +65,25 @@ class MessageManager:
         except AttributeError:
             logger.error(str(message))
             raise AttributeError
+
+    def __send(self, chat_id, text, reply_markup):
+        if isinstance(text, str):
+            message = self.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup,
+                                            parse_mode='html'
+                                            )
+        else:
+            last_index = len(text) - 1
+            for i, t in enumerate(text):
+                if i is last_index:
+                    message = self.bot.send_message(chat_id=chat_id, text=t, reply_markup=reply_markup,
+                                                    parse_mode='html'
+                                                    )
+                    break
+
+                self.bot.send_message(chat_id=chat_id, text=t,
+                                      parse_mode='html'
+                                      )
+        return message
 
     def route(self, func):
         def wrapper(message):
@@ -173,6 +167,16 @@ def check_tags(string):
                 new_stack.append(brackets_open[brackets_closed.index(item)])
         stack = new_stack
     return stack
+
+
+def validate_text(text: str):
+    if len(text) > 5 and '<' in text[-2] and text[-2:] != '</':
+        text = f'{text}>'
+    elif text[-2:] == '</':
+        text = text[-2:]
+    elif text == '\n':
+        text = ''
+    return text
 
 
 __all__ = ['MessageManager']
