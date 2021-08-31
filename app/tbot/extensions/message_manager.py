@@ -37,8 +37,21 @@ class MessageManager:
             if message.from_user.is_bot:
                 try:
                     if not isinstance(markup, ReplyKeyboardMarkup):
-                        message = self.bot.edit_message_text(chat_id=chat_id, message_id=message.id, text=text,
-                                                             reply_markup=markup, parse_mode='html')
+                        if isinstance(text, str):
+                            message = self.bot.edit_message_text(chat_id=chat_id, message_id=message.id, text=text,
+                                                                 reply_markup=markup, parse_mode='html')
+                        else:
+                            if len(text) > 1:
+                                message = self.bot.edit_message_text(chat_id=chat_id, message_id=message.id,
+                                                                     text=text[0],
+                                                                     parse_mode='html')
+                                self.__send(chat_id, text[1:], markup)
+                            else:
+                                message = self.bot.edit_message_text(chat_id=chat_id, message_id=message.id,
+                                                                     text=text[0],
+                                                                     reply_markup=markup,
+                                                                     parse_mode='html')
+
                     else:
                         self.bot.delete_message(chat_id=chat_id, message_id=message.id)
                         message = self.__send(chat_id=chat_id, text=text, reply_markup=markup)
