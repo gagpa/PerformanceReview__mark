@@ -38,8 +38,8 @@ class ReviewForm(Template):
                 self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_review_advices_todo'].add(type='todo'),
                                      BUTTONS_TEMPLATES['coworker_review_advices_not_todo'].add(type='not todo'))
                 if review.advices and any(advice.advice_type.name == 'todo' for advice in review.advices) \
-                    and any(advice.advice_type.name == 'not todo' for advice in review.advices) \
-                    and all(rating.text and rating.rating for rating in review.projects_ratings):
+                        and any(advice.advice_type.name == 'not todo' for advice in review.advices) \
+                        and all(rating.text and rating.rating for rating in review.projects_ratings):
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_review_form_send_to_hr'])
                 self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_review_list'])
                 markup = self.build(review=review.id)
@@ -85,11 +85,12 @@ class ReviewForm(Template):
 
             if form.projects:
                 fill_volume += 1
-                find_coworkers = lambda project: '\n'.join(
-                    [f"• {review.coworker.fullname} (@{review.coworker.username})" for review in project.reviews])
+                find_coworkers = lambda project: '\n •  '.join(
+                    [f"@{review.coworker.username}" for review in project.reviews])
                 project_list_text = [
-                    f'<b>{project.name}</b>\n<i>{project.description}</i>\nОценивающие:\n{find_coworkers(project)}'
-                    for project in form.projects]
+                    f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}'
+                    for project in
+                    form.projects]
                 self.build_list_message(title='▪️Проекты', list_text=project_list_text)
 
             else:
@@ -187,7 +188,7 @@ class ReviewForm(Template):
                 if rating.text:
                     list_data[-1] += f'\n -  Комментарий: {rating.text}'
                 if rating.hr_comment:
-                    list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
+                    list_data[-1] += f'\n❗ Исправить: {rating.hr_comment}'
             if list_data:
                 self.build_list_message(title='▫ Оценки коллеги', list_text=list_data)
 
@@ -207,7 +208,7 @@ class ReviewForm(Template):
                         else:
                             text = f'• {advice.text}'
                         if advice.hr_comment:
-                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>'
+                            sub_text = f'❗ Исправить: {advice.hr_comment}'
                             text = f'{text}\n{sub_text}'
                     self.build_message(title='Что начать делать:',
                                        text=text)
@@ -218,12 +219,12 @@ class ReviewForm(Template):
                         else:
                             text = f'• {advice.text}'
                         if advice.hr_comment:
-                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>'
+                            sub_text = f'❗ Исправить: {advice.hr_comment}'
                             text = f'{text}\n{sub_text}'
                     self.build_message(title='Что перестать делать:',
                                        text=text)
             if not any(advice.hr_comment for advice in review.advices) and not any(
-                rating.hr_comment for rating in ratings):
+                    rating.hr_comment for rating in ratings):
                 count_comment = 0
                 count_rate = 0
                 max_rates = len(review.projects_ratings) or 1
@@ -274,7 +275,7 @@ class ReviewForm(Template):
                 if rating.text:
                     list_data[-1] += f'\nКомментарий: {rating.text}'
                 if rating.hr_comment:
-                    list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
+                    list_data[-1] += f'\n❗ Исправить: {rating.hr_comment}'
             if list_data:
                 self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
 
@@ -296,7 +297,7 @@ class ReviewForm(Template):
                         else:
                             text = f'• {advice.text}'
                         if advice.hr_comment:
-                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>"'
+                            sub_text = f'❗ Исправить: {advice.hr_comment}"'
                             text = f'{text}\n{sub_text}'
                     self.build_message(title='Что начать делать:',
                                        text=text)
@@ -307,7 +308,7 @@ class ReviewForm(Template):
                         else:
                             text = f'• {advice.text}'
                         if advice.hr_comment:
-                            sub_text = f'<i>❗ Исправить: {advice.hr_comment}</i>"'
+                            sub_text = f'❗ Исправить: {advice.hr_comment}"'
                             text = f'{text}\n{sub_text}'
                     self.build_message(title='Что перестать делать:',
                                        text=text)
