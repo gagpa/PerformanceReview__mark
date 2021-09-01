@@ -28,11 +28,11 @@ def employee_review(request):
     rating = ProjectCommentService().final_rating(form_id)
 
     coworkers_comments = ProjectCommentService().coworkers_projects_comments(form_id)
-    coworkers_rating = [comment.rating.value for comment in coworkers_comments]
+    coworkers_rating = [comment.rating.value for comment in coworkers_comments if comment.rating]
     boss_comments = ProjectCommentService().boss_projects_comments(form_id)
-    boss_rating = [comment.rating.value for comment in boss_comments]
+    boss_rating = [comment.rating.value for comment in boss_comments if comment.rating]
     subordinate_comments = ProjectCommentService().subordinate_projects_comments(form_id)
-    subordinate_rating = [comment.rating.value for comment in subordinate_comments]
+    subordinate_rating = [comment.rating.value for comment in subordinate_comments if comment.rating]
 
     reviews = ProjectCommentService.project_comments(form_id)
 
