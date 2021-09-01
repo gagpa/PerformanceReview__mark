@@ -78,13 +78,12 @@ class ProjectsForm(Template):
         if page:
             ratings = self.cut_per_page(ratings, page)
             projects = self.cut_per_page(projects, page)
-
-        find_coworkers = lambda project: ''.join(
-            [f"• {review.coworker.fullname} (@{review.coworker.username})\n" for review in project.reviews])
+        find_coworkers = lambda project: '\n •  '.join(
+            [f"@{review.coworker.username}" for review in project.reviews])
         project_list_text = [
-            f'<b>{project.name}</b>\n<i>{project.description}</i>\nОценивающие:\n{find_coworkers(project)}'
-            for project in projects]
-
+            f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}'
+            for project in
+            projects]
         if review_type == 'hr':
             self.build_list_message(title='▪️Проверка оценок проектов',
                                     list_text=project_list_text)
@@ -97,7 +96,7 @@ class ProjectsForm(Template):
                 if rating.text:
                     list_data[-1] += f'\n -  Комментарий: {rating.text}'
                 if rating.hr_comment:
-                    list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
+                    list_data[-1] += f'\n❗ Исправить: {rating.hr_comment}'
             if list_data:
                 self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
             self.build_message(description=f'Автор: @{form.user.username}\n'
@@ -106,9 +105,7 @@ class ProjectsForm(Template):
             return self.MESSAGE
 
         elif review_type == 'coworker':
-            project_list_text = [
-                f'<b>{rate.project.name}</b>\n<i>{rate.project.description}</i>\nОценивающие:\n{find_coworkers(rate.project)}'
-                for rate in ratings]
+
             self.build_list_message(title='▪️Проекты на оценку',
                                     list_text=project_list_text)
             list_data = []
@@ -120,7 +117,7 @@ class ProjectsForm(Template):
                 if rating.text:
                     list_data[-1] += f'\n -  Комментарий: {rating.text}'
                 if rating.hr_comment:
-                    list_data[-1] += f'<i>\n❗ Исправить: {rating.hr_comment}</i>'
+                    list_data[-1] += f'\n❗ Исправить: {rating.hr_comment}'
             if list_data:
                 self.build_list_message(title='▫ Ваши оценки', list_text=list_data)
             self.build_message(description='❕ Выберите проект, который вы хотите оценить и прокомментировать.')
@@ -141,7 +138,7 @@ class ProjectsForm(Template):
                                             'Описание: Опубликовала 15 новостей о работе отделов ИЦ\n'
                                             '\nПроект: Обучение\n'
                                             'Описание: Сходила на тренинг для ботов”\n',
-                                       description='❕ Нажми кнопку “Добавить проект” и опиши <b>каждый проект отдельно:</b>')
+                                       description='❕ Нажми кнопку “Добавить проект” и опиши каждый проект отдельно:')
 
                 else:
                     self.build_message(title=title,
@@ -150,7 +147,7 @@ class ProjectsForm(Template):
                                             '– проекты, над которыми ты работал(-а), \n'
                                             '– детали выполнения твоих базовых функциональных обязанностей,\n'
                                             '– планы по росту и развитию.\n',
-                                       description='❕ Нажми кнопку “Добавить проект” и опиши <b>каждый проект отдельно:</b>')
+                                       description='❕ Нажми кнопку “Добавить проект” и опиши каждый проект отдельно:')
                 return self.MESSAGE
 
             elif view == 'edit_choose':

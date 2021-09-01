@@ -56,7 +56,7 @@ class CoworkerAdvicesForm(Template):
         for advice in coworker_advices:
             text = advice.text
             if advice.hr_comment:
-                text = f'{advice.text}\n<i>❗ Исправить: {advice.hr_comment}</i>'
+                text = f'{advice.text}\n❗ Исправить: {advice.hr_comment}'
             list_text.append(text)
         if view == 'list':
 
@@ -88,9 +88,9 @@ class CoworkerAdvicesForm(Template):
 
         elif view == 'add':
             if advice_type == 'todo':
-                description = '\n❕ Напиши, что стоит <b>начать</b> делать твоему коллеге, чтобы улучшить свою работу, одним текстом через «;». Если что-то забудешь, позже можно это исправить:'
+                description = '\n❕ Напиши, что стоит начать делать твоему коллеге, чтобы улучшить свою работу, одним текстом через «;». Если что-то забудешь, позже можно это исправить:'
             else:
-                description = '\n❕ Напиши, что стоит <b>перестать</b> делать твоему коллеге, чтобы улучшить свою работу, одним текстом через «;». Если что-то забудешь, позже можно это исправить:'
+                description = '\n❕ Напиши, что стоит перестать делать твоему коллеге, чтобы улучшить свою работу, одним текстом через «;». Если что-то забудешь, позже можно это исправить:'
             if coworker_advices:
                 self.build_list_message(title=title,
                                         description=f'\n{description}',
@@ -106,7 +106,7 @@ class CoworkerAdvicesForm(Template):
             for i, advice in enumerate(coworker_advices):
 
                 if advice.hr_comment:
-                    text = f'{advice.text}\n<i>❗ Исправить: {advice.hr_comment}</i>'
+                    text = f'{advice.text}\n❗ Исправить: {advice.hr_comment}'
                 else:
                     text = advice.text
                 if advice.advice_type.name == 'todo':
