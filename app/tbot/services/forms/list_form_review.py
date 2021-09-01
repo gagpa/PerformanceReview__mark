@@ -75,7 +75,7 @@ class ListFormReview(Template):
         elif review == 'hr':
             list_data = [f'@{review.form.user.username} - @{review.coworker.username}' for review in reviews]
             description = '\n❕ Можете выбрать форму на проверку' if list_data else ''
-            self.build_list_message(title='📑 Список оценок и советов на проверку\n\n  Оценивающий - оцениваемый',
+            self.build_list_message(title='📑 Список оценок и советов на проверку\n\n  Оцениваемый - Оценивающий',
                                     description=description,
                                     list_text=list_data)
             return self.MESSAGE
