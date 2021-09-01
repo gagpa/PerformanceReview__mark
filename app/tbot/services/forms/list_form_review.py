@@ -15,9 +15,9 @@ class ListFormReview(Template):
         page = self.args.get('page')
         is_asc = self.args.get('is_asc')
         reviews = self.args.get('reviews')
+        reviews = self.cut_per_page(reviews, page)
         if review == 'boss':
             count_obj = len(forms)
-            reviews = self.cut_per_page(reviews, page)
             unique_args = [{'review': review.id} for review in reviews]
             main_template = BUTTONS_TEMPLATES['boss_review_form']
             update_template = BUTTONS_TEMPLATES['boss_review_update_list']
@@ -28,7 +28,6 @@ class ListFormReview(Template):
 
         elif review == 'coworker':
             count_obj = len(forms)
-            reviews = self.cut_per_page(reviews, page)
             unique_args = [{'review': review.id} for review in reviews]
             update_template = BUTTONS_TEMPLATES['coworker_review_update_list']
             pagination_template = BUTTONS_TEMPLATES['coworker_review_list']
