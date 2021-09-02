@@ -13,7 +13,7 @@ def get_marks_info(marks, boss, coworkers, subordinate):
     text = ''
     if boss != 'Нет':
         text += f'<b>Руководитель: {boss}</b>\n'
-        text += '\n'.join(marks['Руководитель'][0])
+        text += marks['Руководитель'][0]
     if coworkers != 'Нет':
         if text:
             text = f'{text}\n'
