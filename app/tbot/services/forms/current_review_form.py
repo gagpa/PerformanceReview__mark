@@ -10,15 +10,19 @@ from app.tbot.storages import BUTTONS_TEMPLATES
 
 
 def get_marks_info(marks, boss, coworkers, subordinate):
-    text = '\n'
+    text = ''
     if boss != 'Нет':
-        text += f'\n<b>Руководитель: {boss}</b>\n'
-        text += ''.join(marks['Руководитель'][0])
+        text += f'<b>Руководитель: {boss}</b>\n'
+        text += '\n'.join(marks['Руководитель'][0])
     if coworkers != 'Нет':
-        text += f'\n<b>Коллеги: {coworkers}</b>\n'
+        if text:
+            text = f'{text}\n'
+        text += f'<b>Коллеги: {coworkers}</b>\n'
         text += '\n'.join(marks['Коллеги'])
     if subordinate != 'Нет':
-        text += f'\n<b>Подчиненные: {subordinate}</b>\n'
+        if text:
+            text = f'{text}\n'
+        text += f'<b>Подчиненные: {subordinate}</b>\n'
         text += '\n'.join(marks['Подчиненные'])
     return text
 
@@ -82,7 +86,7 @@ class CurrentReviewForm(Template):
                                                                    list_data=list_data,
                                                                    )
         elif self.args.get('model') and not self.args.get('change_summary'):
-            title = 'Review сотрудника'
+            self.build_message(title='Review сотрудника')
             todo = []
             not_todo = []
             not_rated = HrReviewService().not_rated(self.args.get('form_id'))
@@ -96,26 +100,28 @@ class CurrentReviewForm(Template):
             not_todo = '\n'.join(not_todo)
             summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
             rating = self.args.get('rating') if self.args.get('rating') else '\nостутствует'
-            marks = get_marks_info(self.args.get('marks'), self.args.get('boss_rating'),
+            marks = get_marks_info(self.args.get('marks'),
+                                   self.args.get('boss_rating'),
                                    self.args.get('coworkers_rating'),
-                                   self.args.get('subordinate_rating'))
-            text = f"<i>ФИО:</i> {self.args.get('model').user.fullname}\n" \
-                   f"<i>Статус:</i> {self.args.get('model').status.name}\n\n" \
-                   f"▪️<b>Оценка:</b> {rating}" \
-                   f"{marks}\n" \
-                   f"\n▪️<b>Что делать:</b>\n" \
-                   f"{todo if todo else 'отсутствует'}" \
-                   f"\n\n▪️<b>Что не делать:</b>\n" \
-                   f"{not_todo if not_todo else 'отсутствует'}" \
-                   f"\n\n▪️<b>Подведение итогов:</b>" \
-                   f"\n{summary}"
+                                   self.args.get('subordinate_rating'),
+                                   )
+            self.build_message(text=f'<i>ФИО:</i> {self.args.get("model").user.fullname}')
+            self.build_message(text=f'<i>Статус:</i> {self.args.get("model").status.name}')
+            self.build_message(text=f'▪️<b>Оценка:</b> {rating}')
+            self.build_message(text=f'{marks}')
+            self.build_message(title=f'▪️Что делать:')
+            self.build_message(text=f'{todo if todo else "отсутствует"}')
+            self.build_message(title=f'▪️Что не делать:')
+            self.build_message(text=f'{not_todo if not_todo else "отсутствует"}')
+            self.build_message(title=f'▪️Подведение итогов:')
+            self.build_message(text=f'{summary}')
             if self.args.get('summary'):
-                text = f'{text}\n\n❕ Доступна опция выгрузки анкеты'
+                self.build_message(f'❕ Доступна опция выгрузки анкеты')
             if not_rated:
-                text = f'{text}\n\n❕ Не оценили:\n{usernames}'
-            message_text = self.message_builder.build_message(title, '', text)
+                self.build_message(f'❕ Не оценили:\n{usernames}')
+            return self.MESSAGE
         elif self.args.get('change_summary'):
-            title = 'Review сотрудника'
+            self.build_message(title='Review сотрудника')
             todo = []
             not_todo = []
             for advice in self.args.get('advices'):
@@ -130,19 +136,18 @@ class CurrentReviewForm(Template):
             marks = get_marks_info(self.args.get('marks'), self.args.get('boss_rating'),
                                    self.args.get('coworkers_rating'),
                                    self.args.get('subordinate_rating'))
-            text = f"<i>ФИО:</i> {self.args.get('model').user.fullname}\n" \
-                   f"<i>Статус:</i> {self.args.get('model').status.name}\n\n" \
-                   f"▪️<b>Оценка:</b> {rating}" \
-                   f"{marks}\n" \
-                   f"\n▪️<b>Что делать:</b>\n" \
-                   f"{todo if todo else 'отсутствует'}" \
-                   f"\n\n▪️<b>Что не делать:</b>\n" \
-                   f"{not_todo if not_todo else 'отсутствует'}" \
-                   f"\n\n▪️<b>Подведение итогов:</b>" \
-                   f"\n{summary}"
-
-            text += '\n\n❕ Введите краткие итоги на основе полученных советов:'
-            message_text = self.message_builder.build_message(title, '', text=text)
+            self.build_message(text=f'<i>ФИО:</i> {self.args.get("model").user.fullname}')
+            self.build_message(text=f'<i>Статус:</i> {self.args.get("model").status.name}')
+            self.build_message(text=f'▪️<b>Оценка:</b> {rating}')
+            self.build_message(text=f'{marks}')
+            self.build_message(title=f'▪️Что делать:')
+            self.build_message(text=f'{todo if todo else "отсутствует"}')
+            self.build_message(title=f'▪️Что не делать:')
+            self.build_message(text=f'{not_todo if not_todo else "отсутствует"}')
+            self.build_message(title=f'▪️Подведение итогов:')
+            self.build_message(text=f'{summary}')
+            self.build_message(description='❕ Введите краткие итоги на основе полученных советов:')
+            return self.MESSAGE
         elif self.args.get('changed'):
             text = 'Итоги сформированы. Доступна опция выгрузки анкеты.'
             message_text = self.message_builder.build_message('', '', text=text)
