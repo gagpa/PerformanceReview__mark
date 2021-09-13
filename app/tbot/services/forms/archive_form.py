@@ -32,7 +32,7 @@ class ArchiveForm(Template):
             pagination_template = BUTTONS_TEMPLATES['get_old_review']
             back = BUTTONS_TEMPLATES['back_to_old_review_list']
             self.extend_keyboard(False, back)
-            self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj)
+            self.add_paginator(paginator=pagination_template, page=page, count_obj=count_obj, pk=self.args.get('period_id'))
             return self.build_list(main_template, unique_args)
         elif self.args.get('pk') and self.args.get('choose_rapport'):
             rows = list()
