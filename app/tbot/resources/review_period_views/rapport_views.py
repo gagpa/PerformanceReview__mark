@@ -46,14 +46,17 @@ def send_rapport_to_boss(request):
 
 
 def get_hr_rapport(request):
+    def get_marks_value(models):
+        return [item.raiting.value for item in models if item.raiting]
+
     pk = request.args['form_id'][0]
     template_vars = get_data_for_rapport(pk)
     coworkers_comments = ProjectCommentService().coworkers_projects_comments(pk)
-    coworkers_rating = [comment.rating.value for comment in coworkers_comments]
+    coworkers_rating = get_marks_value(coworkers_comments)
     boss_comments = ProjectCommentService().boss_projects_comments(pk)
-    boss_rating = [comment.rating.value for comment in boss_comments]
+    boss_rating = get_marks_value(boss_comments)
     subordinate_comments = ProjectCommentService().subordinate_projects_comments(pk)
-    subordinate_rating = [comment.rating.value for comment in subordinate_comments]
+    subordinate_rating = get_marks_value(subordinate_comments)
     final_rating = ProjectCommentService().final_rating(pk)
     template_vars.update(rating=final_rating if final_rating else 'Нет',
                          boss_rating=round(mean(boss_rating), 2) if boss_rating else 'Нет',
@@ -75,8 +78,7 @@ def get_hr_rapport(request):
             role = 'Подчиненный'
         else:
             role = 'Коллега'
-        ratings = [project_rating.rating.value for project_rating in review.projects_ratings if
-                   project_rating.rating]
+        ratings = get_marks_value(review.projects_ratings)
         mark = ' + '.join(map(str, ratings))
         if len(ratings) > 1:
             mark = f'{mark} = {round(mean(ratings), 2)}'
