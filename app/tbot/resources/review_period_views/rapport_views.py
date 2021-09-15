@@ -83,7 +83,7 @@ def get_hr_rapport(request):
         if len(ratings) > 1:
             mark = f'{mark} = {round(mean(ratings), 2)}'
 
-        comments = '<br>• '.join([project_rating.text for project_rating in review.projects_ratings if project_rating.rating])
+        comments = '<br>• '.join([project_rating.text for project_rating in review.projects_ratings if project_rating.rating and project_rating.text])
         comments = f'Комментарии по проектам:<br>• {comments}<br>'
         todo = '<br>• '.join([advice.text for advice in review.advices if advice.advice_type.name == 'todo'])
         todo = f'Что делать:<br>• {todo}<br>'
@@ -95,13 +95,16 @@ def get_hr_rapport(request):
 
 
 def update_data_for_boss_rapport(pk):
+    def get_marks_value(models):
+        return [item.rating.value for item in models if item.rating]
+
     template_vars = get_data_for_rapport(pk)
     coworkers_comments = ProjectCommentService().coworkers_projects_comments(pk)
-    coworkers_rating = [comment.rating.value for comment in coworkers_comments]
+    coworkers_rating = get_marks_value(coworkers_comments)
     boss_comments = ProjectCommentService().boss_projects_comments(pk)
-    boss_rating = [comment.rating.value for comment in boss_comments]
+    boss_rating = get_marks_value(boss_comments)
     subordinate_comments = ProjectCommentService().subordinate_projects_comments(pk)
-    subordinate_rating = [comment.rating.value for comment in subordinate_comments]
+    subordinate_rating = get_marks_value(subordinate_comments)
     final_rating = ProjectCommentService().final_rating(pk)
     template_vars.update(rating=final_rating if final_rating else 'Нет',
                          boss_rating=round(mean(boss_rating), 2) if boss_rating else 'Нет',
