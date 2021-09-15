@@ -47,7 +47,7 @@ def send_rapport_to_boss(request):
 
 def get_hr_rapport(request):
     def get_marks_value(models):
-        return [item.raiting.value for item in models if item.raiting]
+        return [item.raiting.value for item in models if item.rating]
 
     pk = request.args['form_id'][0]
     template_vars = get_data_for_rapport(pk)
