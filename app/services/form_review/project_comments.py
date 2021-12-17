@@ -64,7 +64,7 @@ class ProjectCommentService(Entity):
             if comments:
                 rating = []
                 for comment in comments:
-                    if comment.rating:
+                    if comment.rating and comment.rating.value > 0:
                         rating.append(comment.rating.value)
                 all_ratings.append(mean(rating)) if rating else None
 

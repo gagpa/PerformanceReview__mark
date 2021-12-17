@@ -96,7 +96,7 @@ def get_hr_rapport(request):
 
 def update_data_for_boss_rapport(pk):
     def get_marks_value(models):
-        return [item.rating.value for item in models if item.rating]
+        return [item.rating.value for item in models if item.rating and item.rating.value > 0]
 
     template_vars = get_data_for_rapport(pk)
     coworkers_comments = ProjectCommentService().coworkers_projects_comments(pk)
