@@ -74,7 +74,7 @@ class ProjectForm(Template):
 
         self.build_message(title='Проект:',
                            text=project.name)
-        self.build_message(title='Цели и обязанности:',
+        self.build_message(title='Роль и результаты:',
                            text=project.description)
         self.build_message(title='Оценивающие:',
                            text=list_text)
@@ -161,7 +161,7 @@ class ProjectForm(Template):
                 self.build_message(title='Заполнение проекта',
                                    description='\n❕ Перечисли через “;” имена коллег с использованием @:',
                                    text=f'\n<b>Название проекта:</b>\n {project.name}\n'
-                                        f'<b>Цели и обязанности:</b>\n {project.description}\n\n'
+                                        f'<b>Роль и результаты:</b>\n {project.description}\n\n'
                                         f'Введи username коллег, которые могут оценить твой вклад в этот проект: '
                                         f'коллеги по команде, все, с кем пересекались по этой задаче, твой наставник, '
                                         f'твои подчиненные и стажеры.\n\n'
@@ -170,7 +170,7 @@ class ProjectForm(Template):
             else:
                 coworkers = ' '.join(
                     [f'{review.coworker.fullname} (@{review.coworker.username})' for review in project.reviews])
-                self.build_message(title=f'Проект - {project.name}', text=f'Цели и обязанности: {project.description}\n'
+                self.build_message(title=f'Проект - {project.name}', text=f'Роль и результаты: {project.description}\n'
                                                                           f'Коллеги: {coworkers}')
             return self.MESSAGE
 
