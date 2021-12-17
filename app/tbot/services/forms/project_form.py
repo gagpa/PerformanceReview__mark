@@ -104,7 +104,7 @@ class ProjectForm(Template):
                 text = ''
                 for i, rating in enumerate(RatingService().all):
                     if rating.value == -1:
-                        text = f'❔ {text}{rating.name}\n'
+                        text = f'{text}❔ {rating.name}\n'
                     else:
                         text = f'{text}{"🌟" * rating.value} - {rating.name}\n'
                 self.build_message(description='❕ Поставьте оценку проекту',
