@@ -1,9 +1,10 @@
 from typing import List
 
 from app.db import Session
-from app.models import Project, User, CoworkerReview, CoworkerAdvice, CoworkerProjectRating
+from app.models import Project, User, CoworkerReview, CoworkerProjectRating
 from app.services.abc_entity import Entity
 from app.services.dictinary import HrReviewStatusService
+from configs.bot_config import MAX_USERS_ON_PROJECT
 
 
 class ProjectsService(Entity):
@@ -58,9 +59,13 @@ class ProjectsService(Entity):
         users = Session().query(User).filter(User.username.in_(contacts)).all()
         form = self.model.form
         hr_status = HrReviewStatusService().coworker
+        i = Session().query(CoworkerProjectRating).filter(CoworkerProjectRating.project_id == self.model.id).count()
         for user in users:
+            if i >= MAX_USERS_ON_PROJECT:
+                break
             if user == form.user:
                 continue
+            i += 1
             reviews = user.coworker_reviews
             review = list(filter(lambda coworker_review: coworker_review.form == form, reviews))
             if review:
@@ -96,16 +101,16 @@ class ProjectsService(Entity):
         """ Изменить контакт в проекте """
         if not Session.object_session(self.model):
             self.model = Session().merge(self.model)
-        is_exist = Session().query(CoworkerReview).\
-            join(CoworkerProjectRating).\
+        is_exist = Session().query(CoworkerReview). \
+            join(CoworkerProjectRating). \
             filter(CoworkerProjectRating.project == self.model,
-                   CoworkerReview.coworker == new_contact).\
+                   CoworkerReview.coworker == new_contact). \
             first()
         if not is_exist:
-            review = Session().query(CoworkerReview).\
-                join(CoworkerProjectRating).\
+            review = Session().query(CoworkerReview). \
+                join(CoworkerProjectRating). \
                 filter(CoworkerProjectRating.project == self.model,
-                       CoworkerReview.coworker == old_contact).\
+                       CoworkerReview.coworker == old_contact). \
                 first()
             review.coworker = new_contact
             Session().add(review)

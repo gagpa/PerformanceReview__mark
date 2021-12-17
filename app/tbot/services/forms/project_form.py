@@ -4,6 +4,7 @@ from app.models import Project
 from app.services.dictinary.rating import RatingService
 from app.tbot.extensions.template import Template
 from app.tbot.storages import BUTTONS_TEMPLATES
+from configs.bot_config import MAX_USERS_ON_PROJECT
 
 
 class ProjectForm(Template):
@@ -31,7 +32,8 @@ class ProjectForm(Template):
                                            unique_args=[{'contact': review.coworker.id} for review in project.reviews],
                                            project=project.id)
                 elif view == 'contacts':
-                    self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_add_contact_in_current_project'])
+                    if len(project.reviews) < MAX_USERS_ON_PROJECT:
+                        self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_add_contact_in_current_project'])
                     if project.reviews:
                         self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_project_delete_choose_contact'],
                                              BUTTONS_TEMPLATES['review_form_project_edit_choose_contact'])
@@ -52,10 +54,12 @@ class ProjectForm(Template):
                     back_to_projects = BUTTONS_TEMPLATES['coworker_back_projects'].add(review=review.id)
                     target = coworker_comment_rating.rating.value if coworker_comment_rating.rating else None
                     self.extend_keyboard(True, back, back_to_projects)
-                    return self.build_list(rate, unique_args=unique_args, target=target, proj_rate=coworker_comment_rating.id,
+                    return self.build_list(rate, unique_args=unique_args, target=target,
+                                           proj_rate=coworker_comment_rating.id,
                                            review=review.id)
                 elif view == 'project':
-                    self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_choose_rate'], BUTTONS_TEMPLATES['coworker_comment'])
+                    self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_choose_rate'],
+                                         BUTTONS_TEMPLATES['coworker_comment'])
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['coworker_back_projects'].add(review=review.id))
                     return self.build(proj_rate=coworker_comment_rating.id, review=review.id)
 
@@ -133,6 +137,8 @@ class ProjectForm(Template):
             elif view == 'contacts':
                 self.add_project(project)
                 self.build_message(description='❕ Внеси изменения или вернись к списку проектов.')
+                if len(project.reviews) >= MAX_USERS_ON_PROJECT:
+                    self.build_message(description=f'Максимальное число оценивающих в проекте - {MAX_USERS_ON_PROJECT}')
 
             elif view == 'delete_choose_contact':
                 self.add_project(project)

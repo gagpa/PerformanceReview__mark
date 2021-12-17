@@ -1,7 +1,7 @@
 from app.db import Session
+from app.models import User
 from app.services.form_review import ProjectsService
 from app.services.validator import Validator
-from app.models import User
 
 
 class ProjectsServiceTBot(ProjectsService):
@@ -61,6 +61,7 @@ class ProjectsServiceTBot(ProjectsService):
 
     def update_contacts_before(self, func, old_contact: User):
         """ Декоратор для обновления контактов в проекте """
+
         def wrapper(request):
             text = request.text.replace('@', '')
             new_contact = Session().query(User).filter(User.username == text).first()
@@ -75,8 +76,9 @@ class ProjectsServiceTBot(ProjectsService):
 
     def add_contacts_before(self, func):
         """ Декортаор для добавления контакта в проект """
+
         def wrapper(request):
-            for text in request.split_text:
+            for i, text in enumerate(request.split_text):
                 Validator().validate_text(text, 'form')
             self.add_contacts(request.split_text)
             request.add('project', [self.model.id])
