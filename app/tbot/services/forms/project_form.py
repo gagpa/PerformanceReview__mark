@@ -90,7 +90,7 @@ class ProjectForm(Template):
 
             if coworker_comment_rating.rating:
                 if coworker_comment_rating.rating.value == -1:
-                    text = f'✖'
+                    text = f'❔ {coworker_comment_rating.rating.name}'
                 else:
                     text = f'{"🌟" * coworker_comment_rating.rating.value}'
                 self.build_message(title='Текущая оценка:', text=text)
@@ -104,7 +104,7 @@ class ProjectForm(Template):
                 text = ''
                 for i, rating in enumerate(RatingService().all):
                     if rating.value == -1:
-                        text = f'{text}✖ - {rating.name}\n'
+                        text = f'{text}{rating.name}\n'
                     else:
                         text = f'{text}{"🌟" * rating.value} - {rating.name}\n'
                 self.build_message(description='❕ Поставьте оценку проекту',
@@ -114,7 +114,7 @@ class ProjectForm(Template):
         elif review_type == 'hr':
             self.add_project(project)
             if coworker_comment_rating.rating.value == -1:
-                text = '✖'
+                text = f'❔ {coworker_comment_rating.rating.name}'
             else:
                 text = f'{"🌟" * coworker_comment_rating.rating.value}'
             self.build_message(title='Текущая оценка:', text=text)
