@@ -76,14 +76,16 @@ from app.tbot.resources.review_form_views import \
     copy_last_review, \
     review_form_achievements_delete_choose_view, \
     review_form_duties_edit_choose_view, \
-    review_form_duties_delete_choose_view,\
-    review_form_duty_edit_view,\
+    review_form_duties_delete_choose_view, \
+    review_form_duty_edit_view, \
     review_form_duty_delete_view, \
     review_form_project_delete_contact_view, \
     review_form_project_delete_choose_contact_view, \
     review_form_add_contact_in_current_project_view, \
     review_form_project_edit_choose_contact_view, \
-    review_form_project_change_contact_view
+    review_form_project_change_contact_view, \
+    review_form_project_add_description_view, \
+review_form_project_choose_department
 
 from app.tbot.resources.review_period_views.archive_views import old_forms_list, old_review_list
 
@@ -112,7 +114,6 @@ from app.tbot.resources.user_views.users_list_views import \
     choose_departments_view
 from app.tbot.resources import only_on_review
 
-
 ROUTES = \
     {
         'form': only_on_review(review_form_view),
@@ -123,6 +124,8 @@ ROUTES = \
         'duty_delete': only_on_review(review_form_duty_delete_view),
         'duties_delete_choose': only_on_review(review_form_duties_delete_choose_view),
         'project_add': only_on_review(review_form_project_add_view),
+        'con_add': only_on_review(review_form_project_add_description_view),
+        'con_dep': only_on_review(review_form_project_choose_department),
         'project_delete': only_on_review(review_form_project_delete_view),
         'project_delete_choose': only_on_review(review_form_projects_delete_choose_view),
         'projects': only_on_review(review_form_projects_list_view),

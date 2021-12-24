@@ -39,10 +39,45 @@ class ProjectForm(Template):
                                              BUTTONS_TEMPLATES['review_form_project_edit_choose_contact'])
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_project_edit_back'])
                     return self.build(project=project.id)
+                elif view == 'contacts_on_create':
+                    form = self.args['form']
+                    creator = form.user
+                    department = self.args['dep']
+                    users_in_departments = department.users
+                    users_in_departments = [item for item in users_in_departments if item.id != creator.id]
+                    users_in_project = [item.coworker_review.coworker_id for item in project.ratings]
+                    for i, user in enumerate(users_in_departments):
+                        btn = BUTTONS_TEMPLATES['review_form_project_contacts_on_create'].add(user=user.username,
+                                                                                              i=project.id,
+                                                                                              dep=department.id,
+                                                                                              )
+                        if user.id in users_in_project:
+                            btn.text = f'❌ {" ".join(user.fullname.split(" ")[:2])}'
+                            self.extend_keyboard(i % 2 == 0, btn)
+                        elif len(users_in_project) < MAX_USERS_ON_PROJECT:
+                            btn.text = f'{" ".join(user.fullname.split(" ")[:2])}'
+                            btn.add()
+                            self.extend_keyboard(i % 2 == 0, btn)
+                    btn_back = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_dep'].add(i=project.id)
+                    btn_accept = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_done']
+                    btn_accept.text = 'Назад к проектам'
+                    self.extend_keyboard(True, btn_back, btn_accept)
+                    return self.build()
+                elif view == 'choose_dep':
+                    departments = self.args['departments']
+                    for i, item in enumerate(departments):
+                        btn = BUTTONS_TEMPLATES['review_form_project_contacts_on_create'].add(i=project.id,
+                                                                                              dep=item.id,)
+                        btn.text = item.name
+                        self.extend_keyboard(i % 2 == 0, btn)
+                    btn_accept = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_done']
+                    btn_accept.text = 'Назад к проектам'
+                    self.extend_keyboard(True, btn_accept)
+                    return self.build()
                 else:
                     self.extend_keyboard(False, BUTTONS_TEMPLATES['review_form_project_edit_name'],
                                          BUTTONS_TEMPLATES['review_form_project_edit_description'],
-                                         BUTTONS_TEMPLATES['review_form_project_contacts'])
+                                         BUTTONS_TEMPLATES['review_form_project_contacts_on_create'])
                     self.extend_keyboard(True, BUTTONS_TEMPLATES['review_form_back_projects_list'])
                     return self.build(project=project.id)
 
@@ -66,10 +101,10 @@ class ProjectForm(Template):
     def add_project(self, project: Project):
         """ Добавить проект в сообщение """
         list_text = ''
-        text_rim = len(project.reviews)
+        text_rim = len(project.reviews) - 1
         for i, review in enumerate(project.reviews):
             list_text = f'{list_text}{i + 1}){review.coworker.fullname} (@{review.coworker.username})'
-            if i + 1 != text_rim:
+            if i != text_rim:
                 list_text = f'{list_text}\n'
 
         self.build_message(title='Проект:',
@@ -148,8 +183,6 @@ class ProjectForm(Template):
             elif view == 'contacts':
                 self.add_project(project)
                 self.build_message(description='❕ Внеси изменения или вернись к списку проектов.')
-                if len(project.reviews) >= MAX_USERS_ON_PROJECT:
-                    self.build_message(description=f'Максимальное число оценивающих в проекте - {MAX_USERS_ON_PROJECT}')
 
             elif view == 'delete_choose_contact':
                 self.add_project(project)
@@ -169,20 +202,17 @@ class ProjectForm(Template):
                                    text=f'\n<b>Название проекта:</b>\n {project.name}')
 
             elif not project.reviews:
-                self.build_message(title='Заполнение проекта',
-                                   description='\n❕ Перечисли через “;” имена коллег с использованием @:',
-                                   text=f'\n<b>Название проекта:</b>\n {project.name}\n'
-                                        f'<b>Роль и результаты:</b>\n {project.description}\n\n'
-                                        f'Введи username коллег, которые могут оценить твой вклад в этот проект: '
+                self.add_project(project)
+                self.build_message(text=f'Выберите коллег, которые могут оценить твой вклад в этот проект: '
                                         f'коллеги по команде, все, с кем пересекались по этой задаче, твой наставник, '
                                         f'твои подчиненные и стажеры.\n\n'
                                         f'Руководителя добавлять не нужно – если ты указал его ник при регистрации, '
                                         f'он автоматически оценит все твои проекты.')
             else:
-                coworkers = ' '.join(
-                    [f'{review.coworker.fullname} (@{review.coworker.username})' for review in project.reviews])
-                self.build_message(title=f'Проект - {project.name}', text=f'Роль и результаты: {project.description}\n'
-                                                                          f'Коллеги: {coworkers}')
+                self.add_project(project)
+                if len(project.reviews) >= MAX_USERS_ON_PROJECT:
+                    self.build_message(description=f'Максимальное число оценивающих в проекте - {MAX_USERS_ON_PROJECT}')
+
             return self.MESSAGE
 
 

@@ -1,3 +1,5 @@
+from app.db import Session
+from app.models import Project, Department
 from app.services.user import UserService
 from app.tbot.resources.review_form_views.projects_views import list_view
 from app.tbot.services import ProjectsServiceTBot
@@ -135,13 +137,47 @@ def add_name_view(request):
 
 def add_description_view(request):
     """ Добавить описание проекта """
-    project = request.model
-    text = request.text
     form = request.form
+    # Найти проект
+    try:
+        project = request.model
+    except AttributeError:
+        project_id = int(request.args.get('i', request.args.get('project'))[0])
+        project = Session().query(Project).filter_by(id=project_id).one()
+
     service = ProjectsServiceTBot(project, form=form)
-    template = ProjectForm(project=project, review_type='write')
-    service.description = text
-    return template, service.add_model(add_contacts_view)
+    # Определить описание
+    if not project.description:
+        project.description = request.text
+    # Если было нажатие на пользователя, то удалить или добавить
+    if request.args.get('user'):
+        user = [item.coworker_review.coworker for item in project.ratings if
+                item.coworker_review.coworker.username == request.args['user'][0]]
+        if user:
+            service.del_contact(user[0])
+        else:
+            service.add_contacts(request.args['user'])
+    # Определить отдел для выбора сотрудников
+    if request.args.get('dep'):
+        department = Session().query(Department).filter_by(id=int(request.args['dep'][0])).one()
+    else:
+        department = form.user.department
+    service.save(project)
+    service.save_all()
+    project = form.projects[-1]
+    template = ProjectForm(project=project, form=form, review_type='write', dep=department, view='contacts_on_create',
+                           have_markup=True)
+    return template
+
+
+def choose_department(request):
+    """Выбрать отдел с сотрудниками для добавления в проект"""
+    form = request.form
+    project = Session().query(Project).filter_by(id=int(request.args['i'][0])).one()
+    departments = Session().query(Department).all()
+    template = ProjectForm(project=project, form=form, departments=departments,
+                           review_type='write', view='choose_dep', have_markup=True)
+    return template
 
 
 def add_contacts_view(request):

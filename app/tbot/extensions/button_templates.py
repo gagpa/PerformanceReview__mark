@@ -21,6 +21,10 @@ class ButtonTemplate:
     def text(self):
         return self.__text
 
+    @text.setter
+    def text(self, value):
+        self.__text = value
+
     @property
     def callback(self):
         self.kwargs.update({'cb': self.__callback})
