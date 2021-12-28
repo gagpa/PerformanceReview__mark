@@ -56,9 +56,11 @@ def check_last_form(users):
 
 
 def review_period_stop(request):
-    service = ReviewPeriodService().by(is_active=True)
+    service = ReviewPeriodService()
+    review = service.by(is_active=True)
     if service:
-        service.is_active = False
-        service.end_date = datetime.datetime.now()
+        review.is_active = False
+        review.end_date = datetime.datetime.now()
     Session.commit()
+    service.send_to_archive()
     return ReviewPeriodForm(stopped=True)

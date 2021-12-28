@@ -165,7 +165,7 @@ TEMPLATES = \
         'back_to_form': ButtonTemplate('back_to_form', 'Назад'),
         'get_hr_rapport': ButtonTemplate('get_hr_rapport', 'Для HR'),
         'get_boss_rapport': ButtonTemplate('get_boss_rapport', 'Для руководителя'),
-        'send_rapport_to_boss': ButtonTemplate('send_rapport_to_boss', 'Отправить руководителю'),
+        'send_rapport_to_boss': ButtonTemplate('send_rap_to_boss', 'Отправить руководителю'),
         'employee_review': ButtonTemplate('employee_review'),
         'input_summary': ButtonTemplate('input_summary', 'Написать отчет'),
         'change_summary': ButtonTemplate('input_summary', 'Изменить отчет'),

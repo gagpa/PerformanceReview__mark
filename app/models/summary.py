@@ -19,8 +19,8 @@ class Summary(Base):
     form_id = Column(Integer, ForeignKey('forms.id', ondelete='CASCADE'), nullable=False)
     from_hr_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
-    form = relationship('Form', backref=backref('summaries', cascade='all, delete'))
-    users = relationship('User', backref=backref('summaries', cascade='all, delete'))
+    form = relationship('Form', backref=backref('summary', cascade='all, delete', uselist=False))
+    hr = relationship('User', backref=backref('summary', cascade='all, delete', uselist=False))
 
     __mapper_args__ = {
         'order_by': id

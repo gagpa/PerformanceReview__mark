@@ -229,7 +229,7 @@ ROUTES = \
         'back_to_form': employee_review,
         'get_hr_rapport': get_hr_rapport,
         'get_boss_rapport': get_boss_rapport,
-        'send_rapport_to_boss': send_rapport_to_boss,
+        'send_rap_to_boss': send_rapport_to_boss,
         'employee_review': employee_review,
         'current_forms_list': current_forms_list,
         'input_summary': input_summary,
