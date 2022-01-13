@@ -52,7 +52,7 @@ class ProjectForm(Template):
                                                                                               dep=department.id,
                                                                                               )
                         if user.id in users_in_project:
-                            btn.text = f'❌ {" ".join(user.fullname.split(" ")[:2])}'
+                            btn.text = f'✅ {" ".join(user.fullname.split(" ")[:2])}'
                             self.extend_keyboard(i % 2 == 0, btn)
                         elif len(users_in_project) < MAX_USERS_ON_PROJECT:
                             btn.text = f'{" ".join(user.fullname.split(" ")[:2])}'
@@ -60,8 +60,9 @@ class ProjectForm(Template):
                             self.extend_keyboard(i % 2 == 0, btn)
                     btn_back = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_dep'].add(i=project.id)
                     btn_accept = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_done']
-                    btn_accept.text = 'Назад к проектам'
-                    self.extend_keyboard(True, btn_back, btn_accept)
+                    btn_accept.text = 'Сохранить'
+                    self.extend_keyboard(True, btn_accept)
+                    self.extend_keyboard(True, btn_back)
                     return self.build()
                 elif view == 'choose_dep':
                     departments = self.args['departments']
@@ -71,7 +72,7 @@ class ProjectForm(Template):
                         btn.text = item.name
                         self.extend_keyboard(i % 2 == 0, btn)
                     btn_accept = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_done']
-                    btn_accept.text = 'Назад к проектам'
+                    btn_accept.text = 'Сохранить'
                     self.extend_keyboard(True, btn_accept)
                     return self.build()
                 else:
@@ -208,11 +209,21 @@ class ProjectForm(Template):
                                         f'твои подчиненные и стажеры.\n\n'
                                         f'Руководителя добавлять не нужно – если ты указал его ник при регистрации, '
                                         f'он автоматически оценит все твои проекты.')
+            elif view == 'choose_dep':
+                self.add_project(project)
+                if len(project.reviews) >= MAX_USERS_ON_PROJECT:
+                    self.build_message(description=f'Вы добавили максимальное количество оценивающих в проект'
+                                                   f' – {MAX_USERS_ON_PROJECT} человек. Удалите кого-либо из '
+                                                   f'списка для добавления нового оценивающего.\n'
+                                                   f'Чтобы удалить оценивающего, выберите отдел, а затем сотрудника')
             else:
                 self.add_project(project)
                 if len(project.reviews) >= MAX_USERS_ON_PROJECT:
-                    self.build_message(description=f'Максимальное число оценивающих в проекте - {MAX_USERS_ON_PROJECT}')
-
+                    self.build_message(description=f'Вы добавили максимальное количество оценивающих в проект'
+                                                   f' – {MAX_USERS_ON_PROJECT} человек. Удалите кого-либо из '
+                                                   f'списка для добавления нового оценивающего.')
+                else:
+                    self.build_message(description='Для добавления оценивающего выберите отдел, а затем сотрудника')
             return self.MESSAGE
 
 

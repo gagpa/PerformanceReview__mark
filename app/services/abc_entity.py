@@ -48,7 +48,8 @@ class Entity(ABC):
         Session().add_all(models)
         Session.commit()
 
-    def delete(self, *models):
+    @classmethod
+    def delete(cls, *models):
         """ """
         for model in models:
             Session().delete(model)

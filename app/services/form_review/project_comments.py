@@ -12,8 +12,8 @@ class ProjectCommentService(Entity):
     """ Сервис комментариев """
     Model = Form
 
-    @staticmethod
-    def boss_projects_comments(pk):
+    @classmethod
+    def boss_projects_comments(cls, pk):
         """ Комментарии руководителя о проектах формы"""
         form = FormService().by_pk(pk)
         projects_comments = Session().query(CoworkerProjectRating) \
@@ -26,8 +26,8 @@ class ProjectCommentService(Entity):
             .filter(User.id == form.user.boss_id).all()
         return boss_comments
 
-    @staticmethod
-    def coworkers_projects_comments(pk):
+    @classmethod
+    def coworkers_projects_comments(cls, pk):
         """ Комментарии коллег о проектах формы"""
         form = FormService().by_pk(pk)
         projects_comments = Session().query(CoworkerProjectRating) \
@@ -37,12 +37,12 @@ class ProjectCommentService(Entity):
             .join(User, CoworkerReview.coworker)
         coworkers_comments = projects_comments \
             .filter(Form.id == form.id) \
-            .filter(User.id != form.user.boss_id)\
+            .filter(User.id != form.user.boss_id) \
             .filter(or_(User.boss_id != form.user_id, User.boss_id == None)).all()
         return coworkers_comments
 
-    @staticmethod
-    def subordinate_projects_comments(pk):
+    @classmethod
+    def subordinate_projects_comments(cls, pk):
         """ Комментарии подчиненных о проектах формы"""
         form = FormService().by_pk(pk)
         projects_comments = Session().query(CoworkerProjectRating) \
@@ -54,11 +54,14 @@ class ProjectCommentService(Entity):
             .filter(User.boss_id == form.user.id).all()
         return subordinate_comments
 
-    def final_rating(self, pk):
+    @classmethod
+    def final_rating(cls, pk):
         """ Средняя оценка по проектам формы"""
-        all_comments = [self.boss_projects_comments(pk),
-                        self.subordinate_projects_comments(pk),
-                        self.coworkers_projects_comments(pk)]
+        all_comments = [
+            cls.boss_projects_comments(pk),
+            cls.subordinate_projects_comments(pk),
+            cls.coworkers_projects_comments(pk),
+        ]
         all_ratings = []
         for comments in all_comments:
             if comments:

@@ -81,7 +81,7 @@ class ArchiveForm(Template):
             description = 'Выберите номер анкеты, чтобы сформировать отчет:'
             list_data = list()
             for model in old_forms:
-                string = f'{model["employee"]["fullname"]}\n'
+                string = f'{model["author"]["fullname"]}\n'
                 # rating = ProjectCommentService().final_rating(model['id'])
                 # string += f"\nОценка: {rating}\n" if rating else "\n"
                 list_data.append(string)

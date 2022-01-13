@@ -11,7 +11,7 @@ from configs.bot_config import ARCHIVE_SERVICE
 
 
 class ReviewPeriodService(Entity):
-    """  """
+    """"""
     Model = ReviewPeriod
 
     @property
@@ -36,85 +36,6 @@ class ReviewPeriodService(Entity):
             raise ModuleNotAvliable('archive')
         archive_review = json.loads(response.content)['data']['id']
         for form in self.model.forms:
-            employee = form.user
-            request = \
-                {
-                    'review': archive_review,
-                    'employee':
-                        {
-                            'fullname': employee.fullname,
-                            'department': employee.department.name,
-                            'position': employee.position.name
-                        },
-
-                    'achievements': [item.text for item in form.achievements],
-                    'fails': [item.text for item in form.fails],
-                    'duties': [item.text for item in form.duties],
-                    'respondents':
-                        [
-                            {
-                                'coworker':
-                                    {
-                                        'fullname': review.coworker.fullname,
-                                        'department': review.coworker.department.name,
-                                        'position': review.coworker.position.name
-                                    },
-                                'todo':
-                                    [
-                                        advice.text
-                                        for advice in review.advices if advice.advice_type.name == 'todo'
-                                    ],
-                                'not_todo':
-                                    [
-                                        advice.text
-                                        for advice in review.advices if advice.advice_type.name == 'not todo'
-                                    ],
-
-                            }
-                            for review in form.coworker_reviews
-                        ]
-                }
-            lead = employee.boss
-            if lead:
-                request.update({
-                    'lead':
-                        {
-                            'fullname': lead.fullname,
-                            'department': lead.department.name,
-                            'position': lead.position.name
-                        },
-                })
-            if form.projects:
-                request.update({'projects': [
-                    {
-                        'name': project.name,
-                        'description': project.name,
-                        'respondents':
-                            [
-                                {'coworker':
-                                    {
-                                        'fullname': rate.coworker_review.coworker.fullname,
-                                        'department': rate.coworker_review.coworker.department.name,
-                                        'position': rate.coworker_review.coworker.position.name
-                                    },
-                                    'mark': rate.rating.value,
-                                    'comment': rate.text
-                                }
-                                for rate in project.ratings if rate.rating
-                            ]
-                    }
-                    for project in form.projects
-                ], })
-            if form.summary:
-                request.update(
-                    {'summary':
-                        {
-                            'hr': form.summary.hr,
-                            'text': form.summary.text,
-                            'mark': 1
-                        }
-                    }
-                )
             response = requests.post(urljoin(ARCHIVE_SERVICE, 'api/v1/form'), json=request)
             if response.status_code != 201:
                 raise ModuleNotAvliable

@@ -61,7 +61,7 @@ class ProjectsService(Entity):
         hr_status = HrReviewStatusService().coworker
         i = Session().query(CoworkerProjectRating).filter(CoworkerProjectRating.project_id == self.model.id).count()
         for user in users:
-            if i >= MAX_USERS_ON_PROJECT:
+            if i >= MAX_USERS_ON_PROJECT and user.id != form.user.boss_id:
                 break
             if user == form.user:
                 continue

@@ -81,7 +81,7 @@ class ProjectsForm(Template):
         find_coworkers = lambda project: '\n •  '.join(
             [f"@{review.coworker.username}" for review in project.reviews])
         project_list_text = [
-            f'{project.name}\n Описание: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}'
+            f'{project.name}\n Роль и результаты: {project.description}\n Оценивающие:\n •  {find_coworkers(project)}'
             for project in
             projects]
         if review_type == 'hr':

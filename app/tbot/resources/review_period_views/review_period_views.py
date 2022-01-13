@@ -62,5 +62,4 @@ def review_period_stop(request):
         review.is_active = False
         review.end_date = datetime.datetime.now()
     Session.commit()
-    service.send_to_archive()
     return ReviewPeriodForm(stopped=True)
