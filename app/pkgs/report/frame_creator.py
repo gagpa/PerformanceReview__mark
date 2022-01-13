@@ -103,7 +103,7 @@ def create_respondents_frames(form: Form) -> typing.List[schemas.FormRespondent]
                                              comment=rate.text
                                              )
                          )
-            if rate.rating:
+            if rate.rating and rate.rating.value > 0:
                 marks_value.append(rate.rating.value)
         average_mark = round(mean(marks_value), 2) if marks_value else None
         respondent = schemas.FormRespondent(
