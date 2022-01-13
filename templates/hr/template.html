@@ -325,7 +325,7 @@
         <td class="index"></td>
         <td>Итого:</td>
         <td colspan="2">
-            {% if respondent.average_mark %}
+            {% if respondent.average_mark and respondent.average_mark > 0 %}
             {{ respondent.average_mark }}
             {% endif %}
         </td>
