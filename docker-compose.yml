@@ -28,7 +28,19 @@ services:
     depends_on:
       - psql
     container_name: perf_review__migration
-
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: perf_review__telebot
+    restart: always
+    env_file: .env
+    container_name: perf_review__scheduler
+    volumes:
+      - .:/usr/src/hr-test-bot
+    command: python scheduler.py
+    depends_on:
+      - psql
   psql:
     image: postgres
     restart: always
