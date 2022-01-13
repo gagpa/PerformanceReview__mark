@@ -86,13 +86,12 @@ class ProjectForm(Template):
                 if view == 'rate':
                     unique_args = [{'rate': rating.id} for rating in RatingService().all]
                     rate = BUTTONS_TEMPLATES['coworker_rate']
-                    back = BUTTONS_TEMPLATES['coworker_back_project']
                     back_to_projects = BUTTONS_TEMPLATES['coworker_back_projects'].add(review=review.id)
                     target = coworker_comment_rating.rating.value if coworker_comment_rating.rating else None
                     not_rate = BUTTONS_TEMPLATES['coworker_rate'].add(**unique_args[-1])
                     not_rate.text = 'Не могу оценить'
                     self.extend_keyboard(True, not_rate)
-                    self.extend_keyboard(True, back, back_to_projects)
+                    self.extend_keyboard(True, back_to_projects)
                     return self.build_list(rate, unique_args=unique_args[:-1], target=target,
                                            proj_rate=coworker_comment_rating.id,
                                            review=review.id)
