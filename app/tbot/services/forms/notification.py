@@ -43,7 +43,7 @@ class Notification(Template):
 
         elif view == 'copy_last_form':
             last_form = self.args.get('last_form')
-            to_form = BUTTONS_TEMPLATES['copy_last_form'].add(last_form=last_form.id)
+            to_form = BUTTONS_TEMPLATES['copy_last_form'].add(last_form=last_form)
             self.extend_keyboard(False, to_form)
             return self.build()
 

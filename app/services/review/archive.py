@@ -24,3 +24,7 @@ def get_form(form_id):
     if response.status_code != 200:
         raise ModuleNotAvliable
     return json.loads(response.content)['data']
+
+
+def get_last():
+    return get_review(get_reviews()['items'][-1]['id'])

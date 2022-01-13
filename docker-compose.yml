@@ -41,9 +41,16 @@ services:
     command: python scheduler.py
     depends_on:
       - psql
+      - sqlalchemy.url = postgresql+psycopg2://postgres:psql_pass@psql/reviewdb
+
   psql:
     image: postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: psql_pass
     container_name: perf_review__db
+
+
+
+
+

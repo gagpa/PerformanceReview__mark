@@ -52,15 +52,6 @@ class RequestSerializer:
             return user
 
     @property
-    def review_period(self):
-        """ """
-        if self.__message.review_period['is_active']:
-            pk = self.__message.review_period['pk']
-            service = ReviewPeriodService()
-            review_period = service.by_pk(pk=pk)
-            return review_period
-
-    @property
     def session(self):
         """ Парсинг session из сообщения и вернуть сериализованные данные """
         return self.__message.session
@@ -69,6 +60,10 @@ class RequestSerializer:
     def review_period(self):
         """ Парсинг review_period из сообщения и вернуть сериализованные данные """
         return self.__message.review_period
+
+    @review_period.setter
+    def review_period(self, value):
+        self.__message.review_period['is_active'] = value
 
     @property
     def text(self):

@@ -34,14 +34,14 @@ class EmployeeWithLead(Employee):
 class ProjectRespondent(BaseModel):
     """Опрошенный сотрудник, по проекту"""
     employee: EmployeeWithRelation
-    mark: typing.Optional[int] = Field(None, ge=1, le=5)
+    mark: typing.Optional[int] = Field(None, ge=-1, le=5)
     comment: typing.Optional[str]
 
 
 class ProjectMark(BaseModel):
     name: str
     description: str
-    mark: typing.Optional[int] = Field(None, ge=1, le=5)
+    mark: typing.Optional[int] = Field(None, ge=-1, le=5)
     comment: typing.Optional[str]
 
 

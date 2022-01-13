@@ -16,6 +16,7 @@ class GeneralCalculator(Calculator):
 
     @classmethod
     def _calculate(cls, marks: typing.List[float]) -> float:
+        marks = [mark for mark in marks if mark > 0]
         if marks:
             return round(mean(marks), 2)
         return 0

@@ -306,7 +306,11 @@
         <td class="index">{{ loop.index }}</td>
         <td class="project_name">{{ mark.name }}</td>
         {% if mark.mark %}
+        {% if mark.mark == -1 %}
+        <td class="mark">-</td>
+        {% else %}
         <td class="mark">{{ mark.mark }}</td>
+        {% endif %}
         {% else %}
         <td class="mark">не оценено</td>
         {% endif %}

@@ -43,7 +43,7 @@ TEMPLATES = \
         'review_form_project_delete': ButtonTemplate('project_delete'),
         'review_form_project_edit': ButtonTemplate('project_edit'),
         'review_form_project_edit_name': ButtonTemplate('project_edit_name', 'Название'),
-        'review_form_project_edit_description': ButtonTemplate('project_edit_description', 'Описание'),
+        'review_form_project_edit_description': ButtonTemplate('project_edit_description', 'Роль и результаты'),
         'review_form_project_delete_choose': ButtonTemplate('project_delete_choose', 'Удалить проект'),
         'review_form_project_edit_choose': ButtonTemplate('project_edit_choose', 'Изменить проект'),
         'review_form_back_projects_list': ButtonTemplate('projects', '« К Проектам'),

@@ -1,5 +1,7 @@
+from app import models
 from app.db import Session
 from app.models import Fail, Duty, Achievement
+from app.pkgs.review_archive import ReviewArchive
 from app.services.dictinary import StatusService
 from app.services.form_review import FormService, ProjectsService
 from app.services.user import EmployeeService
@@ -38,43 +40,41 @@ def send_to_boss_view(request):
 
 def copy_last_review(request):
     """ Скопировать анкету из предыдущего ревью """
-    form = request.form
     last_form_id = request.args.get('last_form')[0]
-
-    form_service = FormService(form)
-    status_service = StatusService()
-
-    last_projects = ProjectsService().all_by(form_id=last_form_id)
-    for last_project in last_projects:
-        last_project_service = ProjectsService(last_project)
-        new_project = ProjectsService.create_empty(form=form)
-        service = ProjectsService(new_project)
-        service.name = last_project_service.name
-        service.description = last_project_service.description
-        service.add_contacts([user.username for user in last_project_service.contacts])
+    form_archive = ReviewArchive().find_form(last_form_id)
+    user = Session.query(models.User).filter_by(username=form_archive.author.username).one()
+    for form in Session().query(models.Form).filter_by(user=user).all():
+        Session().delete(form)
+    Session().commit()
+    new_form = models.Form(user_id=user.id, review_period_id=request.review_period['pk'],
+                           status_id=StatusService().write_in.id)
+    form_service = FormService()
+    form_service.save(new_form)
+    Session.commit()
+    new_form = Session().query(models.Form).filter_by(user=user).one()
+    for project in form_archive.projects:
+        new_project = models.Project(name=project.name, description=project.description, form=new_form)
+        Session.add(new_project)
+        Session.commit()
+        project_service = ProjectsService(new_project)
+        project_service.add_contacts([user.employee.username for user in project.respondents])
         Session.commit()
 
-    last_fails = Session().query(Fail).filter_by(form_id=last_form_id).all()
-    for last_fail in last_fails:
-        fail = Fail(text=last_fail.text, form_id=form.id)
+    for last_fail in form_archive.fails:
+        fail = Fail(text=last_fail, form_id=new_form.id)
         Session().add(fail)
         Session.commit()
 
-    last_duties = Session().query(Duty).filter_by(form_id=last_form_id).all()
-    for last_duty in last_duties:
-        duty = Duty(text=last_duty.text, form_id=form.id)
+    for last_duty in form_archive.duties:
+        duty = Duty(text=last_duty, form_id=new_form.id)
         Session().add(duty)
         Session.commit()
 
-    last_achievements = Session().query(Achievement).filter_by(form_id=last_form_id).all()
-    for last_achievement in last_achievements:
-        achievement = Achievement(text=last_achievement.text, form_id=form.id)
+    for last_achievement in form_archive.achievements:
+        achievement = Achievement(text=last_achievement, form_id=new_form.id)
         Session().add(achievement)
         Session.commit()
-
-    write_in = form_service.is_current_status(status_service.write_in)
-
-    return ReviewForm(form=form, review_type='write', have_markup=write_in)
+    return ReviewForm(form=new_form, review_type='write', have_markup=True)
 
 
 __all__ = [
