@@ -9,8 +9,8 @@ class ReviewIsNotUpped(Template):
         pass
 
     def create_message(self) -> str:
-        self.build_message(title='Ревью заврешено',
-                                  description='На данный момент вы не можете воспользоваться данным функционалом.\n'
-                                              'В след. раз будьте более оперативным',
-                                  )
+        self.build_message(title='Ревью завершено',
+                           description='На данный момент вы не можете воспользоваться данным функционалом.\n'
+                                       'В след. раз будьте более оперативным',
+                           )
         return self.MESSAGE
