@@ -99,26 +99,27 @@ class CurrentReviewForm(Template):
             todo = '\n'.join(todo)
             not_todo = '\n'.join(not_todo)
             summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
-            rating = self.args.get('rating') if self.args.get('rating') else '\nостутствует'
+            rating = self.args.get('rating') if self.args.get('rating') else 'остутствует'
             marks = get_marks_info(self.args.get('marks'),
                                    self.args.get('boss_rating'),
                                    self.args.get('coworkers_rating'),
                                    self.args.get('subordinate_rating'),
                                    )
-            self.build_message(text=f'<i>ФИО:</i> {self.args.get("model").user.fullname}')
-            self.build_message(text=f'<i>Статус:</i> {self.args.get("model").status.name}')
+            self.build_message(text=f'<i>ФИО:</i> {self.args.get("model").user.fullname}\n'
+                                    f'<i>Статус:</i> {self.args.get("model").status.name}')
             self.build_message(text=f'▪️<b>Оценка:</b> {rating}')
             self.build_message(text=f'{marks}')
-            self.build_message(title=f'▪️Что делать:')
-            self.build_message(text=f'{todo if todo else "отсутствует"}')
-            self.build_message(title=f'▪️Что не делать:')
-            self.build_message(text=f'{not_todo if not_todo else "отсутствует"}')
-            self.build_message(title=f'▪️Подведение итогов:')
-            self.build_message(text=f'{summary}')
+            self.build_message(title=f'▪️Что делать:\n'
+                                     f'{todo if todo else "отсутствует"}')
+            self.build_message(title=f'▪️Что не делать:\n'
+                                     f'{not_todo if not_todo else "отсутствует"}')
+            self.build_message(title=f'▪️Подведение итогов:\n'
+                                     f'{summary}')
             if self.args.get('summary'):
                 self.build_message(f'❕ Доступна опция выгрузки анкеты')
             if not_rated:
-                self.build_message(f'❕ Не оценили:\n{usernames}')
+                self.build_message(f'❕ Не оценили:\n'
+                                   f'{usernames}')
             return self.MESSAGE
         elif self.args.get('change_summary'):
             self.build_message(title='Review сотрудника')
@@ -136,16 +137,16 @@ class CurrentReviewForm(Template):
             marks = get_marks_info(self.args.get('marks'), self.args.get('boss_rating'),
                                    self.args.get('coworkers_rating'),
                                    self.args.get('subordinate_rating'))
-            self.build_message(text=f'<i>ФИО:</i> {self.args.get("model").user.fullname}')
-            self.build_message(text=f'<i>Статус:</i> {self.args.get("model").status.name}')
+            self.build_message(text=f'<i>ФИО:</i> {self.args.get("model").user.fullname}\n'
+                                    f'<i>Статус:</i> {self.args.get("model").status.name}')
             self.build_message(text=f'▪️<b>Оценка:</b> {rating}')
             self.build_message(text=f'{marks}')
-            self.build_message(title=f'▪️Что делать:')
-            self.build_message(text=f'{todo if todo else "отсутствует"}')
-            self.build_message(title=f'▪️Что не делать:')
-            self.build_message(text=f'{not_todo if not_todo else "отсутствует"}')
-            self.build_message(title=f'▪️Подведение итогов:')
-            self.build_message(text=f'{summary}')
+            self.build_message(title=f'▪️Что делать:\n'
+                                     f'{todo if todo else "отсутствует"}')
+            self.build_message(title=f'▪️Что не делать:\n'
+                                     f'{not_todo if not_todo else "отсутствует"}')
+            self.build_message(title=f'▪️Подведение итогов:\n'
+                                     f'{summary}')
             self.build_message(description='❕ Введите краткие итоги на основе полученных советов:')
             return self.MESSAGE
         elif self.args.get('changed'):

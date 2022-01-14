@@ -28,11 +28,13 @@ def employee_review(request):
     rating = ProjectCommentService().final_rating(form_id)
 
     coworkers_comments = ProjectCommentService().coworkers_projects_comments(form_id)
-    coworkers_rating = [comment.rating.value for comment in coworkers_comments if comment.rating]
+    coworkers_rating = [comment.rating.value for comment in coworkers_comments if
+                        comment.rating and comment.rating.value > 0]
     boss_comments = ProjectCommentService().boss_projects_comments(form_id)
-    boss_rating = [comment.rating.value for comment in boss_comments if comment.rating]
+    boss_rating = [comment.rating.value for comment in boss_comments if comment.rating and comment.rating.value > 0]
     subordinate_comments = ProjectCommentService().subordinate_projects_comments(form_id)
-    subordinate_rating = [comment.rating.value for comment in subordinate_comments if comment.rating]
+    subordinate_rating = [comment.rating.value for comment in subordinate_comments if
+                          comment.rating and comment.rating.value > 0]
 
     reviews = ProjectCommentService.project_comments(form_id)
 
@@ -47,7 +49,7 @@ def employee_review(request):
         else:
             role = 'Коллеги'
         ratings = [project_rating.rating.value for project_rating in review.projects_ratings if
-                   project_rating.rating]
+                   project_rating.rating and project_rating.rating.value > 0]
         mean_rating = round(mean(ratings), 2) if ratings else 'Нет'
         marks[role].append(f'{fullname} @{username}: {mean_rating}')
 
