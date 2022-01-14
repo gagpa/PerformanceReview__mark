@@ -7,17 +7,64 @@ from app.services.form_review.project_comments import ProjectCommentService
 from app.services.review import HrReviewService
 from app.tbot.extensions.template import Template
 from app.tbot.storages import BUTTONS_TEMPLATES
+from app import queries
+from app.pkgs import mark_calculator as calculators
+from app.pkgs.report import create_form_frame
 
 
-def get_marks_info(marks, boss, coworkers, subordinate):
+def cut_middle(fullname):
+    return ' '.join(fullname.split(' ')[:2])
+
+
+def get_marks_info(form):
+    avr_lead = calculators.LeadCalculator.calculate(form)
+    avr_coworkers = calculators.CoworkerCalculator.calculate(form)
+    avr_subordinates = calculators.SubordinateCalculator.calculate(form)
+    lead_marks = queries.find__lead_marks(form).all()
+    form_frame = create_form_frame(form)
     text = ''
-    text += f'<b>Руководитель: {boss}</b>\n'
-    text += marks['Руководитель'][0]
-    text += f'<b>Коллеги: {coworkers}</b>\n'
-    text += '\n'.join(marks['Коллеги'])
-    text = f'{text}\n'
-    text += f'<b>Подчиненные: {subordinate}</b>\n'
-    text += '\n'.join(marks['Подчиненные'])
+    if lead_marks:
+        if avr_lead:
+            text += f'<b>Руководитель: {avr_lead}</b>\n' \
+                    f'{cut_middle(form_frame.author.lead.fullname)} @{form_frame.author.lead.username}: {avr_lead}'
+        elif [mark for mark in lead_marks if mark.rating and mark.rating.value == -1]:
+            text += f'<b>Руководитель: не могу оценить</b>\n' \
+                    f'{cut_middle(form_frame.author.lead.fullname)} @{form_frame.author.lead.username}'
+        else:
+            text += f'<b>Руководитель: не оценил</b>\n' \
+                    f'{cut_middle(form_frame.author.lead.fullname)} @{form_frame.author.lead.username}'
+    else:
+        text += f'<b>Нет руководителя</b>'
+    if avr_coworkers:
+        text += f'\n<b>Коллеги: {avr_lead}</b>\n'
+        for coworker in form_frame.respondents:
+            if coworker.employee.relation == 'коллега' and coworker.average_mark:
+                text += f'{cut_middle(coworker.employee.fullname)} @{coworker.employee.username}: {coworker.average_mark}\n'
+    else:
+        is_first = True
+        for coworker in form_frame.respondents:
+            if coworker.employee.relation == 'коллега':
+                if [mark.mark for mark in coworker.marks if mark.mark == -1]:
+                    if is_first:
+                        text += f'\n<b>Коллеги: нет</b>'
+                        is_first = False
+                    text += f'\n{cut_middle(coworker.employee.fullname)} @{coworker.employee.username}: не могу оценить'
+    if avr_subordinates:
+        text += f'\n<b>Подчинённые: {avr_subordinates}</b>\n'
+        for coworker in form_frame.respondents:
+            if coworker.employee.relation == 'подчинённый' and coworker.average_mark:
+                text += f'{cut_middle(coworker.employee.fullname)} @{coworker.employee.username}: {coworker.average_mark}\n'
+    else:
+        is_first = True
+        for coworker in form_frame.respondents:
+            if coworker.employee.relation == 'подчинённый':
+                if is_first:
+                    text += f'\n<b>Подчинённые: нет</b>\n'
+                    is_first = False
+                if [mark.mark for mark in coworker.marks if mark.mark == -1]:
+                    text += f'\n{cut_middle(coworker.employee.fullname)} @{coworker.employee.username}: не могу оценить'
+                else:
+                    text += f'\n{cut_middle(coworker.employee.fullname)} @{coworker.employee.username}: не оценил'
     return text
 
 
@@ -94,11 +141,7 @@ class CurrentReviewForm(Template):
             not_todo = '\n'.join(not_todo)
             summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
             rating = self.args.get('rating') if self.args.get('rating') else 'остутствует'
-            marks = get_marks_info(self.args.get('marks'),
-                                   self.args.get('boss_rating'),
-                                   self.args.get('coworkers_rating'),
-                                   self.args.get('subordinate_rating'),
-                                   )
+            marks = get_marks_info(self.args.get('model'))
             self.build_message(text=f'<i>ФИО:</i> {self.args.get("model").user.fullname}\n'
                                     f'<i>Статус:</i> {self.args.get("model").status.name}')
             self.build_message(text=f'▪️<b>Оценка:</b> {rating}')
@@ -127,10 +170,8 @@ class CurrentReviewForm(Template):
             todo = '\n'.join(todo)
             not_todo = '\n'.join(not_todo)
             summary = self.args.get('summary').text if self.args.get('summary') else 'отсутствует'
-            rating = self.args.get('rating') if self.args.get('rating') else '\nостутствует'
-            marks = get_marks_info(self.args.get('marks'), self.args.get('boss_rating'),
-                                   self.args.get('coworkers_rating'),
-                                   self.args.get('subordinate_rating'))
+            rating = self.args.get('rating') if self.args.get('rating') else 'отсутствует'
+            marks = get_marks_info(self.args.get('model'))
             self.build_message(text=f'<i>ФИО:</i> {self.args.get("model").user.fullname}\n'
                                     f'<i>Статус:</i> {self.args.get("model").status.name}')
             self.build_message(text=f'▪️<b>Оценка:</b> {rating}')

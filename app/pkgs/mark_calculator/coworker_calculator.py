@@ -6,6 +6,7 @@ from sqlalchemy import or_
 from app.db import Session
 from app.models import Form, User, Project, CoworkerProjectRating, CoworkerReview
 from .base import Calculator
+from app.queries import find__coworkers_marks
 
 
 class CoworkerCalculator(Calculator):
@@ -23,13 +24,5 @@ class CoworkerCalculator(Calculator):
 
     @classmethod
     def _find_marks(cls, form: Form):
-        projects_comments = Session().query(CoworkerProjectRating) \
-            .join(Project, CoworkerProjectRating.project) \
-            .join(Form, Project.form) \
-            .join(CoworkerReview, CoworkerReview.id == CoworkerProjectRating.coworker_review_id) \
-            .join(User, CoworkerReview.coworker)
-        coworkers_comments = projects_comments \
-            .filter(Form.id == form.id) \
-            .filter(User.id != form.user.boss_id) \
-            .filter(or_(User.boss_id != form.user_id, User.boss_id == None)).all()
+        coworkers_comments = find__coworkers_marks(form).all()
         return [item.rating.value for item in coworkers_comments if item.rating and item.rating.value]

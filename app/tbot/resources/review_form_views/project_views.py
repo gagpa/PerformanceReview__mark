@@ -164,7 +164,8 @@ def add_description_view(request):
         department = form.user.department
     service.save(project)
     service.save_all()
-    project = form.projects[-1]
+    if not project.id:
+        project = Session().query(Project).all()[-1]
     template = ProjectForm(project=project, form=form, review_type='write', dep=department, view='contacts_on_create',
                            have_markup=True)
     return template
