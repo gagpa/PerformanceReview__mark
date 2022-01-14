@@ -10,20 +10,14 @@ from app.tbot.storages import BUTTONS_TEMPLATES
 
 
 def get_marks_info(marks, boss, coworkers, subordinate):
-    text = ''
-    if boss != 'Нет':
-        text += f'<b>Руководитель: {boss}</b>\n'
-        text += marks['Руководитель'][0]
-    if coworkers != 'Нет':
-        if text:
-            text = f'{text}\n'
-        text += f'<b>Коллеги: {coworkers}</b>\n'
-        text += '\n'.join(marks['Коллеги'])
-    if subordinate != 'Нет':
-        if text:
-            text = f'{text}\n'
-        text += f'<b>Подчиненные: {subordinate}</b>\n'
-        text += '\n'.join(marks['Подчиненные'])
+    text = '':
+    text += f'<b>Руководитель: {boss}</b>\n'
+    text += marks['Руководитель'][0]
+    text += f'<b>Коллеги: {coworkers}</b>\n'
+    text += '\n'.join(marks['Коллеги'])
+    text = f'{text}\n'
+    text += f'<b>Подчиненные: {subordinate}</b>\n'
+    text += '\n'.join(marks['Подчиненные'])
     return text
 
 
