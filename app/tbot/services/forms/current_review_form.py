@@ -10,7 +10,7 @@ from app.tbot.storages import BUTTONS_TEMPLATES
 
 
 def get_marks_info(marks, boss, coworkers, subordinate):
-    text = '':
+    text = ''
     text += f'<b>Руководитель: {boss}</b>\n'
     text += marks['Руководитель'][0]
     text += f'<b>Коллеги: {coworkers}</b>\n'
