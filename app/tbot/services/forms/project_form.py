@@ -61,14 +61,14 @@ class ProjectForm(Template):
                     btn_back = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_dep'].add(i=project.id)
                     btn_accept = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_done']
                     btn_accept.text = 'Сохранить'
-                    self.extend_keyboard(True, btn_accept)
                     self.extend_keyboard(True, btn_back)
+                    self.extend_keyboard(True, btn_accept)
                     return self.build()
                 elif view == 'choose_dep':
                     departments = self.args['departments']
                     for i, item in enumerate(departments):
                         btn = BUTTONS_TEMPLATES['review_form_project_contacts_on_create'].add(i=project.id,
-                                                                                              dep=item.id,)
+                                                                                              dep=item.id, )
                         btn.text = item.name
                         self.extend_keyboard(i % 2 == 0, btn)
                     btn_accept = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_done']
@@ -217,13 +217,20 @@ class ProjectForm(Template):
                     self.build_message(description=f'Вы добавили максимальное количество оценивающих в проект'
                                                    f' – {MAX_USERS_ON_PROJECT} человек. Удалите кого-либо из '
                                                    f'списка для добавления нового оценивающего.\n'
-                                                   f'Чтобы удалить оценивающего, выберите отдел, а затем сотрудника')
+                                                   f'Чтобы удалить сотрудника из списка оценивающих, '
+                                                   f'необходимо выбрать отдел, в котором он работает,'
+                                                   f' и снять галочку с его фамилии.'
+                                       )
             else:
                 self.add_project(project)
                 if len(project.reviews) >= MAX_USERS_ON_PROJECT:
                     self.build_message(description=f'Вы добавили максимальное количество оценивающих в проект'
                                                    f' – {MAX_USERS_ON_PROJECT} человек. Удалите кого-либо из '
-                                                   f'списка для добавления нового оценивающего.')
+                                                   f'списка для добавления нового оценивающего.\n'
+                                                   f'Чтобы удалить сотрудника из списка оценивающих, '
+                                                   f'необходимо выбрать отдел, в котором он работает,'
+                                                   f' и снять галочку с его фамилии.'
+                                       )
                 else:
                     self.build_message(description='Для добавления оценивающего выберите отдел, а затем сотрудника')
             return self.MESSAGE
