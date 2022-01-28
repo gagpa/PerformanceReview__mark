@@ -1,56 +1,46 @@
 version: "3.3"
 
 services:
-  telebot:
+  bot:
+    user: "${UID}:${GID}"
     build:
       context: .
       dockerfile: docker/Dockerfile
-    image: perf_review__telebot
+    image: perf_review__bot
     restart: always
     env_file: .env
-    container_name: perf_review__telebot
+    container_name: MARK__bot
     volumes:
-      - .:/usr/src/hr-test-bot
+      - .:/usr/src/app
     command: python main.py
     depends_on:
-      - psql
+      - db
     tty: True
-
-  migration:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    image: perf_review__migration
-    env_file: .env
-    volumes:
-      - .:/usr/src/hr-test-bot
-    command: bash -c "alembic stamp head && alembic revision --autogenerate -m "update" && alembic upgrade head"
-    depends_on:
-      - psql
-    container_name: perf_review__migration
   scheduler:
+    user: "${UID}:${GID}"
     build:
       context: .
       dockerfile: docker/Dockerfile
-    image: perf_review__telebot
+    image: perf_review__scheduler
     restart: always
     env_file: .env
-    container_name: perf_review__scheduler
+    container_name: MARK__scheduler
     volumes:
-      - .:/usr/src/hr-test-bot
+      - .:/usr/src/app
     command: python scheduler.py
     depends_on:
-      - psql
-      - sqlalchemy.url = postgresql+psycopg2://postgres:psql_pass@psql/reviewdb
-
-  psql:
-    image: postgres
+      - db
+  db:
+    image: postgres:13.2-alpine
     restart: always
+    volumes:
+      - ${DB_VOLUME}:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: psql_pass
-    container_name: perf_review__db
-
-
-
-
-
+      - POSTGRES_PASSWORD=${SQL_PASS}
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_DB=${SQL_DBNAME}
+    container_name: MARK__db
+networks:
+  default:
+    external:
+       name: ${NETWORK}
