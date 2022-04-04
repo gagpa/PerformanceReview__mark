@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Review по сотруднику за период 26.08.2021 – 12.09.2021</title>
+    <style>
+        html, body, div, span, applet, object, iframe,
+        h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+        a, abbr, acronym, address, big, cite, code,
+        del, dfn, em, img, ins, kbd, q, s, samp,
+        small, strike, strong, sub, sup, tt, var,
+        b, u, i, center,
+        dl, dt, dd, ol, ul, li,
+        fieldset, form, label, legend,
+        table, caption, tbody, tfoot, thead, tr, th, td,
+        article, aside, canvas, details, embed,
+        figure, figcaption, footer, header, hgroup,
+        menu, nav, output, ruby, section, summary,
+        time, mark, audio, video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+        }
+        /* HTML5 display-role reset for older browsers */
+        article, aside, details, figcaption, figure,
+        footer, header, hgroup, menu, nav, section {
+            display: block;
+        }
+        body {
+            padding: 15px;
+            line-height: 1.5;
+            font-family: Arial;
+            font-size: 14px;
+        }
+        * {
+          font-family: Arial;
+        }
+        ol, ul {
+            list-style: none;
+        }
+        blockquote, q {
+            quotes: none;
+        }
+        blockquote:before, blockquote:after,
+        q:before, q:after {
+            content: '';
+            content: none;
+        }
+        table {
+            margin: 10px 0;
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        h2 {
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: #1f3864;
+            margin-top: 15px;
+        }
+
+        div.title {
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        td {
+            vertical-align: center;
+        }
+        table.employee td.name
+        {
+            width: 151px;
+        }
+
+        td.main_info {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        td.general_info {
+            font-size: 12px;
+        }
+
+        td.sub_info {
+            font-size: 10px;
+        }
+
+        td.borders {
+            border-bottom: 0.5px solid black;
+            border-top: 0.5px solid black;
+        }
+
+        td.background, tr.background {
+            background: #d9e2f3;
+        }
+
+        div.project_description {
+            font-style: italic;
+            font-size: 11px;
+            color: #7f7f7f
+        }
+        li {
+            line-height: 1.3;
+            margin-bottom: 5px;
+        }
+        ol {
+          margin:0 0 1.5em;
+          padding:0;
+          counter-reset:item;
+        }
+        ol>li {
+            padding:0 0 0 1em;
+            counter-increment: item;
+        }
+        ol li>span {
+        }
+        ol div {
+            padding-left: 32px;
+        }
+        ol>li:before {
+            display:inline-block;
+            width:1.5em;
+            padding-right:0.5em;
+            text-align:right;
+            content: counter(item) ")";
+            float: left;
+        }
+        ul {
+            margin-left: 28px;
+        }
+        ul.point {
+            margin-left: 28px;
+        }
+        ul.point li {
+            list-style-type: disc;
+        }
+        span.info {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        table.marks td {
+            font-size: 10px
+        }
+
+        table.marks td {
+            line-height: 1.2;
+            padding: 3px 6px;
+            border-bottom: 0.5px solid #EEE;
+        }
+
+        table.marks .project_name {
+            width: 200px;
+        }
+
+        table.marks tr.borders td {
+            background: #d9e2f3;
+            border-bottom: 0.5px solid black;
+            border-top: 0.7px solid black;
+            font-weight: bold;
+            letter-spacing: 1px;
+            line-height: 2.7;
+        }
+        table.advices td {
+            padding: 3px 6px;
+            font-size: 10px;
+        }
+        table.advices td.advice_type {
+            width: 150px;
+            font-weight: bold;
+        }
+        table.advices td.advice ul{
+            margin: 0;
+        }
+        td.index {
+            width: 5px;
+        }
+        td.mark{
+            width: 60px;
+        }
+        td.comment{
+            width: 100%
+        }
+
+    </style>
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
+</head>
+<body>
+<div class="title">Review по сотруднику за период 26.08.2021 – 12.09.2021</div>
+<table class="employee">
+    <tr>
+        <td class="main_info name" style="border-bottom: 0.5px solid black">ФИО:</td>
+        <td class="main_info value" style="border-bottom: 0.5px solid black">{{ author.fullname }}</td>
+    </tr>
+    <tr>
+        <td class="name general_info name">Отдел</td>
+        <td class="value general_info value">{{ author.department }}</td>
+    </tr>
+    <tr>
+        <td class="name general_info name">Должность</td>
+        <td class="value general_info value">{{ author.position }}</td>
+    </tr>
+    {% if author.lead %}
+    <tr>
+        <td class="name general_info name">Руководитель</td>
+        <td class="value general_info value">{{ author.lead.fullname }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td class="name sub_info name">Ник в telegram</td>
+        <td class="value sub_info value">
+            <a href="https://t.me/{{ author.username }}">@{{ author.username }}</a>
+        </td>
+    </tr>
+    {% if summary %}
+    <tr>
+        <td class="name title borders main_info name">Оценка</td>
+        <td class="value title borders main_info value">{{ summary.marks.total }}</td>
+    </tr>
+    <tr>
+        <td class="name sub_info name">от руководителя</td>
+        {% if summary.marks.lead %}
+        <td class="value sub_info value">{{ summary.marks.lead }}</td>
+        {% else %}
+        <td class="value sub_info name value">Нет</td>
+        {% endif %}
+    </tr>
+    <tr>
+        <td class="name sub_info name">от коллег</td>
+        {% if summary.marks.coworkers %}
+        <td class="value sub_info value">{{ summary.marks.coworkers }}</td>
+        {% else %}
+        <td class="value sub_info value">Нет</td>
+        {% endif %}
+    </tr>
+    <tr>
+        <td class="name sub_info">от подчинённых</td>
+        {% if summary.marks.subordinates %}
+        <td class="value sub_info">{{ summary.marks.subordinates }}</td>
+        {% else %}
+        <td class="value sub_info">Нет</td>
+        {% endif %}
+    </tr>
+    {% endif %}
+</table>
+<h2>Обязанности</h2>
+<ul class="point">
+    {% for duty in duties %}
+    <li>{{ duty }}</li>
+    {% endfor %}
+</ul>
+<h2>Проекты</h2>
+<ol>
+    {% for project in projects %}
+    <li>
+        <div class="project_name">{{ project.name }}</div>
+        <div class="project_description">Роль и результаты: {{ project.description }}</div>
+    </li>
+    {% endfor %}
+</ol>
+<h2>Достижения</h2>
+<ul class="point">
+    {% for achievement in achievements %}
+    <li>{{ achievement }}</li>
+    {% endfor %}
+</ul>
+<h2>Фейлы</h2>
+<ul class="point">
+    {% for fail in fails %}
+    <li>{{ fail }}</li>
+    {% endfor %}
+</ul>
+{% if summary and summary.text %}
+<h2>Итоги ревью</h2>
+<ul>
+    <li>{{ summary.text }}</li>
+</ul>
+{% endif %}
+<h2>Отзывы о сотруднике</h2>
+{% for respondent in respondents %}
+<div>
+    <span>Оценивающий: </span>
+    <span class="info">{{ respondent.employee.fullname }}</span>
+</div>
+<div>
+    <span>Роль: </span>
+    <span class="info">{{ respondent.employee.relation }}</span>
+</div>
+<table class="marks">
+    <tr class="borders">
+        <td class="index"></td>
+        <td class="project_name">Проект</td>
+        <td class="mark">Оценка</td>
+        <td class="comment">Комментарий</td>
+    </tr>
+    {% for mark in respondent.marks %}
+    <tr>
+        <td class="index">{{ loop.index }}</td>
+        <td class="project_name">{{ mark.name }}</td>
+        {% if mark.mark %}
+        {% if mark.mark == -1 %}
+        <td class="mark">-</td>
+        {% else %}
+        <td class="mark">{{ mark.mark }}</td>
+        {% endif %}
+        {% else %}
+        <td class="mark">не оценено</td>
+        {% endif %}
+        {% if mark.comment %}
+        <td class="comment">{{ mark.comment }}</td>
+        {% else %}
+        <td class="comment">не заполнено</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    <tr class="borders">
+        <td class="index"></td>
+        <td>Итого:</td>
+        <td colspan="2">
+            {% if respondent.average_mark and respondent.average_mark > 0 %}
+            {{ respondent.average_mark }}
+            {% endif %}
+        </td>
+    </tr>
+</table>
+<table class="advices">
+    <tr>
+        <td class="advice_type">Что делать:</td>
+        <td class="advice">
+            <ul>
+                {% if respondent.todo %}
+                {% for todo in respondent.todo %}
+                {% if todo %}
+                <li>{{ todo }}</li>
+                {% else %}
+                <li>не заполнено</li>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <li>не заполнено</li>
+                {% endif %}
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td class="advice_type">Что перестать делать:</td>
+        <td class="advice">
+            <ul>
+                {% if respondent.not_todo %}
+                {% for not_todo in respondent.not_todo %}
+                {% if not_todo %}
+                <li>{{ not_todo }}</li>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <li>не заполнено</li>
+                {% endif %}
+            </ul>
+        </td>
+    </tr>
+</table>
+{% endfor %}
+</body>

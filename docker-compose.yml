@@ -1,0 +1,46 @@
+version: "3.3"
+
+services:
+  bot:
+    user: "${UID}:${GID}"
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: perf_review__bot
+    restart: always
+    env_file: .env
+    container_name: MARK__bot
+    volumes:
+      - .:/usr/src/app
+    command: python main.py
+    depends_on:
+      - db
+    tty: True
+  scheduler:
+    user: "${UID}:${GID}"
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: perf_review__scheduler
+    restart: always
+    env_file: .env
+    container_name: MARK__scheduler
+    volumes:
+      - .:/usr/src/app
+    command: python scheduler.py
+    depends_on:
+      - db
+  db:
+    image: postgres:13.2-alpine
+    restart: always
+    volumes:
+      - ${DB_VOLUME}:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${SQL_PASS}
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_DB=${SQL_DBNAME}
+    container_name: MARK__db
+networks:
+  default:
+    external:
+       name: ${NETWORK}

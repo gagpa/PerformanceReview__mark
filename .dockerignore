@@ -1,0 +1,17 @@
+docker-compose.yml
+.docker
+
+.vscode/
+.idea/
+
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+*.py[cod]
+*/*.py[cod]
+*/*/*.py[cod]
+*/*/*/*.py[cod]
+
+venv/
+db_volume/
