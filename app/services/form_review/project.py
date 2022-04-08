@@ -95,6 +95,9 @@ class ProjectsService(Entity):
             for rate in ratings:
                 if rate.project == self.model:
                     Session().delete(rate)
+        elif len(ratings) == 0:
+            review = Session().query(CoworkerReview).filter(CoworkerReview.coworker == contact, CoworkerReview.form == self.model.form).one()
+            Session().delete(review)
         Session.commit()
 
     def update_contacts(self, old_contact: User, new_contact: User):
