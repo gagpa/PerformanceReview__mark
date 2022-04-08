@@ -110,6 +110,9 @@ def delete_view(request):
     form = request.form
     service = ProjectsServiceTBot(form=form)
     project = service.by_pk(pk=pk)
+    users = [UserService().by_pk(review.coworker_id) for review in project.reviews]
+    for user in users:
+        service.del_contact(user)
     service.delete(*project.ratings)
     service.delete(project)
     return list_view(request=request)
