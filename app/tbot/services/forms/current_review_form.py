@@ -36,7 +36,7 @@ def get_marks_info(form):
     else:
         text += f'<b>Нет руководителя</b>'
     if avr_coworkers:
-        text += f'\n<b>Коллеги: {avr_lead}</b>\n'
+        text += f'\n<b>Коллеги: {avr_coworkers}</b>\n'
         for coworker in form_frame.respondents:
             if coworker.employee.relation == 'коллега' and coworker.average_mark:
                 text += f'{cut_middle(coworker.employee.fullname)} @{coworker.employee.username}: {coworker.average_mark}\n'
