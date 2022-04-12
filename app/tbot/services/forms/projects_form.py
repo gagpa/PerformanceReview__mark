@@ -85,6 +85,10 @@ class ProjectsForm(Template):
             for project in
             projects]
         if review_type == 'hr':
+            project_list_text = [
+                f'{rating.project.name}\n Роль и результаты: {rating.project.description}\n Оценивающие:\n •  {find_coworkers(rating.project)}'
+                for rating in
+                ratings]
             self.build_list_message(title='▪️Проверка оценок проектов',
                                     list_text=project_list_text)
             list_data = []
@@ -105,7 +109,10 @@ class ProjectsForm(Template):
             return self.MESSAGE
 
         elif review_type == 'coworker':
-
+            project_list_text = [
+                f'{rating.project.name}\n Роль и результаты: {rating.project.description}\n Оценивающие:\n •  {find_coworkers(rating.project)}'
+                for rating in
+                ratings]
             self.build_list_message(title='▪️Проекты на оценку',
                                     list_text=project_list_text)
             list_data = []
