@@ -26,9 +26,9 @@ def delete_user(request):
         for project in form.projects:
             if project.reviews:
                 service.delete(project.reviews)
+    request.add('dep', [user.department.id])
     service.delete(user)
     notificator.notificate(Notification(view='delete_user'), user.chat_id)
-    request.add('dep', [user.department.id])
     return users_list_view(request=request)
 
 
