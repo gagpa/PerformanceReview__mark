@@ -13,9 +13,9 @@ class AuthForm(Template):
         user = self.args.get('user')
         if self.args.get('is_position'):
             unique_args = [{'pk': pos.id} for pos in self.args['models']]
-            self.build_list(BUTTONS_TEMPLATES['get_position'], unique_args=unique_args, departament=self.args['departament'])
             self.extend_keyboard(True, BUTTONS_TEMPLATES['get_reg'])
-            return self.build()
+            return self.build_list(BUTTONS_TEMPLATES['get_position'], unique_args=unique_args, departament=self.args['departament'])
+
         elif self.args.get('is_department'):
             unique_args = [{'pk': department.id} for department in self.args['models']]
             return self.build_list(BUTTONS_TEMPLATES['get_department'], unique_args=unique_args)
