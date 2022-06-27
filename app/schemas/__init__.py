@@ -1,4 +1,5 @@
 import typing
+from datetime import datetime
 from enum import Enum
 from uuid import UUID
 
@@ -76,10 +77,17 @@ class Summary(BaseModel):
     marks: typing.Optional[Marks]
 
 
+class Review(BaseModel):
+    """Ревью"""
+    id: typing.Union[UUID, int]
+    start_date: datetime
+    end_date: typing.Optional[datetime] = None
+
+
 class FormFrame(BaseModel):
     """Анкета из архива"""
     id: typing.Union[UUID, int]
-    review: typing.Union[UUID, int]
+    review: Review
     author: EmployeeWithLead
     projects: typing.Optional[typing.List[Project]]
     achievements: typing.Optional[typing.List[str]]

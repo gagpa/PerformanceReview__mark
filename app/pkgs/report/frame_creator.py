@@ -9,7 +9,7 @@ from .. import mark_calculator as calculators
 def create_form_frame(form: Form):
     """Создать слепок анкеты"""
     return schemas.FormFrame(id=form.id,
-                             review=form.review_period_id,
+                             review=create_review_frame(form),
                              author=create_author_frame(form),
                              projects=create_projects_frames(form),
                              fails=create_fails_frames(form),
@@ -18,6 +18,14 @@ def create_form_frame(form: Form):
                              respondents=create_respondents_frames(form),
                              summary=create_summary_frames(form),
                              )
+
+
+def create_review_frame(form) -> schemas.Review:
+    return schemas.Review(
+        id=form.review_period_id,
+        start_date=form.review_period.start_date,
+        end_date=form.review_period.end_date,
+    )
 
 
 def create_author_frame(form) -> schemas.EmployeeWithLead:
