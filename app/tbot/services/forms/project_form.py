@@ -69,7 +69,7 @@ class ProjectForm(Template):
                     for i, item in enumerate(departments):
                         btn = BUTTONS_TEMPLATES['review_form_project_contacts_on_create'].add(i=project.id,
                                                                                               dep=item.id, )
-                        btn.text = item.name
+                        btn.text = str(i + 1)
                         self.extend_keyboard(i % 2 == 0, btn)
                     btn_accept = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_done']
                     btn_accept.text = 'Сохранить'
@@ -214,7 +214,7 @@ class ProjectForm(Template):
                                                    f'необходимо выбрать отдел, в котором он работает,'
                                                    f' и снять галочку с его фамилии.'
                                        )
-                self.build_message(text=''.join([f'{i + 1}. {dep.name}' for i, dep in enumerate(self.args['departments'])]))
+                self.build_message(text='\n'.join([f'{i + 1}. {dep.name}' for i, dep in enumerate(self.args['departments'])]))
 
             elif not project.reviews:
                 self.add_project(project)
@@ -238,7 +238,7 @@ class ProjectForm(Template):
                                        )
                 else:
                     self.build_message(description='Для добавления оценивающего выберите отдел, а затем сотрудника')
-                self.build_message(text=''.join([f'{i + 1}. {dep.name}' for i, dep in enumerate(self.args['departments'])]))
+                self.build_message(text='\n'.join([f'{i + 1}. {dep.name}' for i, dep in enumerate(self.args['departments'])]))
             return self.MESSAGE
 
 
