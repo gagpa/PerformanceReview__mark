@@ -15,7 +15,7 @@ def get_rapport(request):
         form = create_form_frame(FormService().by_pk(pk))
     else:
         form = ReviewArchive().find_form(UUID(pk))
-    return ArchiveForm(pk=form.id, period_id=form.review, choose_rapport=True)
+    return ArchiveForm(pk=form.id, period_id=form.review.id, choose_rapport=True)
 
 
 def get_boss_rapport(request):
