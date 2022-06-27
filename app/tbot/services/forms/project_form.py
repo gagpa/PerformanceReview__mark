@@ -204,16 +204,6 @@ class ProjectForm(Template):
                                    description='\n❕ Опиши полученные результаты и свою роль в этом проекте:',
                                    text=f'\n<b>Название проекта:</b>\n {project.name}')
 
-            elif not project.reviews:
-                self.add_project(project)
-                self.build_message(text=f'Выберите коллег, которые могут оценить твой вклад в этот проект: '
-                                        f'коллеги по команде, все, с кем пересекались по этой задаче, твой наставник, '
-                                        f'твои подчиненные и стажеры.\n\n'
-                                        f'Руководителя добавлять не нужно – если ты указал его ник при регистрации, '
-                                        f'он автоматически оценит все твои проекты.')
-                user = self.args['form'].user.id
-                coworkers = [item for item in self.args['dep'].users if item.id != user]
-                self.build_message(text=f'\n'.join([f'{i + 1}.{coworker.fullname}' for i, coworker in enumerate(coworkers)]))
             elif view == 'choose_dep':
                 self.add_project(project)
                 if len(project.reviews) >= MAX_USERS_ON_PROJECT:
@@ -224,6 +214,18 @@ class ProjectForm(Template):
                                                    f'необходимо выбрать отдел, в котором он работает,'
                                                    f' и снять галочку с его фамилии.'
                                        )
+                self.build_message(text=''.join([f'{i + 1}. {dep.name}' for i, dep in enumerate(self.args['departments'])]))
+
+            elif not project.reviews:
+                self.add_project(project)
+                self.build_message(text=f'Выберите коллег, которые могут оценить твой вклад в этот проект: '
+                                        f'коллеги по команде, все, с кем пересекались по этой задаче, твой наставник, '
+                                        f'твои подчиненные и стажеры.\n\n'
+                                        f'Руководителя добавлять не нужно – если ты указал его ник при регистрации, '
+                                        f'он автоматически оценит все твои проекты.')
+                user = self.args['form'].user.id
+                coworkers = [item for item in self.args['dep'].users if item.id != user]
+                self.build_message(text=f'\n'.join([f'{i + 1}.{coworker.fullname}' for i, coworker in enumerate(coworkers)]))
             else:
                 self.add_project(project)
                 if len(project.reviews) >= MAX_USERS_ON_PROJECT:
