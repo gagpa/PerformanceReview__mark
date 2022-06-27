@@ -12,9 +12,12 @@ class AuthForm(Template):
         """ Создать клавиатуру """
         user = self.args.get('user')
         if self.args.get('is_position'):
-            unique_args = [{'pk': pos.id} for pos in self.args['models']]
+            for position in self.args['models']:
+                btn = BUTTONS_TEMPLATES['get_position']
+                btn.add(pk=position.id, departament=self.args['departament'])
+                self.extend_keyboard(False, btn)
             self.extend_keyboard(True, BUTTONS_TEMPLATES['get_reg'])
-            return self.build_list(BUTTONS_TEMPLATES['get_position'], unique_args=unique_args, departament=self.args['departament'])
+            return self.build()
 
         elif self.args.get('is_department'):
             unique_args = [{'pk': department.id} for department in self.args['models']]
