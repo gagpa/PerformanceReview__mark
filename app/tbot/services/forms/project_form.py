@@ -52,10 +52,10 @@ class ProjectForm(Template):
                                                                                               dep=department.id,
                                                                                               )
                         if user.id in users_in_project:
-                            btn.text = f'✅ {" ".join(user.fullname.split(" ")[:2])}'
+                            btn.text = f'✅ {i + 1}'
                             self.extend_keyboard(i % 2 == 0, btn)
                         elif len(users_in_project) < MAX_USERS_ON_PROJECT:
-                            btn.text = f'{" ".join(user.fullname.split(" ")[:2])}'
+                            btn.text = f'{i + 1}'
                             btn.add()
                             self.extend_keyboard(i % 2 == 0, btn)
                     btn_back = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_dep'].add(i=project.id)
@@ -211,6 +211,9 @@ class ProjectForm(Template):
                                         f'твои подчиненные и стажеры.\n\n'
                                         f'Руководителя добавлять не нужно – если ты указал его ник при регистрации, '
                                         f'он автоматически оценит все твои проекты.')
+                user = self.args['form'].user.id
+                coworkers = [item for item in self.args['dep'].users if item.id != user]
+                self.build_message(text=f'\n'.join([f'{i + 1}.{coworker.fullname}' for i, coworker in enumerate(coworkers)]))
             elif view == 'choose_dep':
                 self.add_project(project)
                 if len(project.reviews) >= MAX_USERS_ON_PROJECT:
@@ -233,6 +236,7 @@ class ProjectForm(Template):
                                        )
                 else:
                     self.build_message(description='Для добавления оценивающего выберите отдел, а затем сотрудника')
+                self.build_message(text=''.join([f'{i + 1}. {dep.name}' for i, dep in enumerate(self.args['departments'])]))
             return self.MESSAGE
 
 
