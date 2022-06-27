@@ -86,7 +86,7 @@ class Review(BaseModel):
     @validator('start_date', 'end_date')
     def dates(cls, v):
         if isinstance(v, datetime):
-            return v.strftime('%Y-%m-%d')
+            return v.strftime('%d.%m.%Y')
 
 
 class FormFrame(BaseModel):
@@ -100,3 +100,11 @@ class FormFrame(BaseModel):
     duties: typing.Optional[typing.List[str]]
     respondents: typing.Optional[typing.List[FormRespondent]]
     summary: typing.Optional[Summary]
+
+    def request(self):
+        data = self.dict()
+        data['review']['start_date'] = datetime.strptime(self.review.start_date, '%d.%m.%Y').strftime(
+            '%d.%m.%YT00:00:00+00:00')
+        data['review']['end_date'] = datetime.strptime(self.review.end_date, '%d.%m.%Y').strftime(
+            '%d.%m.%YT00:00:00+00:00')
+        return data

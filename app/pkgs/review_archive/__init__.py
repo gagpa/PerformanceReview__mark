@@ -12,13 +12,13 @@ from app.schemas import FormFrame
 from app.services.form_review import FormService
 from configs.bot_config import ARCHIVE_SERVICE
 from .. import exc
-import json
+
 
 class ReviewArchive:
 
     def archive_form(self, review_id: UUID, form: Form) -> UUID:
         """Заархивировать анкету"""
-        request = create_form_frame(form).dict()
+        request = create_form_frame(form).request()
         request['review'].update(id=str(review_id))
         response = requests.post(urljoin(ARCHIVE_SERVICE, 'api/v1/form'), json=request)
         if response.status_code == 201:
