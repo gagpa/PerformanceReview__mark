@@ -52,10 +52,10 @@ class ProjectForm(Template):
                                                                                               dep=department.id,
                                                                                               )
                         if user.id in users_in_project:
-                            btn.text = f'✅ {i + 1}'
+                            btn.text = f'✅ {" ".join(user.fullname.split(" ")[:2])}'
                             self.extend_keyboard(i % 2 == 0, btn)
                         elif len(users_in_project) < MAX_USERS_ON_PROJECT:
-                            btn.text = f'{i + 1}'
+                            btn.text = f'{" ".join(user.fullname.split(" ")[:2])}'
                             btn.add()
                             self.extend_keyboard(i % 2 == 0, btn)
                     btn_back = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_dep'].add(i=project.id)
@@ -69,7 +69,7 @@ class ProjectForm(Template):
                     for i, item in enumerate(departments):
                         btn = BUTTONS_TEMPLATES['review_form_project_contacts_on_create'].add(i=project.id,
                                                                                               dep=item.id, )
-                        btn.text = str(i + 1)
+                        btn.text = item.name
                         self.extend_keyboard(i % 2 == 0, btn)
                     btn_accept = BUTTONS_TEMPLATES['review_form_project_contacts_on_create_done']
                     btn_accept.text = 'Сохранить'
@@ -214,6 +214,7 @@ class ProjectForm(Template):
                                                    f'необходимо выбрать отдел, в котором он работает,'
                                                    f' и снять галочку с его фамилии.'
                                        )
+                self.build_message(text='Для добавления оценивающих выберите отдел:')
                 self.build_message(text='\n'.join([f'{i + 1}. {dep.name}' for i, dep in enumerate(self.args['departments'])]))
 
             elif not project.reviews:
@@ -223,9 +224,6 @@ class ProjectForm(Template):
                                         f'твои подчиненные и стажеры.\n\n'
                                         f'Руководителя добавлять не нужно – если ты указал его ник при регистрации, '
                                         f'он автоматически оценит все твои проекты.')
-                user = self.args['form'].user.id
-                coworkers = [item for item in self.args['dep'].users if item.id != user]
-                self.build_message(text=f'\n'.join([f'{i + 1}.{coworker.fullname}' for i, coworker in enumerate(coworkers)]))
             else:
                 self.add_project(project)
                 if len(project.reviews) >= MAX_USERS_ON_PROJECT:
@@ -238,9 +236,6 @@ class ProjectForm(Template):
                                        )
                 else:
                     self.build_message(description='Для добавления оценивающего выберите отдел, а затем сотрудника')
-                user = self.args['form'].user.id
-                coworkers = [item for item in self.args['dep'].users if item.id != user]
-                self.build_message(text=f'\n'.join([f'{i + 1}.{coworker.fullname}' for i, coworker in enumerate(coworkers)]))
             return self.MESSAGE
 
 
