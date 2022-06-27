@@ -19,7 +19,7 @@ class ReviewArchive:
     def archive_form(self, review_id: UUID, form: Form) -> UUID:
         """Заархивировать анкету"""
         request = create_form_frame(form).dict()
-        request.update(review=str(review_id))
+        request['review'].update(id=str(review_id))
         response = requests.post(urljoin(ARCHIVE_SERVICE, 'api/v1/form'), json=request)
         if response.status_code == 201:
             return UUID(json.loads(response.content)['data']['id'])
