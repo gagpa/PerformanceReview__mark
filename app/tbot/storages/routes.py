@@ -37,7 +37,7 @@ from app.tbot.resources.hr_review_views import \
     hr_review_send_back_view, \
     hr_comment_advice_view
 from app.tbot.resources.registrations_views.auth_views import add_position_user, \
-    add_department_user
+    add_department_user, add_new_username
 
 from app.tbot.resources.request_views import \
     request_view, \
@@ -184,7 +184,7 @@ ROUTES = \
         'hr_advices_edit': only_on_review(hr_comment_advice_view),
         'get_position': add_department_user,
         'get_department': add_position_user,
-
+        'get_reg': add_new_username,
         'request_view': request_view,
         'request_list_view': request_list_view,
         'request_delete_view': delete_request_view,

@@ -123,6 +123,7 @@ TEMPLATES = \
 
         'get_position': ButtonTemplate('get_position'),
         'get_department': ButtonTemplate('get_department'),
+        'get_reg': ButtonTemplate('get_reg', 'Назад'),
 
         'request_view': ButtonTemplate('request_view'),
         'request_list_view': ButtonTemplate('request_list_view'),

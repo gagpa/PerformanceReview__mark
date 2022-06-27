@@ -12,10 +12,10 @@ class AuthForm(Template):
         """ Создать клавиатуру """
         user = self.args.get('user')
         if self.args.get('is_position'):
-            row = BUTTONS_TEMPLATES['get_position']
-            markup = self.markup_builder.build_list_with_buttons(
-                self.args['models'], row, departament=self.args.get('departament'))
-            return markup
+            unique_args = [{'pk': pos.id} for pos in self.args['models']]
+            self.build_list(BUTTONS_TEMPLATES['get_position'], unique_args=unique_args, departament=self.args['department'])
+            self.extend_keyboard(True, BUTTONS_TEMPLATES['get_reg'])
+            return self.build()
         elif self.args.get('is_department'):
             unique_args = [{'pk': department.id} for department in self.args['models']]
             return self.build_list(BUTTONS_TEMPLATES['get_department'], unique_args=unique_args)
