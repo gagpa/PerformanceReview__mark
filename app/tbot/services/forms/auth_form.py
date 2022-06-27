@@ -16,7 +16,7 @@ class AuthForm(Template):
                 btn = BUTTONS_TEMPLATES['get_position']
                 btn.add(pk=position.id, departament=self.args['departament'])
                 btn.text = position.name
-                self.extend_keyboard(False, btn)
+                self.extend_keyboard(True, btn)
             self.extend_keyboard(True, BUTTONS_TEMPLATES['get_reg'])
             return self.build()
 
