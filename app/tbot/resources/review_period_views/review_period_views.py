@@ -45,14 +45,16 @@ def second_date_period(request, date):
 
 def check_last_form():
     """ Посмотреть есть ли анкета в предыдущем ревью """
-    for archive_form in archive.get_last()['forms']:
-        try:
-            notificator.notificate(Notification(view='copy_last_form',
-                                                archive_form=ReviewPeriodService().current,
-                                                last_form=archive_form['id']),
-                                   Session.query(User).filter_by(username=archive_form['author']['username']).one().chat_id)
-        except Exception:
-            pass
+    last_review = archive.get_last()
+    if last_review:
+        for archive_form in last_review['forms']:
+            try:
+                notificator.notificate(Notification(view='copy_last_form',
+                                                    archive_form=ReviewPeriodService().current,
+                                                    last_form=archive_form['id']),
+                                       Session.query(User).filter_by(username=archive_form['author']['username']).one().chat_id)
+            except Exception:
+                pass
 
 
 def review_period_stop(request):

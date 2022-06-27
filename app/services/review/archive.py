@@ -27,4 +27,6 @@ def get_form(form_id):
 
 
 def get_last():
-    return get_review(get_reviews()['items'][-1]['id'])
+    reviews = get_reviews()['items']
+    if reviews:
+        return get_review(reviews[-1]['id'])
