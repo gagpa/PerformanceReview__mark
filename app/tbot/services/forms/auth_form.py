@@ -33,11 +33,13 @@ class AuthForm(Template):
             description = '❕ Как тебя зовут? Напиши свою Фамилию Имя Отчество:'
 
         elif self.args.get('is_department'):
+            departments = '\n'.join([f'{i + 1}. {department.name}' for i, department in enumerate(self.args['models'])])
             description = 'Привет, я бот Марк.\n\n' \
-                    'Я помогу тебе пройти Performance review: обзор эффективности работы сотрудника за определенный период времени. Этот инструмент позволяет  выявить “слабые” и “сильные” места в компании и повысить  эффективность работы организации в целом.' \
-                    '\n\n❕ Давай знакомиться, в каком центре ИЦ ты работаешь?'
-            description += '\nОтделы:'
-            description.join([f'\n{i + 1}. {department.name}' for i, department in enumerate(self.args['models'])])
+                          'Я помогу тебе пройти Performance review: обзор эффективности работы сотрудника за определенный период времени. Этот инструмент позволяет  выявить “слабые” и “сильные” места в компании и повысить  эффективность работы организации в целом.' \
+                          '\n\n❕ Давай знакомиться, в каком центре ИЦ ты работаешь?\n' \
+                          'Отделы:\n' \
+                          f'{departments}'
+
         elif self.args.get('is_position'):
             description = '❕ Как называется твоя должность?'
 
