@@ -238,7 +238,7 @@ class ProjectForm(Template):
                                        )
                 else:
                     self.build_message(description='Для добавления оценивающего выберите отдел, а затем сотрудника')
-                self.build_message(text='\n'.join([f'{i + 1}. {dep.name}' for i, dep in enumerate(self.args['departments'])]))
+                self.build_message(text='\n'.join([f'{i + 1}. {dep.name}' for i, dep in enumerate(self.args['dep'])]))
             return self.MESSAGE
 
 
