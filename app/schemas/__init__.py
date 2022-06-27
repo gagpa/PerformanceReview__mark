@@ -83,10 +83,10 @@ class Review(BaseModel):
     start_date: datetime
     end_date: typing.Optional[datetime] = None
 
-    # @validator('start_date', 'end_date')
-    # def dates(cls, v):
-    #     if isinstance(v, datetime):
-    #         return v.strftime('%d.%m.%Y')
+    @validator('start_date', 'end_date')
+    def dates(cls, v):
+        if isinstance(v, datetime):
+            return v.strftime('%Y-%m-%d')
 
 
 class FormFrame(BaseModel):
