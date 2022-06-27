@@ -3,7 +3,7 @@ from datetime import datetime
 from enum import Enum
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 
 class Relation(Enum):
@@ -82,6 +82,11 @@ class Review(BaseModel):
     id: typing.Union[UUID, int]
     start_date: datetime
     end_date: typing.Optional[datetime] = None
+
+    @validator('start_date', 'end_date')
+    def dates(cls, v):
+        if isinstance(v, datetime):
+            return v.strftime('%d.%m.%Y')
 
 
 class FormFrame(BaseModel):
