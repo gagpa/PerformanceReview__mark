@@ -104,7 +104,7 @@ class FormFrame(BaseModel):
     def request(self):
         data = self.dict()
         data['review']['start_date'] = datetime.strptime(self.review.start_date, '%d.%m.%Y').strftime(
-            '%Y-%m-%dT00:00:00+00:00')
+            '%Y-%m-%dT00:00:00')
         data['review']['end_date'] = datetime.strptime(self.review.end_date, '%d.%m.%Y').strftime(
-            '%Y-%m-%dT00:00:00+00:00')
+            '%Y-%m-%dT00:00:00')
         return data
