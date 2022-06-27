@@ -12,7 +12,7 @@ from app.schemas import FormFrame
 from app.services.form_review import FormService
 from configs.bot_config import ARCHIVE_SERVICE
 from .. import exc
-
+import json
 
 class ReviewArchive:
 
@@ -23,6 +23,7 @@ class ReviewArchive:
         response = requests.post(urljoin(ARCHIVE_SERVICE, 'api/v1/form'), json=request)
         if response.status_code == 201:
             return UUID(json.loads(response.content)['data']['id'])
+        print(json.loads(response.content))
         raise exc.ModuleNotAvliable('archive')
 
     def archive_review(self, review: ReviewPeriod):
