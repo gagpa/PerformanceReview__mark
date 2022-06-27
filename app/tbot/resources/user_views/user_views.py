@@ -28,6 +28,7 @@ def delete_user(request):
                 service.delete(project.reviews)
     service.delete(user)
     notificator.notificate(Notification(view='delete_user'), user.chat_id)
+    request.add('dep', [user.department.id])
     return users_list_view(request=request)
 
 
